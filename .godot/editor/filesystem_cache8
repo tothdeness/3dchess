@@ -1,8 +1,7 @@
 ea4bc82a6ad023ab7ee23ee620429895
-::res://::1709576172
-Dummy.cs::CSharpScript::-1::1709571144::0::1::::<>MeshInstance3D<>::
-dummyPiece.tres::CapsuleMesh::312498879964737186::1709569468::0::1::::<><>::
+::res://::1709586657
+Dummy.cs::CSharpScript::-1::1709584845::0::1::::<>MeshInstance3D<>::
 icon.svg::CompressedTexture2D::3362685071349176278::1709320502::1709320519::1::::<><>::
-main.cs::CSharpScript::-1::1709576093::0::1::::<>Node3D<>::
-main.tscn::PackedScene::9171388744662835910::1709576107::0::1::::<><>::res://main.cs<>res://Dummy.cs
-pieceTest.cs::CSharpScript::-1::1709575958::0::1::::<>Node3D<>::
+main.cs::CSharpScript::-1::1709580083::0::1::::<>Node3D<>::
+main.tscn::PackedScene::9171388744662835910::1709584903::0::1::::<><>::res://main.cs<>uid://c30li4nqdnqu0::::res://mesh.tscn
+mesh.tscn::PackedScene::6790422150365391065::1709584764::0::1::::<><>::res://Dummy.cs

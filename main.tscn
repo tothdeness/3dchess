@@ -80,4 +80,4 @@ mesh = SubResource("CylinderMesh_kkf8w")
 skeleton = NodePath("../Node3D/MeshInstance3D/MeshInstance3D2")
 
 [node name="Mesh" parent="." instance=ExtResource("2_10ajy")]
-transform = Transform3D(2.2886, 0, 0, 0, 3.31347, 0, 0, 0, 2.20833, 2.22546, 3.98648, -8.41154)
+transform = Transform3D(2.2886, 0, 0, 0, 3.31347, 0, 0, 0, 2.20833, 8.1891, 3.98648, 9.47899)
