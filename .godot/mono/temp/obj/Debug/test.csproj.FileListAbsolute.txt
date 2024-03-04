@@ -15,3 +15,4 @@ E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\obj\Debug\refint\test.dll
 E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\obj\Debug\test.pdb
 E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\obj\Debug\test.genruntimeconfig.cache
 E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\obj\Debug\ref\test.dll
+E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\obj\Debug\test.sourcelink.json
