@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "SzUkZl2uI045Ddc2LJYKm8GpyBlBJNyLuYAmVHM2IJHB+hebPHdibvuwQMpwKR0nYSVI5t5vetd3SMN7beCWTQ==",
+  "success": true,
+  "projectFilePath": "E:\\2023_24-Egyetem\\2.félév\\3dchess\\test.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\d\\.nuget\\packages\\godot.sourcegenerators\\4.2.1\\godot.sourcegenerators.4.2.1.nupkg.sha512",
+    "C:\\Users\\d\\.nuget\\packages\\godotsharp\\4.2.1\\godotsharp.4.2.1.nupkg.sha512",
+    "C:\\Users\\d\\.nuget\\packages\\godotsharpeditor\\4.2.1\\godotsharpeditor.4.2.1.nupkg.sha512"
+  ],
+  "logs": []
+}

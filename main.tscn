@@ -1,0 +1,83 @@
+[gd_scene load_steps=11 format=3 uid="uid://d3wxoyfty6vkg"]
+
+[ext_resource type="Script" path="res://main.cs" id="1_pmi21"]
+[ext_resource type="PackedScene" uid="uid://c30li4nqdnqu0" path="res://mesh.tscn" id="2_10ajy"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_uu48t"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_0vxom"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7obfm"]
+albedo_color = Color(0, 0.572549, 0.403922, 1)
+metallic = 1.0
+metallic_specular = 1.0
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_ucncg"]
+material = SubResource("StandardMaterial3D_7obfm")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_md75j"]
+albedo_color = Color(0.776471, 0, 0.368627, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_3lr8u"]
+material = SubResource("StandardMaterial3D_md75j")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7xjcm"]
+albedo_color = Color(0.223529, 1, 0.956863, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_kkf8w"]
+material = SubResource("StandardMaterial3D_7xjcm")
+
+[node name="Main" type="Node3D"]
+transform = Transform3D(0.983026, 0, 0, 0, 0.983026, 0, 0, 0, 0.983026, 0, 0, 0)
+script = ExtResource("1_pmi21")
+
+[node name="table" type="MeshInstance3D" parent="."]
+transform = Transform3D(32, 0, 0, 0, 1.143, 0, 0, 0, 32, 0, 0, 0)
+mesh = SubResource("BoxMesh_uu48t")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.413075, 0.929543, 0.0123033, -0.0122167, -0.00803415, 1.01716, 0.929544, -0.41318, 0.00790079, -1.69055, 30.4212, 12.8173)
+
+[node name="Node3D" type="Node3D" parent="."]
+transform = Transform3D(0.831401, 0, 0, 0, 1.00029, 0, 0, 0, 1.00045, 0, 0, 0)
+
+[node name="Camera3D" type="Camera3D" parent="Node3D"]
+transform = Transform3D(1.22356, 0, 0, 0, 1.00732, 0.1398, 0, -0.139777, 1.00716, 0, 10, 35)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Node3D"]
+transform = Transform3D(4.99999, -0.00583104, -0.00305475, 0.0058265, 4.99999, -0.00746083, 0.00306339, 0.00745729, 4.99999, 0, 6, 0)
+visible = false
+mesh = SubResource("BoxMesh_0vxom")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Node3D/MeshInstance3D"]
+transform = Transform3D(0.281016, 0, -5.32907e-15, 0, 1.06434, 0, 3.01981e-14, 0, 0.39282, 0, 1.51683, 0)
+mesh = SubResource("CylinderMesh_ucncg")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="Node3D/MeshInstance3D"]
+transform = Transform3D(0.00158882, 1.02, -0.000347946, -0.382409, 0.00423796, 4.54106e-05, 4.54145e-05, 0.00089914, 0.394501, 1.58536, 0, -5.04963e-08)
+mesh = SubResource("CylinderMesh_3lr8u")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="Node3D/MeshInstance3D"]
+transform = Transform3D(0.496179, -3.34025e-08, -2.07265e-08, 1.57963e-08, -0.0329199, 0.630614, -1.63e-08, -1.04869, -0.0197958, -5.96046e-08, 0, -1.52145)
+mesh = SubResource("CylinderMesh_kkf8w")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.328279, 0, -2.04314e-08, 0, 5.66574, 0, 1.25823e-08, 0, 0.771882, -11.0156, 8.89554, 3.16699)
+visible = false
+mesh = SubResource("CylinderMesh_ucncg")
+skeleton = NodePath("../Node3D/MeshInstance3D/MeshInstance3D")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.124789, -4.30723, 0.00072711, 1.64171, -0.352497, 0.000431061, -0.00165513, 0.00448605, 0.777533, -6.36612, 1.88186, 1.97203)
+visible = false
+mesh = SubResource("CylinderMesh_3lr8u")
+skeleton = NodePath("../Node3D/MeshInstance3D/MeshInstance3D3")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.02343, 4.2598e-08, -4.54764e-08, -8.3771e-08, -0.906746, -3.61982, -2.20895e-09, 7.48972, -0.561092, -10.3562, 2.47877, -5.43132)
+visible = false
+mesh = SubResource("CylinderMesh_kkf8w")
+skeleton = NodePath("../Node3D/MeshInstance3D/MeshInstance3D2")
+
+[node name="Mesh" parent="." instance=ExtResource("2_10ajy")]
+transform = Transform3D(2.2886, 0, 0, 0, 3.31347, 0, 0, 0, 2.20833, 2.22546, 3.98648, -8.41154)

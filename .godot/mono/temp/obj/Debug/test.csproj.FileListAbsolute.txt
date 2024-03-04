@@ -1,0 +1,17 @@
+E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\bin\Debug\test.deps.json
+E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\bin\Debug\test.runtimeconfig.json
+E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\bin\Debug\test.dll
+E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\bin\Debug\test.pdb
+E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\bin\Debug\GodotSharp.dll
+E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\bin\Debug\GodotSharpEditor.dll
+E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\obj\Debug\test.csproj.AssemblyReference.cache
+E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\obj\Debug\test.GeneratedMSBuildEditorConfig.editorconfig
+E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\obj\Debug\test.AssemblyInfoInputs.cache
+E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\obj\Debug\test.AssemblyInfo.cs
+E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\obj\Debug\test.csproj.CoreCompileInputs.cache
+E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\obj\Debug\test.csproj.CopyComplete
+E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\obj\Debug\test.dll
+E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\obj\Debug\refint\test.dll
+E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\obj\Debug\test.pdb
+E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\obj\Debug\test.genruntimeconfig.cache
+E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\obj\Debug\ref\test.dll
