@@ -2,8 +2,7 @@
 
 [ext_resource type="Script" path="res://main.cs" id="1_pmi21"]
 [ext_resource type="PackedScene" uid="uid://c30li4nqdnqu0" path="res://mesh.tscn" id="2_10ajy"]
-
-[sub_resource type="BoxMesh" id="BoxMesh_uu48t"]
+[ext_resource type="PackedScene" uid="uid://c5rtmepg8ee4d" path="res://chess_table1.blend" id="3_w5rys"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_0vxom"]
 
@@ -30,10 +29,6 @@ material = SubResource("StandardMaterial3D_7xjcm")
 [node name="Main" type="Node3D"]
 transform = Transform3D(0.983026, 0, 0, 0, 0.983026, 0, 0, 0, 0.983026, 0, 0, 0)
 script = ExtResource("1_pmi21")
-
-[node name="table" type="MeshInstance3D" parent="."]
-transform = Transform3D(32, 0, 0, 0, 1.143, 0, 0, 0, 32, 0, 0, 0)
-mesh = SubResource("BoxMesh_uu48t")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.413075, 0.929543, 0.0123033, -0.0122167, -0.00803415, 1.01716, 0.929544, -0.41318, 0.00790079, -1.69055, 30.4212, 12.8173)
@@ -81,3 +76,7 @@ skeleton = NodePath("../Node3D/MeshInstance3D/MeshInstance3D2")
 
 [node name="Mesh" parent="." instance=ExtResource("2_10ajy")]
 transform = Transform3D(2.2886, 0, 0, 0, 3.31347, 0, 0, 0, 2.20833, 8.1891, 3.98648, 9.47899)
+visible = false
+
+[node name="chess_table1" parent="." instance=ExtResource("3_w5rys")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, -2.66048, 0)
