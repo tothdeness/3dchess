@@ -15,8 +15,8 @@ public partial class main : Node3D
 	{
 		GD.Print("Udvozlet a 3D sakk jatekban!");
 
-		var scene = GD.Load<PackedScene>("res://mesh.tscn");
-		var inst = scene.Instantiate();
+		PackedScene scene = GD.Load<PackedScene>("res://mesh.tscn");
+		Node inst = scene.Instantiate();
 		AddChild(inst);
 
 
@@ -53,7 +53,7 @@ public partial class main : Node3D
 
 
 			}
-
+		
 
 		} else if (_event is InputEventMouseMotion && rightMouseButtonIsPressed) {
 
