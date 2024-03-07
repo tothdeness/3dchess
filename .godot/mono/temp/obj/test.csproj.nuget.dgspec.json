@@ -51,6 +51,10 @@
             "GodotSharpEditor": {
               "target": "Package",
               "version": "[4.2.1, )"
+            },
+            "System.Collections.NonGeneric": {
+              "target": "Package",
+              "version": "[4.3.0, )"
             }
           },
           "imports": [

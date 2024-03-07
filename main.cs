@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.IO;
 using System.Runtime.CompilerServices;
+using test.Controllers;
 
 public partial class main : Node3D
 {
@@ -18,6 +19,11 @@ public partial class main : Node3D
 		PackedScene scene = GD.Load<PackedScene>("res://mesh.tscn");
 		Node inst = scene.Instantiate();
 		AddChild(inst);
+
+
+		TableController t = new TableController();
+
+		GD.Print(t.convert("E3")[0] + " " + t.convert("E3")[1]);
 
 
 	}

@@ -1,9 +1,13 @@
 ea4bc82a6ad023ab7ee23ee620429895
-::res://::1709834396
+::res://::1709841530
 chess_table1 másolata.blend::PackedScene::6694767759114972945::1709766340::1709768294::1::::<><>::
 chess_table1.blend::PackedScene::6914776384317952669::1709767718::1709768294::1::::<><>::
 Dummy.cs::CSharpScript::-1::1709584845::0::1::::<>MeshInstance3D<>::
 icon.svg::CompressedTexture2D::3362685071349176278::1709320502::1709320519::1::::<><>::
-main.cs::CSharpScript::-1::1709580083::0::1::::<>Node3D<>::
-main.tscn::PackedScene::9171388744662835910::1709811706::0::1::::<><>::res://main.cs<>uid://c30li4nqdnqu0::::res://mesh.tscn<>uid://c5rtmepg8ee4d::::res://chess_table1.blend
+main.cs::CSharpScript::-1::1709838876::0::1::::<>Node3D<>::
+main.tscn::PackedScene::9171388744662835910::1709838915::0::1::::<><>::res://main.cs<>uid://c30li4nqdnqu0::::res://mesh.tscn<>uid://c5rtmepg8ee4d::::res://chess_table1.blend
 mesh.tscn::PackedScene::6790422150365391065::1709584764::0::1::::<><>::res://Dummy.cs
+::res://Controllers/::1709840414
+TableController.cs::CSharpScript::-1::1709840414::0::1::::<><>::
+::res://Pieces/::1709840157
+Piece.cs::CSharpScript::-1::1709840157::0::1::::<><>::
