@@ -2,3 +2,6 @@
 /.vs
 /.vs
 /.vs/ProjectEvaluation
+.vs/ProjectEvaluation/test.metadata.v7.bin
+*.bin
+*.bin
