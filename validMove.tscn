@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://ci5u5xic5e83d"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_d6ygp"]
+albedo_color = Color(0, 0.643137, 0.419608, 1)
+
+[sub_resource type="TorusMesh" id="TorusMesh_8urh8"]
+
+[node name="Node3D" type="Node3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0.293125, 0)
+material_override = SubResource("StandardMaterial3D_d6ygp")
+mesh = SubResource("TorusMesh_8urh8")

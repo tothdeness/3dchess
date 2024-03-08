@@ -1,8 +1,10 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
 using test.Controllers;
+using test.Pieces;
 
 public partial class main : Node3D
 {
@@ -16,15 +18,15 @@ public partial class main : Node3D
 	{
 		GD.Print("Udvozlet a 3D sakk jatekban!");
 
-		PackedScene scene = GD.Load<PackedScene>("res://mesh.tscn");
-		Node inst = scene.Instantiate();
-		AddChild(inst);
+		TableController tableCont = new TableController(16, new List<Piece>(), this);
 
+		Piece.tableController = tableCont;
 
-		TableController t = new TableController();
+		Queen queen = new Queen("F4",1);
 
-		GD.Print(t.convert("E3")[0] + " " + t.convert("E3")[1]);
+		Queen queen2 = new Queen("A4", 1);
 
+		Queen queen3 = new Queen("H8", 1);
 
 	}
 
@@ -93,7 +95,7 @@ public partial class main : Node3D
 
 
 
-				cameraHelper.RotateObjectLocal(new Vector3(1, 0, 0), 0.02f * (distance.Y > 0 ? 1 : -1));
+				cameraHelper.RotateObjectLocal(new Vector3(0, 0, 1), 0.02f * (distance.Y > 0 ? 1 : -1));
 				//cameraHelper.RotateX(0.02f * (distance.Y > 0 ? 1 : -1));
 				draggingPosition = currentPos;
 			}

@@ -1,8 +1,9 @@
-[gd_scene load_steps=12 format=3 uid="uid://d3wxoyfty6vkg"]
+[gd_scene load_steps=13 format=3 uid="uid://d3wxoyfty6vkg"]
 
 [ext_resource type="Script" path="res://main.cs" id="1_pmi21"]
 [ext_resource type="PackedScene" uid="uid://c30li4nqdnqu0" path="res://mesh.tscn" id="2_10ajy"]
 [ext_resource type="PackedScene" uid="uid://c5rtmepg8ee4d" path="res://chess_table1.blend" id="3_w5rys"]
+[ext_resource type="PackedScene" uid="uid://ci5u5xic5e83d" path="res://validMove.tscn" id="4_irqhl"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_0vxom"]
 
@@ -36,10 +37,10 @@ script = ExtResource("1_pmi21")
 transform = Transform3D(0.413075, 0.929543, 0.0123033, -0.0122167, -0.00803415, 1.01716, 0.929544, -0.41318, 0.00790079, -1.69055, 30.4212, 12.8173)
 
 [node name="Node3D" type="Node3D" parent="."]
-transform = Transform3D(0.831401, 0, 0, 0, 1.00029, 0, 0, 0, 1.00045, 0, 0, 0)
+transform = Transform3D(0.812137, -0.214081, 0, 0.177936, 0.977113, 0, 0, 0, 1.00045, 0, 0, 0)
 
 [node name="Camera3D" type="Camera3D" parent="Node3D"]
-transform = Transform3D(1.22356, 0, 0, 0, 1.00732, 0.1398, 0, -0.139777, 1.00716, 0, 10, 35)
+transform = Transform3D(-4.44462e-08, 0.456178, -1.13534, 0, 0.943649, 0.379157, 1.01681, 1.37708e-08, -3.42729e-08, -39.1406, 19.6219, 0)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Node3D"]
 transform = Transform3D(4.99999, -0.00583104, -0.00305475, 0.0058265, 4.99999, -0.00746083, 0.00306339, 0.00745729, 4.99999, 0, 6, 0)
@@ -77,9 +78,13 @@ mesh = SubResource("CylinderMesh_kkf8w")
 skeleton = NodePath("../Node3D/MeshInstance3D/MeshInstance3D2")
 
 [node name="Mesh" parent="." instance=ExtResource("2_10ajy")]
-transform = Transform3D(3.99998, 0, 0, 0, 3.99998, 0, 0, 0, 3.99998, 14, 1.257, 14)
+transform = Transform3D(3.99996, 0, 0, 0, 3.99996, 0, 0, 0, 3.99996, -14.027, 1.34208, -16.669)
 visible = false
 mesh = SubResource("BoxMesh_d5g2c")
 
 [node name="chess_table1" parent="." instance=ExtResource("3_w5rys")]
-transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, -2.66, 0)
+transform = Transform3D(2.38498e-08, 0, -2, 0, 2, 0, 2, 0, 2.38498e-08, 0, -2.66, 0)
+
+[node name="Node3D2" parent="." instance=ExtResource("4_irqhl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.03453, 0, -2.03453)
+visible = false

@@ -46,6 +46,8 @@ public partial class Dummy : MeshInstance3D
 				piece.MaterialOverlay = standardMaterial;
 
 
+
+
 				GD.Print("Figura unlocked!");
 				
 			
@@ -78,6 +80,10 @@ public partial class Dummy : MeshInstance3D
 
 				standardMaterial.AlbedoColor = new Color(0.0f, 1.0f, 0.0f);
 				piece.MaterialOverlay = standardMaterial;
+
+				
+				
+
 
 				figureLocked = true;
 
