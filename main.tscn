@@ -34,7 +34,7 @@ transform = Transform3D(0.983026, 0, 0, 0, 0.983026, 0, 0, 0, 0.983026, 0, 0, 0)
 script = ExtResource("1_pmi21")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.413075, 0.929543, 0.0123033, -0.0122167, -0.00803415, 1.01716, 0.929544, -0.41318, 0.00790079, -1.69055, 30.4212, 12.8173)
+transform = Transform3D(0.413075, 0.929543, 0.0123033, -0.0122167, -0.00803415, 1.01716, 0.929544, -0.41318, 0.00790082, -1.69055, 30.4212, 12.8173)
 
 [node name="Node3D" type="Node3D" parent="."]
 transform = Transform3D(0.812137, -0.214081, 0, 0.177936, 0.977113, 0, 0, 0, 1.00045, 0, 0, 0)

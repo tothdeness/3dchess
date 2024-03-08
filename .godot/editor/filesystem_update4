@@ -1,4 +1,6 @@
 res://main.tscn
+res://validMove.tscn
+res://mesh.tscn
 res://Dummy.cs
 res://main.cs
-res://Pieces/Piece.cs
+res://validMove.cs

@@ -1,5 +1,7 @@
 using Godot;
 using System;
+using test.Controllers;
+using test.Pieces;
 
 public partial class Dummy : MeshInstance3D
 {
@@ -35,6 +37,9 @@ public partial class Dummy : MeshInstance3D
 		{
 			InputEventMouseButton mouse = (InputEventMouseButton)_event;
 
+
+
+
 			if(mouse.ButtonIndex == MouseButton.Left)
 			{
 				figureLocked = false;
@@ -49,8 +54,18 @@ public partial class Dummy : MeshInstance3D
 
 
 				GD.Print("Figura unlocked!");
-				
-			
+
+
+				if (validMove.current != null)
+				{
+					TableController.current.Move(validMove.current.Position);	
+					
+				}
+
+				Piece p = TableController.find(this);
+
+				p.DeleteVisualizers();
+
 
 				//QueueFree();
 			}
@@ -77,12 +92,19 @@ public partial class Dummy : MeshInstance3D
 				piece = GetNode<MeshInstance3D>("../"+Name);
 
 
+				Piece p_del = TableController.find(this);
+
+				p_del.DeleteVisualizers();
+
 
 				standardMaterial.AlbedoColor = new Color(0.0f, 1.0f, 0.0f);
 				piece.MaterialOverlay = standardMaterial;
 
-				
-				
+
+				Piece p = TableController.find(this);
+
+				p.ShowValidMoves();
+
 
 
 				figureLocked = true;

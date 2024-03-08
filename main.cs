@@ -18,15 +18,25 @@ public partial class main : Node3D
 	{
 		GD.Print("Udvozlet a 3D sakk jatekban!");
 
-		TableController tableCont = new TableController(16, new List<Piece>(), this);
+		List<Piece> table = new List<Piece>();
 
-		Piece.tableController = tableCont;
+		TableController.tableGraphics = this;
 
-		Queen queen = new Queen("F4",1);
+		TableController.table = table;
 
-		Queen queen2 = new Queen("A4", 1);
 
-		Queen queen3 = new Queen("H8", 1);
+
+
+
+		Queen queen = new Queen("F1",1);
+
+		Queen queen2 = new Queen("C2", 1);
+
+		Queen queen3 = new Queen("G3", 1);
+
+		Queen queen4 = new Queen("E5", 1);
+
+		Queen queen5 = new Queen("G6", 1);
 
 	}
 

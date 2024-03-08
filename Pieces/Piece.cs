@@ -12,7 +12,7 @@ namespace test.Pieces
 	internal abstract class Piece
 	{
 
-		protected Node node { get; set; }
+		public Node node { get; set; }
 	  
 		private string position;
 
@@ -23,29 +23,45 @@ namespace test.Pieces
 		//0 black, 1 white
 		private int team { get; set; }
 
-		public static TableController tableController;
 
 		public abstract List<Vector2> CheckValidMoves();
 
-		public abstract void ShowValidMoves();
+		public void ShowValidMoves()
+		{
+			TableController.showVisualizers(TableController.calculateVisualizers(CheckValidMoves()),this);
+		}
 
 		public void DeleteVisualizers() {
 
-			tableController.removeVisualizers();
+			TableController.removeVisualizers();
 
 		}
 
-		public abstract void Move(int x, int y);
+		public void Move(Vector3 vector) {
+
+			Vector2 vec = TableController.reversePosition(vector);
+
+			GD.Print(vector.Y + " | " + vector.X + " | " + position);
+
+			this.position = TableController.convertReverse(vec);
+			this.x = (int) vec.X;
+			this.y = (int) vec.Y;
+			this.node.Set("position", vector);
+
+			GD.Print(this.y + " | " + this.x +" | "+position);
+
+
+		}
 
 		protected Piece(string position, int team)
 		{
 			this.position = position;
 			this.team = team;
 
-			tableController.table.Add(this); 
+			TableController.table.Add(this); 
 
-			x = (int)TableController.convert(position).X;
-			y = (int)TableController.convert(position).Y;
+			x = (int) TableController.convert(position).X;
+			y = (int) TableController.convert(position).Y;
 
 
 
@@ -57,26 +73,109 @@ namespace test.Pieces
 		{
 			List<Vector2> results = new List<Vector2>();
 
-	
-			for(int i = x+1; i <= 8; i++)
+			Vector2 ij = new Vector2();
+
+			int j = y + 1;
+
+			ij.Y = j;
+			
+
+			for (int i = x + 1; i <= 8; i++)
 			{
-				for(int j = y+1; j <= 8; j++)
+				ij.X = i;
+
+
+				if (ij.Y == 9)
 				{
-					if (!tableController.find(i,j))
+					break;
+				}
+
+					if (!TableController.find(ij))
 					{
-						results.Add(new Vector2(i, j));
+						results.Add(ij);
 					}
 					else
 					{
 						break;
 					}
 
+				ij.Y++;
+				
+			}
+
+			ij.Y = y - 1;
+
+			for (int i = x - 1; i >= 1; i--)
+			{
+				ij.X = i;
+				if (ij.Y == 0)
+				{
+					break;
 				}
+
+				if (!TableController.find(ij))
+				{
+					results.Add(ij);
+				}
+				else
+				{
+					break;
+				}
+
+				ij.Y--;
+
 			}
 
 
+			ij.Y = y - 1;
+
+			for (int i = x + 1; i <= 8; i++)
+			{
+				ij.X = i;
+				if (ij.Y == 0)
+				{
+					break;
+				}
+
+				if (!TableController.find(ij))
+				{
+					results.Add(ij);
+				}
+				else
+				{
+					break;
+				}
+
+				ij.Y--;
+
+			}
+
+			ij.Y = y + 1;
+
+			for (int i = x - 1; i >= 1; i--)
+			{
+				ij.X = i;
+
+				if (ij.Y == 9)
+				{
+					break;
+				}
+
+				if (!TableController.find(ij))
+				{
+					results.Add(ij);
+				}
+				else
+				{
+					break;
+				}
+
+				ij.Y++;
+
+			}
 
 			return results;
+
 		}
 
 

@@ -19,12 +19,9 @@ namespace test.Pieces
 			PackedScene scene = GD.Load<PackedScene>("res://mesh.tscn");
 			Node inst = scene.Instantiate();
 
-			inst.Set("position", tableController.calculatePosition(x,y));
+			inst.Set("position", TableController.calculatePosition(x,y));
 
-
-		
-
-			tableController.tableGraphics.AddChild(inst);
+			TableController.tableGraphics.AddChild(inst);
 
 			node = inst;
 			
@@ -37,16 +34,6 @@ namespace test.Pieces
 			results.AddRange(diagnolMoves());
 
 			return results;
-		}
-
-		public override void Move(int x, int y)
-		{
-			throw new NotImplementedException();
-		}
-
-		public override void ShowValidMoves()
-		{
-			tableController.showVisualizers(tableController.calculateVisualizers(CheckValidMoves()));
 		}
 
 

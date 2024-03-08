@@ -1,13 +1,25 @@
-[gd_scene load_steps=3 format=3 uid="uid://ci5u5xic5e83d"]
+[gd_scene load_steps=5 format=3 uid="uid://ci5u5xic5e83d"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_d6ygp"]
-albedo_color = Color(0, 0.643137, 0.419608, 1)
+[ext_resource type="Script" path="res://validMove.cs" id="1_tgkp5"]
 
-[sub_resource type="TorusMesh" id="TorusMesh_8urh8"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fnwhx"]
+albedo_color = Color(0.301961, 0.741176, 0.364706, 1)
 
-[node name="Node3D" type="Node3D"]
+[sub_resource type="BoxMesh" id="BoxMesh_bhhrf"]
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0.293125, 0)
-material_override = SubResource("StandardMaterial3D_d6ygp")
-mesh = SubResource("TorusMesh_8urh8")
+[sub_resource type="BoxShape3D" id="BoxShape3D_ljd2a"]
+
+[node name="MeshInstance3D" type="MeshInstance3D"]
+transform = Transform3D(4, 0, 0, 0, 0.4, 0, 0, 0, 4, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_fnwhx")
+mesh = SubResource("BoxMesh_bhhrf")
+script = ExtResource("1_tgkp5")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(1.14942, 0, 0, 0, 2.0637, 0, 0, 0, 1.12474, 0, 0, 0)
+shape = SubResource("BoxShape3D_ljd2a")
+
+[connection signal="mouse_entered" from="StaticBody3D" to="." method="_on_static_body_3d_mouse_entered"]
+[connection signal="mouse_exited" from="StaticBody3D" to="." method="_on_static_body_3d_mouse_exited"]
