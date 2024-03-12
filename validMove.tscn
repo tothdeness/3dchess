@@ -10,7 +10,7 @@ albedo_color = Color(0.301961, 0.741176, 0.364706, 1)
 [sub_resource type="BoxShape3D" id="BoxShape3D_ljd2a"]
 
 [node name="MeshInstance3D" type="MeshInstance3D"]
-transform = Transform3D(4, 0, 0, 0, 0.4, 0, 0, 0, 4, 0, 0, 0)
+transform = Transform3D(2, 0, 0, 0, 0.4, 0, 0, 0, 2, 0, 0, 0)
 material_override = SubResource("StandardMaterial3D_fnwhx")
 mesh = SubResource("BoxMesh_bhhrf")
 script = ExtResource("1_tgkp5")
@@ -18,7 +18,7 @@ script = ExtResource("1_tgkp5")
 [node name="StaticBody3D" type="StaticBody3D" parent="."]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
-transform = Transform3D(1.14942, 0, 0, 0, 2.0637, 0, 0, 0, 1.12474, 0, 0, 0)
+transform = Transform3D(3, 0, 0, 0, 5.388, 0, 0, 0, 2.937, 0, 0, 0)
 shape = SubResource("BoxShape3D_ljd2a")
 
 [connection signal="mouse_entered" from="StaticBody3D" to="." method="_on_static_body_3d_mouse_entered"]

@@ -38,6 +38,9 @@ public partial class main : Node3D
 
 		Queen queen5 = new Queen("G6", 1);
 
+
+		Rook rook = new Rook("G1", 1);
+
 	}
 
 	public override void _Process(double delta)

@@ -1,6 +1,5 @@
 res://main.tscn
-res://validMove.tscn
-res://mesh.tscn
+res://rook.tscn
 res://Dummy.cs
 res://main.cs
 res://validMove.cs
