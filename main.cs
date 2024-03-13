@@ -41,6 +41,8 @@ public partial class main : Node3D
 
 		Rook rook = new Rook("G1", 1);
 
+		Bishop bishop = new Bishop("G2", 1);
+
 	}
 
 	public override void _Process(double delta)

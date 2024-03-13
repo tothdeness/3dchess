@@ -1,5 +1,5 @@
 ea4bc82a6ad023ab7ee23ee620429895
-::res://::1710194663
+::res://::1710364105
 bishop.blend::PackedScene::1032771532367255299::1710181089::1710181092::1::::<><>::
 bishop.tscn::PackedScene::5507431242116256338::1710183188::0::1::::<><>::uid://oyjuji7bndhr::::res://bishop.blend
 chess_table1 másolata.blend::PackedScene::6694767759114972945::1709766340::1709768294::1::::<><>::
@@ -7,10 +7,10 @@ chess_table1.blend::PackedScene::6914776384317952669::1709892484::1709892489::1:
 Dummy.cs::CSharpScript::-1::1710193888::0::1::::<>MeshInstance3D<>::
 icon.svg::CompressedTexture2D::3362685071349176278::1709320502::1709320519::1::::<><>::
 main.cs::CSharpScript::-1::1710192821::0::1::::<>Node3D<>::
-main.tscn::PackedScene::9171388744662835910::1710194182::0::1::::<><>::res://main.cs<>uid://c30li4nqdnqu0::::res://mesh.tscn<>uid://c5rtmepg8ee4d::::res://chess_table1.blend<>uid://ci5u5xic5e83d::::res://validMove.tscn
+main.tscn::PackedScene::9171388744662835910::1710194666::0::1::::<><>::res://main.cs<>uid://c30li4nqdnqu0::::res://mesh.tscn<>uid://c5rtmepg8ee4d::::res://chess_table1.blend<>uid://ci5u5xic5e83d::::res://validMove.tscn
 mesh.tscn::PackedScene::6790422150365391065::1710193508::0::1::::<><>::res://Dummy.cs
 rook.blend::PackedScene::2930484512970219594::1710193999::1710194017::1::::<><>::
-rook.tscn::PackedScene::4677270034382716002::1710194182::0::1::::<><>::res://Dummy.cs
+rook.tscn::PackedScene::4677270034382716002::1710194776::0::1::::<><>::res://Dummy.cs
 validMove.cs::CSharpScript::-1::1709917924::0::1::::<>MeshInstance3D<>::
 validMove.tscn::PackedScene::5397552583311376511::1710180273::0::1::::<><>::res://validMove.cs
 ::res://Controllers/::1709922599
