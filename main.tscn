@@ -83,7 +83,7 @@ visible = false
 mesh = SubResource("BoxMesh_d5g2c")
 
 [node name="chess_table1" parent="." instance=ExtResource("3_w5rys")]
-transform = Transform3D(2.38498e-08, 0, -2, 0, 2, 0, 2, 0, 2.38498e-08, 0, -2.66, 0)
+transform = Transform3D(-8.74228e-08, 0, -2, 0, 2, 0, 2, 0, -8.74228e-08, 0, -2.66, 0)
 
 [node name="Node3D2" parent="." instance=ExtResource("4_irqhl")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.03453, 0, -2.03453)

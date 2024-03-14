@@ -1,6 +1,6 @@
 res://main.tscn
 res://rook.tscn
+res://bishop.tscn
 res://Dummy.cs
 res://main.cs
 res://validMove.cs
-res://bishop.tscn

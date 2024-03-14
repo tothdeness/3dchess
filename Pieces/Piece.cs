@@ -17,15 +17,16 @@ namespace test.Pieces
 	  
 		private string position;
 
-		public int x { get; set; }
-		
-		public int y { get; set; } 
 
+		
+		public Vector3 pos_vector { get; set; }
+
+		
 		//0 black, 1 white
 		private int team { get; set; }
 
 
-		public abstract List<Vector2> CheckValidMoves();
+		public abstract List<Vector3> CheckValidMoves();
 
 		public void ShowValidMoves()
 		{
@@ -40,19 +41,17 @@ namespace test.Pieces
 
 		public void Move(Vector3 vector) {
 
-			Vector2 vec = TableController.reversePosition(vector);
+			this.pos_vector = TableController.reversePosition(vector);
 
-			GD.Print(vector.Y + " | " + vector.X + " | " + position);
 
-			this.position = TableController.convertReverse(vec);
-			this.x = (int) vec.X;
-			this.y = (int) vec.Y;
-			vector.Y = 3;
+			this.position = TableController.convertReverse(pos_vector);
+			
+
 			this.node.Set("position", vector);
 
-			GD.Print(this.y + " | " + this.x +" | "+position);
-
-
+	
+			GD.Print("Uj pozizicio: " + position);
+			GD.Print("test: "+pos_vector.X +"  "+ pos_vector.Z);
 		}
 
 		protected Piece(string position, int team)
@@ -60,34 +59,36 @@ namespace test.Pieces
 			this.position = position;
 			this.team = team;
 
-			TableController.table.Add(this); 
+			TableController.table.Add(this);
 
-			x = (int) TableController.convert(position).X;
-			y = (int) TableController.convert(position).Y;
+			Vector3 p = TableController.convert(position);
 
+			p.Y = 3;
 
-
-			GD.Print(" Numbers: " + x + " " + y);
+			pos_vector = p;
+			
+		
 
 		}
 
-		protected List<Vector2> diagnolMoves()
+		protected List<Vector3> diagnolMoves()
 		{
-			List<Vector2> results = new List<Vector2>();
+			List<Vector3> results = new List<Vector3>();
 
-			Vector2 ij = new Vector2();
+			Vector3 ij = pos_vector;
 
-			int j = y + 1;
 
-			ij.Y = j;
-			
+			ij.Z = pos_vector.Z + 1;
 
-			for (int i = x + 1; i <= 8; i++)
+			GD.Print("Current pos: " +ij.X + " " + ij.Z);
+
+
+			for (int i = (int)ij.X  + 1; i <= 8; i++)
 			{
 				ij.X = i;
 
 
-				if (ij.Y == 9)
+				if (ij.Z == 9)
 				{
 					break;
 				}
@@ -101,16 +102,17 @@ namespace test.Pieces
 						break;
 					}
 
-				ij.Y++;
+				ij.Z++;
 				
 			}
 
-			ij.Y = y - 1;
+			ij.Z = pos_vector.Z - 1;
+			ij.X = pos_vector.X;
 
-			for (int i = x - 1; i >= 1; i--)
+			for (int i = (int)ij.X - 1; i >= 1; i--)
 			{
 				ij.X = i;
-				if (ij.Y == 0)
+				if (ij.Z == 0)
 				{
 					break;
 				}
@@ -118,23 +120,25 @@ namespace test.Pieces
 				if (!TableController.find(ij))
 				{
 					results.Add(ij);
+					GD.Print(ij.X + " " + ij.Z);
 				}
 				else
 				{
 					break;
 				}
 
-				ij.Y--;
+				ij.Z--;
 
 			}
 
 
-			ij.Y = y - 1;
+			ij.Z = pos_vector.Z - 1;
+			ij.X = pos_vector.X;
 
-			for (int i = x + 1; i <= 8; i++)
+			for (int i = (int)ij.X + 1; i <= 8; i++)
 			{
 				ij.X = i;
-				if (ij.Y == 0)
+				if (ij.Z == 0)
 				{
 					break;
 				}
@@ -148,17 +152,18 @@ namespace test.Pieces
 					break;
 				}
 
-				ij.Y--;
+				ij.Z--;
 
 			}
 
-			ij.Y = y + 1;
+			ij.Z = pos_vector.Z + 1;
+			ij.X = pos_vector.X;
 
-			for (int i = x - 1; i >= 1; i--)
+			for (int i = (int)ij.X - 1; i >= 1; i--)
 			{
 				ij.X = i;
 
-				if (ij.Y == 9)
+				if (ij.Z == 9)
 				{
 					break;
 				}
@@ -172,7 +177,7 @@ namespace test.Pieces
 					break;
 				}
 
-				ij.Y++;
+				ij.Z++;
 
 			}
 
@@ -181,19 +186,19 @@ namespace test.Pieces
 		}
 
 
-		protected List<Vector2> straightMoves()
+		protected List<Vector3> straightMoves()
 		{
-			List<Vector2> results = new List<Vector2>();
+			List<Vector3> results = new List<Vector3>();
 
-			Vector2 ij = new Vector2();
+			Vector3 ij = new Vector3();
 
 
-			ij.Y = y + 1;
-			ij.X = x;
+			ij.Z = pos_vector.Z + 1;
+			ij.X = pos_vector.X;
 
-			for(int i = (int) ij.Y; i < 9; i++ ) {
+			for(int i = (int) ij.Z; i < 9; i++ ) {
 
-				ij.Y = i;
+				ij.Z = i;
 
 				if (!TableController.find(ij))
 				{
@@ -206,13 +211,13 @@ namespace test.Pieces
 
 			}
 
-			ij.Y = y - 1;
+			ij.Z = pos_vector.Z - 1;
 
 
-			for (int i = (int)ij.Y; i > 0; i--)
+			for (int i = (int)ij.Z; i > 0; i--)
 			{
 
-				ij.Y = i;
+				ij.Z = i;
 
 				if (!TableController.find(ij))
 				{
@@ -225,8 +230,8 @@ namespace test.Pieces
 
 			}
 
-			ij.Y = y;
-			ij.X = x + 1;
+			ij.Z = pos_vector.Z;
+			ij.X = pos_vector.X + 1;
 
 			for (int i = (int)ij.X; i < 9; i++)
 			{
@@ -244,7 +249,7 @@ namespace test.Pieces
 
 			}
 
-			ij.X = x - 1;
+			ij.X = pos_vector.X - 1;
 
 
 			for (int i = (int)ij.X; i > 0; i--)

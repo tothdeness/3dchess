@@ -28,20 +28,20 @@ public partial class main : Node3D
 
 
 
-		Queen queen = new Queen("F1",1);
+		Queen queen = new Queen("E5",1);
 
-		Queen queen2 = new Queen("C2", 1);
+		//Queen queen2 = new Queen("C2", 1);
 
-		Queen queen3 = new Queen("G3", 1);
+		//Queen queen3 = new Queen("G3", 1);
 
-		Queen queen4 = new Queen("E5", 1);
+		//Queen queen4 = new Queen("E5", 1);
 
-		Queen queen5 = new Queen("G6", 1);
+		//Queen queen5 = new Queen("G6", 1);
 
 
-		Rook rook = new Rook("G1", 1);
+		//		Rook rook = new Rook("G1", 1);
 
-		Bishop bishop = new Bishop("G2", 1);
+	//		Bishop bishop = new Bishop("E6", 1);
 
 	}
 

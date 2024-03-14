@@ -15,16 +15,16 @@ namespace test.Pieces
 			PackedScene scene = GD.Load<PackedScene>("res://bishop.tscn");
 			Node inst = scene.Instantiate();
 
-			inst.Set("position", TableController.calculatePosition(x, y));
+			inst.Set("position", TableController.calculatePosition(pos_vector));
 
 			TableController.tableGraphics.AddChild(inst);
 
 			node = inst;
 		}
 
-		public override List<Vector2> CheckValidMoves()
+		public override List<Vector3> CheckValidMoves()
 		{
-			List<Vector2> results = new List<Vector2>();
+			List<Vector3> results = new List<Vector3>();
 
 			results.AddRange(diagnolMoves());
 

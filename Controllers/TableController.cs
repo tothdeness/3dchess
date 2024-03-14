@@ -22,30 +22,36 @@ namespace test.Controllers
 		private static List<Node> visualizers = new List<Node>();
 
 
-		public static Vector2 convert(string coordinate)
+		public static Vector3 convert(string coordinate)
 		{
-			Vector2 result = new Vector2();
+			Vector3 result = new Vector3();
 
 			result.X = coordinate[0] - 'A' + 1;
 
-			result.Y = int.Parse(coordinate[1].ToString());
+			result.Z = int.Parse(coordinate[1].ToString());
 
 
 
 			return result;
 		}
 
-		public static string convertReverse(Vector2 vector)
+		public static string convertReverse(Vector3 vector)
 		{
-			return $"{(char)vector.X}{vector.Y}";
+			int x = (int)vector.Z + 64;
+			int z = (int)vector.X + 48;
+
+			char charX = (char)x;
+			char charZ = (char)z;
+
+			return $"{charX}{charZ}";
 		}
 
 
-		public static bool find(Vector2 vector)
+		public static bool find(Vector3 vector)
 		{
 			foreach(Piece piece in table)
 			{
-				if(piece.x == vector.X && piece.y == vector.Y)
+				if(piece.pos_vector.X == vector.X && piece.pos_vector.Z == vector.Z)
 				{
 					return true;
 				}
@@ -77,29 +83,29 @@ namespace test.Controllers
 
 
 
-		public static List<Vector3> calculateVisualizers(List<Vector2> list)
+		public static List<Vector3> calculateVisualizers(List<Vector3> list)
 		{
 			List<Vector3> results = new List<Vector3> ();
 
 
-			foreach(Vector2 p in list) {
+			foreach(Vector3 p in list) {
 
-				results.Add(new Vector3( p.Y * 4 - 18f, -0.35f, p.X * 4 - 18f));
+				results.Add(new Vector3( p.X * 4 - 18f, -0.35f, p.Z * 4 - 18f));
 			}
 
 			return results;
 		}
 
 
-		public static Vector3 calculatePosition(int x, int y)
+		public static Vector3 calculatePosition(Vector3 v)
 		{
-				return new Vector3(y * 4 - 18, 3, x * 4 - 18);
+				return new Vector3(v.X * 4 - 18, 3, v.Z * 4 - 18);
 		}
 
 
-		public static Vector2 reversePosition(Vector3 vec)
+		public static Vector3 reversePosition(Vector3 vec)
 		{
-			return new Vector2( (vec.Z + 18 ) / 4 , (vec.X + 18) / 4);
+			return new Vector3((vec.X + 18) / 4, 3, (vec.Z + 18) / 4);
 		}
 
 
@@ -119,7 +125,7 @@ namespace test.Controllers
 			}
 
 
-			GD.Print(piece.y + " " + piece.x);
+			//GD.Print(piece.y + " " + piece.x);
 
 
 		}
