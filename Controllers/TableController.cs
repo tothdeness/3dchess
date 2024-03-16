@@ -115,7 +115,7 @@ namespace test.Controllers
 
 			foreach (Vector3 p in list) {
 
-				PackedScene scene = GD.Load<PackedScene>("res://validMove.tscn");
+				PackedScene scene = GD.Load<PackedScene>("res://TSCN/validMove.tscn");
 				Node inst = scene.Instantiate();
 				inst.Set("position",p);
 				visualizers.Add(inst);

@@ -12,7 +12,7 @@ namespace test.Pieces
 	{
 		public Bishop(string position, int team) : base(position, team)
 		{
-			PackedScene scene = GD.Load<PackedScene>("res://bishop.tscn");
+			PackedScene scene = GD.Load<PackedScene>("res://TSCN/bishop.tscn");
 			Node inst = scene.Instantiate();
 
 			inst.Set("position", TableController.calculatePosition(pos_vector));
@@ -26,7 +26,7 @@ namespace test.Pieces
 		{
 			List<Vector3> results = new List<Vector3>();
 
-			results.AddRange(diagnolMoves());
+			results.AddRange(diagnolMoves(false));
 
 			return results;
 		}

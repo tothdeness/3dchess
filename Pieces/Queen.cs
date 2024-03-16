@@ -16,7 +16,7 @@ namespace test.Pieces
 
 		public Queen(string position, int team) : base(position,team)
 		{
-			PackedScene scene = GD.Load<PackedScene>("res://mesh.tscn");
+			PackedScene scene = GD.Load<PackedScene>("res://TSCN/mesh.tscn");
 			Node inst = scene.Instantiate();
 
 			inst.Set("position", TableController.calculatePosition(pos_vector));
@@ -31,8 +31,8 @@ namespace test.Pieces
 		{
 			List<Vector3> results = new List<Vector3>();
 
-			results.AddRange(diagnolMoves());
-			results.AddRange(straightMoves());
+			results.AddRange(diagnolMoves(false));
+			results.AddRange(straightMoves(false));
 
 			return results;
 		}

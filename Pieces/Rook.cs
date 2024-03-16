@@ -13,7 +13,7 @@ namespace test.Pieces
 		public Rook(string position, int team) : base(position, team)
 		{
 
-			PackedScene scene = GD.Load<PackedScene>("res://rook.tscn");
+			PackedScene scene = GD.Load<PackedScene>("res://TSCN/rook.tscn");
 			Node inst = scene.Instantiate();
 
 			inst.Set("position", TableController.calculatePosition(pos_vector));
@@ -28,7 +28,7 @@ namespace test.Pieces
 		{
 			List<Vector3> results = new List<Vector3>();
 
-			results.AddRange(straightMoves());
+			results.AddRange(straightMoves(false));
 
 			return results;
 		}

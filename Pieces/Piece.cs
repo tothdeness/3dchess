@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 using test.Controllers;
@@ -17,7 +18,7 @@ namespace test.Pieces
 	  
 		private string position;
 
-
+		private int y = 3;
 		
 		public Vector3 pos_vector { get; set; }
 
@@ -45,13 +46,18 @@ namespace test.Pieces
 
 
 			this.position = TableController.convertReverse(pos_vector);
-			
+
+
+			vector.Y = y;
+
 
 			this.node.Set("position", vector);
 
+
+
 	
-			GD.Print("Uj pozizicio: " + position);
-			GD.Print("test: "+pos_vector.X +"  "+ pos_vector.Z);
+			//GD.Print("Uj pozizicio: " + position);
+			//GD.Print("test: "+pos_vector.X +"  "+ pos_vector.Z);
 		}
 
 		protected Piece(string position, int team)
@@ -71,7 +77,7 @@ namespace test.Pieces
 
 		}
 
-		protected List<Vector3> diagnolMoves()
+		protected List<Vector3> diagnolMoves(bool one_square)
 		{
 			List<Vector3> results = new List<Vector3>();
 
@@ -80,7 +86,7 @@ namespace test.Pieces
 
 			ij.Z = pos_vector.Z + 1;
 
-			GD.Print("Current pos: " +ij.X + " " + ij.Z);
+		
 
 
 			for (int i = (int)ij.X  + 1; i <= 8; i++)
@@ -101,6 +107,9 @@ namespace test.Pieces
 					{
 						break;
 					}
+
+
+				if (one_square) { break; };
 
 				ij.Z++;
 				
@@ -127,6 +136,8 @@ namespace test.Pieces
 					break;
 				}
 
+				if (one_square) { break; };
+
 				ij.Z--;
 
 			}
@@ -151,6 +162,8 @@ namespace test.Pieces
 				{
 					break;
 				}
+
+				if (one_square) { break; };
 
 				ij.Z--;
 
@@ -177,6 +190,8 @@ namespace test.Pieces
 					break;
 				}
 
+				if (one_square) { break; };
+
 				ij.Z++;
 
 			}
@@ -186,7 +201,7 @@ namespace test.Pieces
 		}
 
 
-		protected List<Vector3> straightMoves()
+		protected List<Vector3> straightMoves(bool one_square)
 		{
 			List<Vector3> results = new List<Vector3>();
 
@@ -196,7 +211,7 @@ namespace test.Pieces
 			ij.Z = pos_vector.Z + 1;
 			ij.X = pos_vector.X;
 
-			for(int i = (int) ij.Z; i < 9; i++ ) {
+			for(int i = (int) ij.Z; i < 9 ; i++ ) {
 
 				ij.Z = i;
 
@@ -208,6 +223,8 @@ namespace test.Pieces
 				{
 					break;
 				}
+
+				if (one_square) { break; };
 
 			}
 
@@ -227,7 +244,7 @@ namespace test.Pieces
 				{
 					break;
 				}
-
+				if (one_square) { break; };
 			}
 
 			ij.Z = pos_vector.Z;
@@ -246,7 +263,7 @@ namespace test.Pieces
 				{
 					break;
 				}
-
+				if (one_square) { break; };
 			}
 
 			ij.X = pos_vector.X - 1;
@@ -265,7 +282,7 @@ namespace test.Pieces
 				{
 					break;
 				}
-
+				if (one_square) { break; };
 			}
 
 
@@ -273,6 +290,25 @@ namespace test.Pieces
 
 			return results;
 		}
+
+
+
+
+
+
+		protected List<Vector3> kingMoves()
+		{
+			List<Vector3> results = new List<Vector3>();
+
+			results.AddRange(straightMoves(true));
+			results.AddRange(diagnolMoves(true));
+
+			return results;
+		}
+
+
+
+
 
 	}
 }

@@ -1,0 +1,27 @@
+[gd_scene load_steps=5 format=3 uid="uid://ckp3t8vj2svr3"]
+
+[ext_resource type="Script" path="res://Dummy.cs" id="1_vr071"]
+[ext_resource type="PackedScene" uid="uid://oyjuji7bndhr" path="res://Blender/bishop.blend" id="1_x5m54"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_od17s"]
+top_radius = 0.0
+bottom_radius = 1.09
+height = 7.82
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_h0ls8"]
+size = Vector3(2.25269, 7.94703, 2.35742)
+
+[node name="MeshInstance3D" type="MeshInstance3D"]
+mesh = SubResource("CylinderMesh_od17s")
+script = ExtResource("1_vr071")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="bishop" parent="StaticBody3D" instance=ExtResource("1_x5m54")]
+visible = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00695801, -0.0407871, -0.00683594)
+shape = SubResource("BoxShape3D_h0ls8")
+
+[connection signal="input_event" from="StaticBody3D" to="." method="_on_static_body_3d_input_event"]

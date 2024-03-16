@@ -39,9 +39,9 @@ public partial class main : Node3D
 		//Queen queen5 = new Queen("G6", 1);
 
 
-		//		Rook rook = new Rook("G1", 1);
+		Rook rook = new Rook("G1", 1);
 
-	//		Bishop bishop = new Bishop("E6", 1);
+		Bishop bishop = new Bishop("E6", 1);
 
 	}
 
@@ -83,7 +83,7 @@ public partial class main : Node3D
 			InputEventMouseMotion mouse = (InputEventMouseMotion)_event;
 
 
-			cameraHelper = GetNode<Node3D>("Node3D");
+			cameraHelper = GetNode<Node3D>("camera");
 
 			//GD.Print("Eger mozgatas! " + mouse.Position);
 
