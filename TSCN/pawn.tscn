@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://yr2yvuk60i5m"]
+
+[ext_resource type="Script" path="res://Dummy.cs" id="1_i30yd"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_vihri"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_4lkc4"]
+
+[node name="MeshInstance3D" type="MeshInstance3D"]
+transform = Transform3D(2.5, 0, 0, 0, 2.5, 0, 0, 0, 2.5, 0, 0, 0)
+mesh = SubResource("BoxMesh_vihri")
+script = ExtResource("1_i30yd")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(1, 0.000157016, -0.000114808, -0.000157016, 1, 0.000116814, 0.000114808, -0.000116814, 1, 0, 0, 0)
+shape = SubResource("BoxShape3D_4lkc4")
+
+[connection signal="input_event" from="StaticBody3D" to="." method="_on_static_body_3d_input_event"]

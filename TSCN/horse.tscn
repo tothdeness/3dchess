@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://4rtq8xgnif4y"]
+
+[ext_resource type="Script" path="res://Dummy.cs" id="1_abnli"]
+
+[sub_resource type="PrismMesh" id="PrismMesh_q07n0"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_c17i4"]
+
+[node name="MeshInstance3D" type="MeshInstance3D"]
+transform = Transform3D(1.99999, 0.00601526, -0.00668651, -0.00341751, 3.49998, 0.00591782, 0.00669664, -0.0103361, 1.99998, 0, 0, 0)
+mesh = SubResource("PrismMesh_q07n0")
+script = ExtResource("1_abnli")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+shape = SubResource("BoxShape3D_c17i4")
+
+[connection signal="input_event" from="StaticBody3D" to="." method="_on_static_body_3d_input_event"]

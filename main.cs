@@ -28,7 +28,7 @@ public partial class main : Node3D
 
 
 
-		Queen queen = new Queen("E5",1);
+		Queen queen = new Queen("D1",1);
 
 		//Queen queen2 = new Queen("C2", 1);
 
@@ -39,9 +39,13 @@ public partial class main : Node3D
 		//Queen queen5 = new Queen("G6", 1);
 
 
-		Rook rook = new Rook("G1", 1);
+		Rook rook = new Rook("A1", 1);
 
-		Bishop bishop = new Bishop("E6", 1);
+		Bishop bishop = new Bishop("F1", 1);
+
+		King king = new King("E1", 1);
+
+		Horse horse = new Horse("A2", 1);
 
 	}
 

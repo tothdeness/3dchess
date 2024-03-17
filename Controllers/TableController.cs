@@ -26,9 +26,9 @@ namespace test.Controllers
 		{
 			Vector3 result = new Vector3();
 
-			result.X = coordinate[0] - 'A' + 1;
+			result.Z = coordinate[0] - 'A' + 1;
 
-			result.Z = int.Parse(coordinate[1].ToString());
+			result.X = int.Parse(coordinate[1].ToString());
 
 
 
@@ -88,7 +88,7 @@ namespace test.Controllers
 			List<Vector3> results = new List<Vector3> ();
 
 
-			foreach(Vector3 p in list) {
+			foreach (Vector3 p in list) {
 
 				results.Add(new Vector3( p.X * 4 - 18f, -0.35f, p.Z * 4 - 18f));
 			}
@@ -113,6 +113,9 @@ namespace test.Controllers
 		public static void showVisualizers(List<Vector3> list, Piece piece)
 		{
 
+
+			current = piece;
+
 			foreach (Vector3 p in list) {
 
 				PackedScene scene = GD.Load<PackedScene>("res://TSCN/validMove.tscn");
@@ -120,7 +123,6 @@ namespace test.Controllers
 				inst.Set("position",p);
 				visualizers.Add(inst);
 				tableGraphics.AddChild(inst);
-				current = piece;
 
 			}
 
@@ -136,9 +138,12 @@ namespace test.Controllers
 
 			foreach (Node p in visualizers) {
 				p.QueueFree();
+
 			}
-			visualizers.Clear();
-			current = null;
+
+		
+			 visualizers.Clear();
+
 
 		}
 

@@ -306,6 +306,40 @@ namespace test.Pieces
 			return results;
 		}
 
+		protected List<Vector3> horseMoves()
+		{
+			List<Vector3> results = new List<Vector3>();
+
+			int[] offsets = { 1, 2, -1, -2 };
+
+			foreach (int x in offsets)
+			{
+				foreach (int z in offsets)
+				{
+					if (Math.Abs(x) != Math.Abs(z)) // Ensure L-shaped moves
+					{
+						Vector3 newPosition = new Vector3(pos_vector.X + x, pos_vector.Y, pos_vector.Z + z);
+
+						if (IsValidPosition(newPosition))
+						{
+							results.Add(newPosition);
+						}
+					}
+				}
+			}
+
+			return results;
+		}
+
+		private bool IsValidPosition(Vector3 position)
+		{
+			int newX = (int)position.X;
+			int newZ = (int)position.Z;
+
+			return newX >= 1 && newX <= 8 && newZ >= 1 && newZ <= 8 && !TableController.find(position);
+		}
+
+
 
 
 

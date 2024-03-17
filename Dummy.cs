@@ -56,10 +56,11 @@ public partial class Dummy : MeshInstance3D
 				GD.Print("Figura unlocked!");
 
 
-				if (validMove.current != null)
+				var c = validMove.current;
+
+				if (c != null && IsInstanceValid(c) && !c.IsQueuedForDeletion())
 				{
-					TableController.current.Move(validMove.current.Position);	
-					
+					TableController.current.Move(c.Position);					
 				}
 
 				Piece p = TableController.find(this);
