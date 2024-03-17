@@ -8,7 +8,7 @@ using test.Controllers;
 
 namespace test.Pieces
 {
-	internal class Pawn : Piece
+	public class Pawn : Piece
 	{
 		public Pawn(string position, int team) : base(position, team)
 		{
@@ -16,17 +16,30 @@ namespace test.Pieces
 			PackedScene scene = GD.Load<PackedScene>("res://TSCN/pawn.tscn");
 			Node inst = scene.Instantiate();
 
-			inst.Set("position", TableController.calculatePosition(pos_vector));
+			y = 1;
+
+			inst.Set("position", TableController.calculatePosition(new Vector3(pos_vector.X, y, pos_vector.Z)));
 
 			TableController.tableGraphics.AddChild(inst);
 
 			node = inst;
 
+			setColor();
+
 		}
 
-		public override List<Vector3> CheckValidMoves()
+		public override List<AvailableMove> CheckValidMoves()
 		{
-			throw new NotImplementedException();
+			List<AvailableMove> ans = new List<AvailableMove>();
+
+			ans.AddRange(pawnMoves());
+
+			return ans;
+
 		}
+
+
+
+
 	}
 }

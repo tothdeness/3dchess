@@ -1,12 +1,22 @@
 using Godot;
 using System;
+using test.Controllers;
 
 public partial class validMove : MeshInstance3D
 {
 
+
+
 	public static MeshInstance3D current = null;
 
-	// Called when the node enters the scene tree for the first time.
+	public static AvailableMove static_target;
+
+	public AvailableMove target;
+
+
+
+
+	// Called  when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
 	}
@@ -20,6 +30,9 @@ public partial class validMove : MeshInstance3D
 	private void _on_static_body_3d_mouse_entered()
 	{
 		current = this;
+
+		static_target = target;
+
 		GD.Print(this.Position);
 	}
 
@@ -27,6 +40,9 @@ public partial class validMove : MeshInstance3D
 	private void _on_static_body_3d_mouse_exited()
 	{
 		current = null;
+
+		static_target = null;
+
 		GD.Print("RESET");
 	}
 

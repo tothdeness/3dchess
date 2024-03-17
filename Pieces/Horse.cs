@@ -8,28 +8,32 @@ using test.Controllers;
 
 namespace test.Pieces
 {
-	internal class Horse : Piece
+	public class Horse : Piece
 	{
 		public Horse(string position, int team) : base(position, team)
 		{
 			PackedScene scene = GD.Load<PackedScene>("res://TSCN/horse.tscn");
 			Node inst = scene.Instantiate();
 
-			inst.Set("position", TableController.calculatePosition(pos_vector));
+			y = 1;
+
+			inst.Set("position", TableController.calculatePosition(new Vector3(pos_vector.X, y, pos_vector.Z)));
 
 			TableController.tableGraphics.AddChild(inst);
 
 			node = inst;
 
+			setColor();
+
 		}
 
-		public override List<Vector3> CheckValidMoves()
+		public override List<AvailableMove> CheckValidMoves()
 		{
-			List<Vector3> results = new List<Vector3>();
+			List<AvailableMove> ans = new List<AvailableMove>();
 
-			results.AddRange(horseMoves());
+			ans.AddRange(horseMoves());
 
-			return results;
+			return ans;
 		}
 	}
 }

@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using test.Pieces;
@@ -11,7 +12,7 @@ using test.Pieces;
 
 namespace test.Controllers
 {
-	internal static class TableController
+	public static class TableController
 	{
 		private static int tableSize;
 
@@ -62,6 +63,40 @@ namespace test.Controllers
 		}
 
 
+		public struct target{
+
+			public int num;
+			public Piece p;
+
+			public target(int num, Piece p)
+			{
+				this.num = num;
+				this.p = p;
+			}
+
+		}
+
+		public static target find(Vector3 vector,Piece curr)
+		{
+			foreach (Piece piece in table)
+			{
+				if (piece.pos_vector.X == vector.X && piece.pos_vector.Z == vector.Z && piece.team == curr.team)
+				{
+					return new target(1,piece);
+
+				} else if(piece.pos_vector.X == vector.X && piece.pos_vector.Z == vector.Z && piece.team != curr.team)
+				{
+					return new target(2,piece);
+				}
+
+			}
+
+			return new target(0,null);
+		}
+
+
+
+
 		public static Piece find(Node node)
 		{
 
@@ -83,23 +118,22 @@ namespace test.Controllers
 
 
 
-		public static List<Vector3> calculateVisualizers(List<Vector3> list)
+		public static List<AvailableMove> calculateVisualizers(List<AvailableMove> list)
 		{
-			List<Vector3> results = new List<Vector3> ();
 
+			foreach (AvailableMove p in list) {
 
-			foreach (Vector3 p in list) {
+			 p.move = new Vector3(p.move.X * 4 - 18f, -0.35f, p.move.Z * 4 - 18f);
 
-				results.Add(new Vector3( p.X * 4 - 18f, -0.35f, p.Z * 4 - 18f));
 			}
 
-			return results;
+			return list;
 		}
 
 
 		public static Vector3 calculatePosition(Vector3 v)
 		{
-				return new Vector3(v.X * 4 - 18, 3, v.Z * 4 - 18);
+				return new Vector3(v.X * 4 - 18, v.Y, v.Z * 4 - 18);
 		}
 
 
@@ -110,19 +144,23 @@ namespace test.Controllers
 
 
 
-		public static void showVisualizers(List<Vector3> list, Piece piece)
+		public static void showVisualizers(List<AvailableMove> list, Piece piece)
 		{
 
+			string at = "attackMove.tscn";
+			string mo = "validMove.tscn";
 
 			current = piece;
 
-			foreach (Vector3 p in list) {
+			foreach (AvailableMove p in list) {
 
-				PackedScene scene = GD.Load<PackedScene>("res://TSCN/validMove.tscn");
+				PackedScene scene = GD.Load<PackedScene>("res://TSCN/" + (p.attack ? at : mo));
 				Node inst = scene.Instantiate();
-				inst.Set("position",p);
+				inst.Set("position",p.move);
 				visualizers.Add(inst);
 				tableGraphics.AddChild(inst);
+
+				if (p.attack) {validMove a = (validMove)inst; a.target = p;}
 
 			}
 

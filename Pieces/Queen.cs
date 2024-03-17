@@ -11,7 +11,7 @@ using static Godot.HttpRequest;
 
 namespace test.Pieces
 {
-	internal class Queen : Piece
+	public class Queen : Piece
 	{
 
 		public Queen(string position, int team) : base(position,team)
@@ -24,17 +24,14 @@ namespace test.Pieces
 			TableController.tableGraphics.AddChild(inst);
 
 			node = inst;
-			
+
+			setColor();
+
 		}
 
-		public override List<Vector3> CheckValidMoves()
+		public override List<AvailableMove> CheckValidMoves()
 		{
-			List<Vector3> results = new List<Vector3>();
-
-			results.AddRange(diagnolMoves(false));
-			results.AddRange(straightMoves(false));
-
-			return results;
+			throw new NotImplementedException();
 		}
 
 

@@ -19,7 +19,7 @@ script = ExtResource("1_tgkp5")
 [node name="StaticBody3D" type="StaticBody3D" parent="."]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
-transform = Transform3D(3, 0, 0, 0, 5.388, 0, 0, 0, 2.937, -0.0281982, 0, -0.0186431)
+transform = Transform3D(3, 0, 0, 0, 5.388, 0, 0, 0, 2.937, 0, 0, 0)
 shape = SubResource("BoxShape3D_ljd2a")
 
 [connection signal="mouse_entered" from="StaticBody3D" to="." method="_on_static_body_3d_mouse_entered"]

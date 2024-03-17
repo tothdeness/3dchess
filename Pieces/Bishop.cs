@@ -8,7 +8,7 @@ using test.Controllers;
 
 namespace test.Pieces
 {
-	internal class Bishop : Piece
+	public class Bishop : Piece
 	{
 		public Bishop(string position, int team) : base(position, team)
 		{
@@ -20,15 +20,14 @@ namespace test.Pieces
 			TableController.tableGraphics.AddChild(inst);
 
 			node = inst;
+
+			setColor();
+
 		}
 
-		public override List<Vector3> CheckValidMoves()
+		public override List<AvailableMove> CheckValidMoves()
 		{
-			List<Vector3> results = new List<Vector3>();
-
-			results.AddRange(diagnolMoves(false));
-
-			return results;
+		throw new NotImplementedException();
 		}
 	}
 

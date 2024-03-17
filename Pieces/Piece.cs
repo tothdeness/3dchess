@@ -6,28 +6,30 @@ using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using test.Controllers;
 using static Godot.HttpRequest;
+using static test.Controllers.TableController;
 
 namespace test.Pieces
 {
-	internal abstract class Piece
+	public abstract class Piece
 	{
 		//VERTICAL POS 3 (Y)
 		public Node node { get; set; }
 	  
 		private string position;
 
-		private int y = 3;
+		protected int y = 3;
 		
 		public Vector3 pos_vector { get; set; }
 
 		
 		//0 black, 1 white
-		private int team { get; set; }
+		public int team { get; set; }
 
 
-		public abstract List<Vector3> CheckValidMoves();
+		public abstract List<AvailableMove> CheckValidMoves();
 
 		public void ShowValidMoves()
 		{
@@ -53,12 +55,19 @@ namespace test.Pieces
 
 			this.node.Set("position", vector);
 
-
-
 	
 			//GD.Print("Uj pozizicio: " + position);
 			//GD.Print("test: "+pos_vector.X +"  "+ pos_vector.Z);
 		}
+
+		public void Delete()
+		{
+			this.node.QueueFree();
+
+			TableController.table.Remove(this);
+
+		}
+
 
 		protected Piece(string position, int team)
 		{
@@ -68,14 +77,32 @@ namespace test.Pieces
 			TableController.table.Add(this);
 
 			Vector3 p = TableController.convert(position);
+			p.Y = y;
 
-			p.Y = 3;
+
 
 			pos_vector = p;
 			
-		
+		}
+
+		 protected void setColor()
+		{
+
+			Dummy d = (Dummy)node;
+
+
+			if(team == 1) {
+				d.setColorWhite();
+			}
+			else
+			{
+				d.setColorBlack();
+			}
+			
 
 		}
+
+
 
 		protected List<Vector3> diagnolMoves(bool one_square)
 		{
@@ -306,9 +333,9 @@ namespace test.Pieces
 			return results;
 		}
 
-		protected List<Vector3> horseMoves()
+		protected List<AvailableMove> horseMoves()
 		{
-			List<Vector3> results = new List<Vector3>();
+			List<AvailableMove> results = new List<AvailableMove>();
 
 			int[] offsets = { 1, 2, -1, -2 };
 
@@ -318,12 +345,20 @@ namespace test.Pieces
 				{
 					if (Math.Abs(x) != Math.Abs(z)) // Ensure L-shaped moves
 					{
+						
+						
 						Vector3 newPosition = new Vector3(pos_vector.X + x, pos_vector.Y, pos_vector.Z + z);
 
-						if (IsValidPosition(newPosition))
+						
+						AvailableMove a = IsValidPosition(newPosition);
+						
+						if(a != null)
 						{
-							results.Add(newPosition);
+							results.Add(a);
 						}
+
+
+
 					}
 				}
 			}
@@ -331,15 +366,77 @@ namespace test.Pieces
 			return results;
 		}
 
-		private bool IsValidPosition(Vector3 position)
+
+
+		private AvailableMove IsValidPosition(Vector3 position)
 		{
 			int newX = (int)position.X;
 			int newZ = (int)position.Z;
 
-			return newX >= 1 && newX <= 8 && newZ >= 1 && newZ <= 8 && !TableController.find(position);
+
+			Vector3 vec = new Vector3(newX, pos_vector.Y, newZ);
+
+			target move = TableController.find(vec, this);
+
+
+
+			if (newX >= 1 && newX <= 8 && newZ >= 1 && newZ <= 8 && move.num == 0)
+			{
+				return new AvailableMove(vec, false);
+
+			}else if(newX >= 1 && newX <= 8 && newZ >= 1 && newZ <= 8 && move.num == 2)
+			{
+				
+				return new AvailableMove(vec, true, move.p);
+			}
+
+			return null;
+
 		}
 
 
+		protected List<AvailableMove> pawnMoves()
+		{
+			List<AvailableMove> results = new List<AvailableMove>();
+
+
+			Vector3 vec = new Vector3(pos_vector.X + 1, pos_vector.Y, pos_vector.Z);
+
+			target move = TableController.find(vec,this);
+
+
+			if (vec.X < 9 && move.num == 0)
+			{
+				results.Add(new AvailableMove(vec,false));
+
+			}
+
+
+			vec = new Vector3(pos_vector.X + 1, pos_vector.Y, pos_vector.Z + 1);
+			move = TableController.find(vec, this);
+
+
+			if (vec.X < 9 &&  vec.Z < 9 && move.num == 2)
+			{
+				results.Add(new AvailableMove(vec, true, move.p));
+
+			}
+
+
+
+			vec = new Vector3(pos_vector.X + 1, pos_vector.Y, pos_vector.Z - 1);
+			move = TableController.find(vec, this);
+
+			if (vec.X < 9 && vec.Z > 0 && move.num == 2)
+			{
+				results.Add(new AvailableMove(vec, true, move.p));
+
+			}
+
+
+
+			return results;
+		}
 
 
 

@@ -1,0 +1,26 @@
+[gd_scene load_steps=5 format=3 uid="uid://ctgqao05vn4rh"]
+
+[ext_resource type="Script" path="res://validMove.cs" id="1_wc4r3"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0dwgw"]
+albedo_color = Color(1, 0.117647, 0.0117647, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_tff0c"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_yug3c"]
+size = Vector3(0.795166, 11.8422, 0.708038)
+
+[node name="MeshInstance3D" type="MeshInstance3D"]
+transform = Transform3D(4, 0, 0, 0, 0.2, 0, 0, 0, 4, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_0dwgw")
+mesh = SubResource("BoxMesh_tff0c")
+script = ExtResource("1_wc4r3")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 7.69982, 0)
+shape = SubResource("BoxShape3D_yug3c")
+
+[connection signal="mouse_entered" from="StaticBody3D" to="." method="_on_static_body_3d_mouse_entered"]
+[connection signal="mouse_exited" from="StaticBody3D" to="." method="_on_static_body_3d_mouse_exited"]

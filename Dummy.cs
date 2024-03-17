@@ -45,25 +45,41 @@ public partial class Dummy : MeshInstance3D
 				figureLocked = false;
 
 
-				piece = GetNode<MeshInstance3D>("../"+Name);
+				var c = validMove.current;
 
-				standardMaterial.AlbedoColor = new Color(1.0f, 1.0f, 1.0f);
-				piece.MaterialOverlay = standardMaterial;
+				var target = validMove.static_target;
 
+				if (c != null && IsInstanceValid(c) && !c.IsQueuedForDeletion())
+				{
+					TableController.current.Move(c.Position);
+
+
+					if (target != null && target.attack) { target.target.Delete();};
+
+					
+				}
+
+
+
+
+				Piece p = TableController.find(this);
+
+
+				if(p.team == 1)
+				{
+					setColorWhite();
+				}
+				else
+				{
+					setColorBlack();
+				}
 
 
 
 				GD.Print("Figura unlocked!");
 
 
-				var c = validMove.current;
 
-				if (c != null && IsInstanceValid(c) && !c.IsQueuedForDeletion())
-				{
-					TableController.current.Move(c.Position);					
-				}
-
-				Piece p = TableController.find(this);
 
 				p.DeleteVisualizers();
 
@@ -120,6 +136,41 @@ public partial class Dummy : MeshInstance3D
 
 
 	}
+
+
+	public void setColorWhite()
+	{
+
+		var piece = GetNode<MeshInstance3D>("../" + Name);
+
+		StandardMaterial3D material = new StandardMaterial3D();
+
+		material.AlbedoColor = new Color(236/255f, 241/255f, 230/255f, 0.8f);
+		piece.MaterialOverlay = material;
+
+
+	}
+
+	public void setColorBlack()
+	{
+
+		var piece = GetNode<MeshInstance3D>("../" + Name);
+
+		StandardMaterial3D material = new StandardMaterial3D();
+
+		material.AlbedoColor = new Color(86/255f, 80/255f, 81/255f,0.45f);
+		material.Metallic = 0.1f;
+		material.MetallicSpecular = 1.0f;
+
+		piece.MaterialOverlay = material;
+
+
+	}
+
+
+
+
+
 
 
 }

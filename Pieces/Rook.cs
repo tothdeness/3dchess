@@ -8,7 +8,7 @@ using test.Controllers;
 
 namespace test.Pieces
 {
-	internal class Rook : Piece
+	public class Rook : Piece
 	{
 		public Rook(string position, int team) : base(position, team)
 		{
@@ -22,15 +22,13 @@ namespace test.Pieces
 
 			node = inst;
 
+			setColor();
+
 		}
 
-		public override List<Vector3> CheckValidMoves()
+		public override List<AvailableMove> CheckValidMoves()
 		{
-			List<Vector3> results = new List<Vector3>();
-
-			results.AddRange(straightMoves(false));
-
-			return results;
+			throw new NotImplementedException();
 		}
 
 

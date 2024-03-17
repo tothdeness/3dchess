@@ -21,7 +21,6 @@ script = ExtResource("1_vr071")
 visible = false
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00695801, -0.0407871, -0.00683594)
 shape = SubResource("BoxShape3D_h0ls8")
 
 [connection signal="input_event" from="StaticBody3D" to="." method="_on_static_body_3d_input_event"]
