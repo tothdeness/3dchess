@@ -26,7 +26,7 @@ public partial class main : Node3D
 
 
 
-		Queen queen2 = new Queen("D5", 0);
+		Queen queen2 = new Queen("D6", 0);
 
 		Queen queen = new Queen("D1",1);
 

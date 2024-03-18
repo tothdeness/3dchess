@@ -1,7 +1,6 @@
 res://TSCN/main.tscn
+res://TSCN/validMove.tscn
+res://TSCN/attackMove.tscn
 res://Dummy.cs
 res://main.cs
 res://validMove.cs
-res://TSCN/bishop.tscn
-res://TSCN/attackMove.tscn
-res://TSCN/validMove.tscn

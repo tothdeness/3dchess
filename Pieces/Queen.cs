@@ -31,7 +31,12 @@ namespace test.Pieces
 
 		public override List<AvailableMove> CheckValidMoves()
 		{
-			throw new NotImplementedException();
+			List<AvailableMove> ans = new List<AvailableMove>();
+
+			ans.AddRange(diagnolMoves(false));
+			ans.AddRange(straightMoves(false));
+
+			return ans;
 		}
 
 

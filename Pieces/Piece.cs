@@ -104,17 +104,15 @@ namespace test.Pieces
 
 
 
-		protected List<Vector3> diagnolMoves(bool one_square)
+		protected List<AvailableMove> diagnolMoves(bool one_square)
 		{
-			List<Vector3> results = new List<Vector3>();
+			List<AvailableMove> results = new List<AvailableMove>();
 
 			Vector3 ij = pos_vector;
 
+			target t = new target();
 
 			ij.Z = pos_vector.Z + 1;
-
-		
-
 
 			for (int i = (int)ij.X  + 1; i <= 8; i++)
 			{
@@ -126,14 +124,18 @@ namespace test.Pieces
 					break;
 				}
 
-					if (!TableController.find(ij))
+				t = TableController.find(ij, this);
+
+					if ( t.num == 0)
 					{
-						results.Add(ij);
+						results.Add(new AvailableMove(ij,false));
 					}
-					else
+					else if(t.num == 2)
 					{
-						break;
+					results.Add(new AvailableMove(ij, true,t.p));
+					break;
 					}
+					else { break; }
 
 
 				if (one_square) { break; };
@@ -153,15 +155,19 @@ namespace test.Pieces
 					break;
 				}
 
-				if (!TableController.find(ij))
+				t = TableController.find(ij, this);
+
+				if (t.num == 0)
 				{
-					results.Add(ij);
-					GD.Print(ij.X + " " + ij.Z);
+					results.Add(new AvailableMove(ij, false));
 				}
-				else
+				else if (t.num == 2)
 				{
+					results.Add(new AvailableMove(ij, true, t.p));
 					break;
 				}
+				else { break; }
+
 
 				if (one_square) { break; };
 
@@ -181,14 +187,18 @@ namespace test.Pieces
 					break;
 				}
 
-				if (!TableController.find(ij))
+				t = TableController.find(ij, this);
+
+				if (t.num == 0)
 				{
-					results.Add(ij);
+					results.Add(new AvailableMove(ij, false));
 				}
-				else
+				else if (t.num == 2)
 				{
+					results.Add(new AvailableMove(ij, true, t.p));
 					break;
 				}
+				else { break; }
 
 				if (one_square) { break; };
 
@@ -208,14 +218,18 @@ namespace test.Pieces
 					break;
 				}
 
-				if (!TableController.find(ij))
+				t = TableController.find(ij, this);
+
+				if (t.num == 0)
 				{
-					results.Add(ij);
+					results.Add(new AvailableMove(ij, false));
 				}
-				else
+				else if (t.num == 2)
 				{
+					results.Add(new AvailableMove(ij, true, t.p));
 					break;
 				}
+				else { break; }
 
 				if (one_square) { break; };
 
@@ -228,11 +242,13 @@ namespace test.Pieces
 		}
 
 
-		protected List<Vector3> straightMoves(bool one_square)
+		protected List<AvailableMove> straightMoves(bool one_square)
 		{
-			List<Vector3> results = new List<Vector3>();
+			List<AvailableMove> results = new List<AvailableMove>();
 
 			Vector3 ij = new Vector3();
+
+			target t = new target();
 
 
 			ij.Z = pos_vector.Z + 1;
@@ -242,14 +258,19 @@ namespace test.Pieces
 
 				ij.Z = i;
 
-				if (!TableController.find(ij))
+
+				t = TableController.find(ij, this);
+
+				if (t.num == 0)
 				{
-					results.Add(ij);
+					results.Add(new AvailableMove(ij, false));
 				}
-				else
+				else if (t.num == 2)
 				{
+					results.Add(new AvailableMove(ij, true, t.p));
 					break;
 				}
+				else { break; }
 
 				if (one_square) { break; };
 
@@ -263,14 +284,21 @@ namespace test.Pieces
 
 				ij.Z = i;
 
-				if (!TableController.find(ij))
+				t = TableController.find(ij, this);
+
+				if (t.num == 0)
 				{
-					results.Add(ij);
+					results.Add(new AvailableMove(ij, false));
 				}
-				else
+				else if (t.num == 2)
 				{
+					results.Add(new AvailableMove(ij, true, t.p));
 					break;
 				}
+				else { break; }
+
+
+
 				if (one_square) { break; };
 			}
 
@@ -282,14 +310,19 @@ namespace test.Pieces
 
 				ij.X = i;
 
-				if (!TableController.find(ij))
+				t = TableController.find(ij, this);
+
+				if (t.num == 0)
 				{
-					results.Add(ij);
+					results.Add(new AvailableMove(ij, false));
 				}
-				else
+				else if (t.num == 2)
 				{
+					results.Add(new AvailableMove(ij, true, t.p));
 					break;
 				}
+				else { break; }
+
 				if (one_square) { break; };
 			}
 
@@ -301,14 +334,20 @@ namespace test.Pieces
 
 				ij.X = i;
 
-				if (!TableController.find(ij))
+				t = TableController.find(ij, this);
+
+				if (t.num == 0)
 				{
-					results.Add(ij);
+					results.Add(new AvailableMove(ij, false));
 				}
-				else
+				else if (t.num == 2)
 				{
+					results.Add(new AvailableMove(ij, true, t.p));
 					break;
 				}
+				else { break; }
+
+
 				if (one_square) { break; };
 			}
 
@@ -323,9 +362,9 @@ namespace test.Pieces
 
 
 
-		protected List<Vector3> kingMoves()
+		protected List<AvailableMove> kingMoves()
 		{
-			List<Vector3> results = new List<Vector3>();
+			List<AvailableMove> results = new List<AvailableMove>();
 
 			results.AddRange(straightMoves(true));
 			results.AddRange(diagnolMoves(true));
