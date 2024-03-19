@@ -33,13 +33,20 @@ namespace test.Pieces
 		{
 			List<AvailableMove> ans = new List<AvailableMove>();
 
-			ans.AddRange(diagnolMoves(false));
-			ans.AddRange(straightMoves(false));
+			ans.AddRange(diagnolMoves(false, false));
+			ans.AddRange(straightMoves(false, false));
 
 			return ans;
 		}
 
+		public override List<AvailableMove> CheckValidMovesWithCover()
+		{
+			List<AvailableMove> ans = new List<AvailableMove>();
 
+			ans.AddRange(diagnolMoves(false, true));
+			ans.AddRange(straightMoves(false, true));
 
+			return ans;
+		}
 	}
 }

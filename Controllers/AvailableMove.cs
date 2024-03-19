@@ -16,6 +16,7 @@ namespace test.Controllers
 
 		public Piece target;
 
+		public bool cover;
 
 		public AvailableMove(Vector3 move, bool attack)
 		{
@@ -27,6 +28,11 @@ namespace test.Controllers
 		public AvailableMove(Vector3 move, bool attack, Piece target) : this(move, attack)
 		{
 			this.target = target;
+		}
+
+		public AvailableMove(Vector3 move, bool attack, bool cover) : this(move, attack)
+		{
+			this.cover = cover;
 		}
 
 

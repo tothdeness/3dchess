@@ -29,12 +29,16 @@ namespace test.Pieces
 		{
 			List<AvailableMove> ans = new List<AvailableMove>();
 
-			ans.AddRange(diagnolMoves(true));
-			ans.AddRange(straightMoves(true));
+			ans.AddRange(kingMoves());
 
 			return ans;
 		}
 
+
+		public override List<AvailableMove> CheckValidMovesWithCover()
+		{
+			throw new NotImplementedException();
+		}
 
 
 	}

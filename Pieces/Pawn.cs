@@ -38,7 +38,14 @@ namespace test.Pieces
 
 		}
 
+		public override List<AvailableMove> CheckValidMovesWithCover()
+		{
+			List<AvailableMove> ans = new List<AvailableMove>();
 
+			ans.AddRange(pawnMoves());
+
+			return ans;
+		}
 
 
 	}

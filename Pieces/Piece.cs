@@ -31,6 +31,10 @@ namespace test.Pieces
 
 		public abstract List<AvailableMove> CheckValidMoves();
 
+
+		public abstract List<AvailableMove> CheckValidMovesWithCover();
+
+
 		public void ShowValidMoves()
 		{
 			TableController.showVisualizers(TableController.calculateVisualizers(CheckValidMoves()),this);
@@ -103,8 +107,46 @@ namespace test.Pieces
 		}
 
 
+		private AvailableMove check(Vector3 ij)
+		{
 
-		protected List<AvailableMove> diagnolMoves(bool one_square)
+			var t = TableController.find(ij, this);
+
+			if (t.num == 0)
+			{
+				return new AvailableMove(ij, false);
+			}
+			else if (t.num == 2)
+			{
+				return new AvailableMove(ij, true, t.p);
+			}
+
+			return null;
+		}
+
+
+
+		private AvailableMove checkWithCover(Vector3 ij)
+		{
+
+			var t = TableController.find(ij, this);
+
+			if (t.num == 0)
+			{
+				return new AvailableMove(ij, false);
+			}
+			else if (t.num == 2)
+			{
+				return new AvailableMove(ij, true, t.p);
+			}
+
+			return new AvailableMove(ij, false, true);
+		}
+
+
+
+
+		protected List<AvailableMove> diagnolMoves(bool one_square,bool cover)
 		{
 			List<AvailableMove> results = new List<AvailableMove>();
 
@@ -124,19 +166,17 @@ namespace test.Pieces
 					break;
 				}
 
-				t = TableController.find(ij, this);
+				AvailableMove a = check(ij);
+				if (cover) { a = checkWithCover(ij);}
 
-					if ( t.num == 0)
-					{
-						results.Add(new AvailableMove(ij,false));
-					}
-					else if(t.num == 2)
-					{
-					results.Add(new AvailableMove(ij, true,t.p));
-					break;
-					}
-					else { break; }
-
+				if (a != null)
+				{
+					results.Add(a);
+					if (a.attack) { break; };
+					if(a.cover) { break; };
+				}
+				else { break; } 
+			
 
 				if (one_square) { break; };
 
@@ -155,16 +195,15 @@ namespace test.Pieces
 					break;
 				}
 
-				t = TableController.find(ij, this);
 
-				if (t.num == 0)
+				AvailableMove a = check(ij);
+				if (cover) { a = checkWithCover(ij); }
+
+				if (a != null)
 				{
-					results.Add(new AvailableMove(ij, false));
-				}
-				else if (t.num == 2)
-				{
-					results.Add(new AvailableMove(ij, true, t.p));
-					break;
+					results.Add(a);
+					if (a.attack) { break; };
+					if (a.cover) { break; };
 				}
 				else { break; }
 
@@ -187,18 +226,17 @@ namespace test.Pieces
 					break;
 				}
 
-				t = TableController.find(ij, this);
+				AvailableMove a = check(ij);
+				if (cover) { a = checkWithCover(ij); }
 
-				if (t.num == 0)
+				if (a != null)
 				{
-					results.Add(new AvailableMove(ij, false));
-				}
-				else if (t.num == 2)
-				{
-					results.Add(new AvailableMove(ij, true, t.p));
-					break;
+					results.Add(a);
+					if (a.attack) { break; };
+					if (a.cover) { break; };
 				}
 				else { break; }
+
 
 				if (one_square) { break; };
 
@@ -218,16 +256,14 @@ namespace test.Pieces
 					break;
 				}
 
-				t = TableController.find(ij, this);
+				AvailableMove a = check(ij);
+				if (cover) { a = checkWithCover(ij); }
 
-				if (t.num == 0)
+				if (a != null)
 				{
-					results.Add(new AvailableMove(ij, false));
-				}
-				else if (t.num == 2)
-				{
-					results.Add(new AvailableMove(ij, true, t.p));
-					break;
+					results.Add(a);
+					if (a.attack) { break; };
+					if (a.cover) { break; };
 				}
 				else { break; }
 
@@ -242,7 +278,7 @@ namespace test.Pieces
 		}
 
 
-		protected List<AvailableMove> straightMoves(bool one_square)
+		protected List<AvailableMove> straightMoves(bool one_square,bool cover)
 		{
 			List<AvailableMove> results = new List<AvailableMove>();
 
@@ -258,17 +294,14 @@ namespace test.Pieces
 
 				ij.Z = i;
 
+				AvailableMove a = check(ij);
+				if (cover) { a = checkWithCover(ij); }
 
-				t = TableController.find(ij, this);
-
-				if (t.num == 0)
+				if (a != null)
 				{
-					results.Add(new AvailableMove(ij, false));
-				}
-				else if (t.num == 2)
-				{
-					results.Add(new AvailableMove(ij, true, t.p));
-					break;
+					results.Add(a);
+					if (a.attack) { break; };
+					if (a.cover) { break; };
 				}
 				else { break; }
 
@@ -284,20 +317,16 @@ namespace test.Pieces
 
 				ij.Z = i;
 
-				t = TableController.find(ij, this);
+				AvailableMove a = check(ij);
+				if (cover) { a = checkWithCover(ij); }
 
-				if (t.num == 0)
+				if (a != null)
 				{
-					results.Add(new AvailableMove(ij, false));
-				}
-				else if (t.num == 2)
-				{
-					results.Add(new AvailableMove(ij, true, t.p));
-					break;
+					results.Add(a);
+					if (a.attack) { break; };
+					if (a.cover) { break; };
 				}
 				else { break; }
-
-
 
 				if (one_square) { break; };
 			}
@@ -310,16 +339,14 @@ namespace test.Pieces
 
 				ij.X = i;
 
-				t = TableController.find(ij, this);
+				AvailableMove a = check(ij);
+				if (cover) { a = checkWithCover(ij); }
 
-				if (t.num == 0)
+				if (a != null)
 				{
-					results.Add(new AvailableMove(ij, false));
-				}
-				else if (t.num == 2)
-				{
-					results.Add(new AvailableMove(ij, true, t.p));
-					break;
+					results.Add(a);
+					if (a.attack) { break; };
+					if (a.cover) { break; };
 				}
 				else { break; }
 
@@ -334,16 +361,14 @@ namespace test.Pieces
 
 				ij.X = i;
 
-				t = TableController.find(ij, this);
+				AvailableMove a = check(ij);
+				if (cover) { a = checkWithCover(ij); }
 
-				if (t.num == 0)
+				if (a != null)
 				{
-					results.Add(new AvailableMove(ij, false));
-				}
-				else if (t.num == 2)
-				{
-					results.Add(new AvailableMove(ij, true, t.p));
-					break;
+					results.Add(a);
+					if (a.attack) { break; };
+					if (a.cover) { break; };
 				}
 				else { break; }
 
@@ -362,15 +387,47 @@ namespace test.Pieces
 
 
 
+
+
+
+
+
 		protected List<AvailableMove> kingMoves()
 		{
 			List<AvailableMove> results = new List<AvailableMove>();
+			List<AvailableMove> notavailable = new List<AvailableMove>();
+			List<AvailableMove> toRemove = new List<AvailableMove>();
 
-			results.AddRange(straightMoves(true));
-			results.AddRange(diagnolMoves(true));
+			results.AddRange(straightMoves(true, false));
+			results.AddRange(diagnolMoves(true, false));
+
+			foreach (Piece piec in TableController.table)
+			{
+				if (this.team != piec.team)
+				{
+					notavailable.AddRange(piec.CheckValidMovesWithCover());
+				}
+			}
+
+			for (int i = 0; i < results.Count(); i++)
+			{
+				foreach (AvailableMove na in notavailable)
+				{
+					if (results[i].move.X == na.move.X && results[i].move.Z == na.move.Z)
+					{
+						toRemove.Add(results[i]);
+					}
+				}
+			}
+
+			foreach (AvailableMove move in toRemove)
+			{
+				results.Remove(move);
+			}
 
 			return results;
 		}
+
 
 		protected List<AvailableMove> horseMoves()
 		{
