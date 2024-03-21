@@ -114,19 +114,59 @@ namespace test.Pieces
 		}
 
 
-		private AvailableMove check(Vector3 ij)
+		private AvailableMove check(Vector3 ij,bool kingProtect = false)
 		{
 
 			var t = TableController.find(ij, this);
 
-			if (t.num == 0)
+
+			Vector3 old = pos_vector;
+
+			if (!kingProtect)
 			{
-				return new AvailableMove(ij, false);
+
+				if (t.num == 0)
+				{
+					return new AvailableMove(ij, false);
+				}
+				else if (t.num == 2)
+				{
+					return new AvailableMove(ij, true, t.p);
+				}
+
 			}
-			else if (t.num == 2)
+			else
 			{
-				return new AvailableMove(ij, true, t.p);
+
+				pos_vector = ij;
+
+
+
+				if (t.num == 0 && !kingIsInCheckSame())
+				{
+					pos_vector = old;
+					return new AvailableMove(ij, false);
+				}
+				else if (t.num == 2 && !kingIsInCheckSame(t.p))
+				{
+					pos_vector = old;
+					return new AvailableMove(ij, true, t.p);
+				}else if(t.num == 1)
+				{
+					pos_vector = old;
+					return new AvailableMove(new Vector3(999,999,999), false);
+				}
+
+
+
+
 			}
+
+
+
+
+
+			pos_vector = old;
 
 			return null;
 		}
@@ -153,7 +193,7 @@ namespace test.Pieces
 
 
 
-		protected List<AvailableMove> diagnolMoves(bool one_square,bool cover)
+		protected List<AvailableMove> diagnolMoves(bool one_square,bool cover,bool kingProtect = false)
 		{
 			List<AvailableMove> results = new List<AvailableMove>();
 
@@ -173,16 +213,18 @@ namespace test.Pieces
 					break;
 				}
 
-				AvailableMove a = check(ij);
+
+				AvailableMove a = check(ij,kingProtect);
+
+
 				if (cover) { a = checkWithCover(ij);}
 
 				if (a != null)
 				{
 					results.Add(a);
-					if (a.attack) { break; };
-					if(a.cover) { break; };
+					if (a.attack || a.cover || a.move.X == 999) { break; }
 				}
-				else { break; } 
+				else { if (!kingProtect) { break; } } 
 			
 
 				if (one_square) { break; };
@@ -203,16 +245,15 @@ namespace test.Pieces
 				}
 
 
-				AvailableMove a = check(ij);
+				AvailableMove a = check(ij, kingProtect);
 				if (cover) { a = checkWithCover(ij); }
 
 				if (a != null)
 				{
 					results.Add(a);
-					if (a.attack) { break; };
-					if (a.cover) { break; };
+					if (a.attack || a.cover || a.move.X == 999) { break; }
 				}
-				else { break; }
+				else { if (!kingProtect) { break; } }
 
 
 				if (one_square) { break; };
@@ -233,16 +274,16 @@ namespace test.Pieces
 					break;
 				}
 
-				AvailableMove a = check(ij);
+				AvailableMove a = check(ij, kingProtect);
 				if (cover) { a = checkWithCover(ij); }
 
 				if (a != null)
 				{
 					results.Add(a);
-					if (a.attack) { break; };
-					if (a.cover) { break; };
+
+					if(a.attack || a.cover || a.move.X == 999) { break; }
 				}
-				else { break; }
+				else { if (!kingProtect) { break; } }
 
 
 				if (one_square) { break; };
@@ -263,16 +304,15 @@ namespace test.Pieces
 					break;
 				}
 
-				AvailableMove a = check(ij);
+				AvailableMove a = check(ij, kingProtect);
 				if (cover) { a = checkWithCover(ij); }
 
 				if (a != null)
 				{
 					results.Add(a);
-					if (a.attack) { break; };
-					if (a.cover) { break; };
+					if (a.attack || a.cover || a.move.X == 999) { break; }
 				}
-				else { break; }
+				else { if (!kingProtect) { break; } }
 
 				if (one_square) { break; };
 
@@ -285,7 +325,7 @@ namespace test.Pieces
 		}
 
 
-		protected List<AvailableMove> straightMoves(bool one_square,bool cover)
+		protected List<AvailableMove> straightMoves(bool one_square,bool cover,bool kingProtect = false)
 		{
 			List<AvailableMove> results = new List<AvailableMove>();
 
@@ -301,16 +341,19 @@ namespace test.Pieces
 
 				ij.Z = i;
 
-				AvailableMove a = check(ij);
+				AvailableMove a = check(ij, kingProtect);
+
+
 				if (cover) { a = checkWithCover(ij); }
 
 				if (a != null)
 				{
 					results.Add(a);
-					if (a.attack) { break; };
-					if (a.cover) { break; };
+					if (a.attack || a.cover || a.move.X == 999) { break; }
 				}
-				else { break; }
+				else { if (!kingProtect) { break; } }
+
+
 
 				if (one_square) { break; };
 
@@ -324,16 +367,17 @@ namespace test.Pieces
 
 				ij.Z = i;
 
-				AvailableMove a = check(ij);
+				AvailableMove a = check(ij, kingProtect);
+
+
 				if (cover) { a = checkWithCover(ij); }
 
 				if (a != null)
 				{
 					results.Add(a);
-					if (a.attack) { break; };
-					if (a.cover) { break; };
+					if (a.attack || a.cover || a.move.X == 999) { break; }
 				}
-				else { break; }
+				else { if (!kingProtect) { break; } }
 
 				if (one_square) { break; };
 			}
@@ -346,16 +390,17 @@ namespace test.Pieces
 
 				ij.X = i;
 
-				AvailableMove a = check(ij);
+				AvailableMove a = check(ij, kingProtect);
+
+
 				if (cover) { a = checkWithCover(ij); }
 
 				if (a != null)
 				{
 					results.Add(a);
-					if (a.attack) { break; };
-					if (a.cover) { break; };
+					if (a.attack || a.cover || a.move.X == 999) { break; }
 				}
-				else { break; }
+				else { if (!kingProtect) { break; } }
 
 				if (one_square) { break; };
 			}
@@ -368,16 +413,17 @@ namespace test.Pieces
 
 				ij.X = i;
 
-				AvailableMove a = check(ij);
+				AvailableMove a = check(ij, kingProtect);
+
+
 				if (cover) { a = checkWithCover(ij); }
 
 				if (a != null)
 				{
 					results.Add(a);
-					if (a.attack) { break; };
-					if (a.cover) { break; };
+					if (a.attack || a.cover || a.move.X == 999) { break; }
 				}
-				else { break; }
+				else { if (!kingProtect) { break; } }
 
 
 				if (one_square) { break; };

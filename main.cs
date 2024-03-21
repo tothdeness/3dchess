@@ -39,7 +39,7 @@ public partial class main : Node3D
 		//Queen queen5 = new Queen("G6", 1);
 
 
-		//Rook rook = new Rook("F4", 0);
+		Rook rook = new Rook("F4", 0);
 
 		Bishop bishop = new Bishop("D4", 0);
 

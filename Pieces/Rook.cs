@@ -48,7 +48,7 @@ namespace test.Pieces
 		{
 			List<AvailableMove> ans = new List<AvailableMove>();
 
-			ans.AddRange(straightMoves(false, false));
+			ans.AddRange(straightMoves(false, false, true));
 
 			return ans;
 		}

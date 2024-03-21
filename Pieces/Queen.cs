@@ -53,8 +53,8 @@ namespace test.Pieces
 		{
 			List<AvailableMove> ans = new List<AvailableMove>();
 
-			ans.AddRange(diagnolMoves(false, false));
-			ans.AddRange(straightMoves(false, false));
+			ans.AddRange(diagnolMoves(false, false, true));
+			ans.AddRange(straightMoves(false, false, true));
 
 			return ans;
 		}
