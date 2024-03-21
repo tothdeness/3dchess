@@ -48,5 +48,15 @@ namespace test.Pieces
 
 			return ans;
 		}
+
+		public override List<AvailableMove> CheckValidMovesWithKingProtection()
+		{
+			List<AvailableMove> ans = new List<AvailableMove>();
+
+			ans.AddRange(diagnolMoves(false, false));
+			ans.AddRange(straightMoves(false, false));
+
+			return ans;
+		}
 	}
 }

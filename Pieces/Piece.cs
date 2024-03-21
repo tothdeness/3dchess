@@ -35,9 +35,12 @@ namespace test.Pieces
 		public abstract List<AvailableMove> CheckValidMovesWithCover();
 
 
+		public abstract List<AvailableMove> CheckValidMovesWithKingProtection();
+
+
 		public void ShowValidMoves()
 		{
-			TableController.showVisualizers(TableController.calculateVisualizers(CheckValidMoves()),this);
+			TableController.showVisualizers(TableController.calculateVisualizers(CheckValidMovesWithKingProtection()),this);
 		}
 
 		public void DeleteVisualizers() {
@@ -58,6 +61,9 @@ namespace test.Pieces
 
 
 			this.node.Set("position", vector);
+
+
+			kingIsInCheckEnemy();
 
 	
 			//GD.Print("Uj pozizicio: " + position);
@@ -384,7 +390,76 @@ namespace test.Pieces
 
 
 
+		protected bool kingIsInCheckEnemy()
+		{
 
+			foreach (Piece piec in TableController.table)
+			{
+				if (this.team == piec.team)
+				{
+					foreach(AvailableMove move in piec.CheckValidMoves())
+					{
+
+						GD.Print(move.target);
+
+						if(move.target is King)
+						{
+							GD.Print("A "+ (this.team == 1 ? " fekete " : " fehér ") +" kiraly sakkban van!");
+							return true;
+						}
+					}
+				}
+
+			}
+
+			GD.Print("A kiraly nincs sakkban !");
+			return false;
+		}
+
+
+		protected bool kingIsInCheckSame(Piece target = null)
+		{
+
+			if(target != null)
+			{
+				TableController.table.Remove(target);
+			}
+
+
+			foreach (Piece piec in TableController.table)
+			{
+				if (this.team != piec.team)
+				{
+
+					GD.Print(piec.position+" "+piec.pos_vector.X+" "+piec.pos_vector.Z);
+
+
+					foreach (AvailableMove move in piec.CheckValidMoves())
+					{
+
+						if (move.target is King)
+						{
+
+							if (target != null)
+							{
+								TableController.table.Add(target);
+							}
+							
+							return true;
+						}
+					}
+				}
+
+			}
+
+
+			if (target != null)
+			{
+				TableController.table.Add(target);
+			}
+			GD.Print("A kiraly nincs sakkban !");
+			return false;
+		}
 
 
 
@@ -429,7 +504,7 @@ namespace test.Pieces
 		}
 
 
-		protected List<AvailableMove> horseMoves()
+		protected List<AvailableMove> horseMoves(bool cover)
 		{
 			List<AvailableMove> results = new List<AvailableMove>();
 
@@ -446,7 +521,7 @@ namespace test.Pieces
 						Vector3 newPosition = new Vector3(pos_vector.X + x, pos_vector.Y, pos_vector.Z + z);
 
 						
-						AvailableMove a = IsValidPosition(newPosition);
+						AvailableMove a = IsValidPosition(newPosition,cover);
 						
 						if(a != null)
 						{
@@ -464,7 +539,7 @@ namespace test.Pieces
 
 
 
-		private AvailableMove IsValidPosition(Vector3 position)
+		private AvailableMove IsValidPosition(Vector3 position,bool cover)
 		{
 			int newX = (int)position.X;
 			int newZ = (int)position.Z;
@@ -475,12 +550,15 @@ namespace test.Pieces
 			target move = TableController.find(vec, this);
 
 
+			bool first = newX >= 1 && newX <= 8 && newZ >= 1 && newZ <= 8;
 
-			if (newX >= 1 && newX <= 8 && newZ >= 1 && newZ <= 8 && move.num == 0)
+			bool second = newX >= 1 && newX <= 8 && newZ >= 1 && newZ <= 8;
+
+			if (first && move.num == 0 || cover && first)
 			{
 				return new AvailableMove(vec, false);
 
-			}else if(newX >= 1 && newX <= 8 && newZ >= 1 && newZ <= 8 && move.num == 2)
+			}else if(second && move.num == 2 || cover && second)
 			{
 				
 				return new AvailableMove(vec, true, move.p);
@@ -491,41 +569,102 @@ namespace test.Pieces
 		}
 
 
-		protected List<AvailableMove> pawnMoves()
+		protected List<AvailableMove> pawnMoves(bool cover,bool kingProtection)
 		{
 			List<AvailableMove> results = new List<AvailableMove>();
 
+			Vector3 old = this.pos_vector;
 
 			Vector3 vec = new Vector3(pos_vector.X + 1, pos_vector.Y, pos_vector.Z);
 
 			target move = TableController.find(vec,this);
 
 
-			if (vec.X < 9 && move.num == 0)
+			bool checkKing = false;
+
+			if (kingProtection)
 			{
-				results.Add(new AvailableMove(vec,false));
+				pos_vector = vec;
+				checkKing = kingIsInCheckSame();
+			}
+
+
+			if (!kingProtection)
+			{
+				if (vec.X < 9 && move.num == 0 && !cover)
+				{
+					results.Add(new AvailableMove(vec, false));
+				}
+			}
+			else
+			{
+
+				if (vec.X < 9 && move.num == 0 && !checkKing)
+				{
+					results.Add(new AvailableMove(vec, false));
+				}
+				pos_vector = old;
 
 			}
+
+		
 
 
 			vec = new Vector3(pos_vector.X + 1, pos_vector.Y, pos_vector.Z + 1);
 			move = TableController.find(vec, this);
 
 
-			if (vec.X < 9 &&  vec.Z < 9 && move.num == 2)
+
+			if (!kingProtection)
 			{
-				results.Add(new AvailableMove(vec, true, move.p));
+				if (vec.X < 9 && vec.Z < 9 && move.num == 2 || vec.X < 9 && vec.Z < 9 && cover)
+				{
+					results.Add(new AvailableMove(vec, true, move.p));
+
+				}
+			}
+			else
+			{
+
+				pos_vector = vec;
+				checkKing = kingIsInCheckSame(move.p);
+
+				if (vec.X < 9 && vec.Z < 9 && move.num == 2 && !checkKing)
+				{
+					results.Add(new AvailableMove(vec, true, move.p));
+
+				}
+				pos_vector = old;
 
 			}
-
-
 
 			vec = new Vector3(pos_vector.X + 1, pos_vector.Y, pos_vector.Z - 1);
 			move = TableController.find(vec, this);
 
-			if (vec.X < 9 && vec.Z > 0 && move.num == 2)
+
+			if (!kingProtection)
 			{
-				results.Add(new AvailableMove(vec, true, move.p));
+
+				if (vec.X < 9 && vec.Z > 0 && move.num == 2 || vec.X < 9 && vec.Z < 9 && cover)
+				{
+					results.Add(new AvailableMove(vec, true, move.p));
+
+				}
+
+			}
+			else
+			{
+
+				pos_vector = vec;
+				checkKing = kingIsInCheckSame(move.p);
+
+				if (vec.X < 9 && vec.Z > 0 && move.num == 2 && !checkKing)
+				{
+					results.Add(new AvailableMove(vec, true, move.p));
+
+				}
+
+				pos_vector = old;
 
 			}
 
@@ -533,6 +672,9 @@ namespace test.Pieces
 
 			return results;
 		}
+
+
+
 
 
 

@@ -31,7 +31,7 @@ namespace test.Pieces
 		{
 			List<AvailableMove> ans = new List<AvailableMove>();
 
-			ans.AddRange(horseMoves());
+			ans.AddRange(horseMoves(false));
 
 			return ans;
 		}
@@ -40,7 +40,16 @@ namespace test.Pieces
 		{
 			List<AvailableMove> ans = new List<AvailableMove>();
 
-			ans.AddRange(horseMoves());
+			ans.AddRange(horseMoves(true));
+
+			return ans;
+		}
+
+		public override List<AvailableMove> CheckValidMovesWithKingProtection()
+		{
+			List<AvailableMove> ans = new List<AvailableMove>();
+
+			ans.AddRange(horseMoves(false));
 
 			return ans;
 		}

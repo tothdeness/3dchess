@@ -32,21 +32,32 @@ namespace test.Pieces
 		{
 			List<AvailableMove> ans = new List<AvailableMove>();
 
-			ans.AddRange(pawnMoves());
+			ans.AddRange(pawnMoves(false,false));
 
 			return ans;
 
 		}
+
+
 
 		public override List<AvailableMove> CheckValidMovesWithCover()
 		{
 			List<AvailableMove> ans = new List<AvailableMove>();
 
-			ans.AddRange(pawnMoves());
+			ans.AddRange(pawnMoves(true,false));
 
 			return ans;
 		}
 
+
+		public override List<AvailableMove> CheckValidMovesWithKingProtection()
+		{
+			List<AvailableMove> ans = new List<AvailableMove>();
+
+			ans.AddRange(pawnMoves(false, true));
+
+			return ans;
+		}
 
 	}
 }

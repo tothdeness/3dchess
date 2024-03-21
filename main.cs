@@ -48,6 +48,8 @@ public partial class main : Node3D
 		Horse horse = new Horse("A2", 1);
 
 
+		King king2 = new King("H6", 0);
+
 
 		Pawn pawn = new Pawn("E3", 1);
 
