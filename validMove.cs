@@ -43,7 +43,6 @@ public partial class validMove : MeshInstance3D
 
 		static_target = null;
 
-		GD.Print("RESET");
 	}
 
 

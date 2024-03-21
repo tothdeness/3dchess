@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -400,11 +401,10 @@ namespace test.Pieces
 					foreach(AvailableMove move in piec.CheckValidMoves())
 					{
 
-						GD.Print(move.target);
 
 						if(move.target is King)
 						{
-							GD.Print("A "+ (this.team == 1 ? " fekete " : " fehér ") +" kiraly sakkban van!");
+			
 							return true;
 						}
 					}
@@ -412,7 +412,7 @@ namespace test.Pieces
 
 			}
 
-			GD.Print("A kiraly nincs sakkban !");
+		
 			return false;
 		}
 
@@ -431,7 +431,7 @@ namespace test.Pieces
 				if (this.team != piec.team)
 				{
 
-					GD.Print(piec.position+" "+piec.pos_vector.X+" "+piec.pos_vector.Z);
+	
 
 
 					foreach (AvailableMove move in piec.CheckValidMoves())
@@ -457,9 +457,36 @@ namespace test.Pieces
 			{
 				TableController.table.Add(target);
 			}
-			GD.Print("A kiraly nincs sakkban !");
+
 			return false;
 		}
+
+
+
+		protected bool kingCheckWithoutKing()
+		{
+
+			foreach (Piece piec in TableController.table)
+			{
+				if (this.team != piec.team && !(piec is King) )
+				{
+					foreach (AvailableMove move in piec.CheckValidMoves())
+					{
+
+	
+
+						if (move.target is King)
+						{
+							return true;
+						}
+					}
+				}
+
+			}
+
+			return false;
+		}
+
 
 
 
@@ -476,6 +503,8 @@ namespace test.Pieces
 			results.AddRange(straightMoves(true, false));
 			results.AddRange(diagnolMoves(true, false));
 
+			Vector3 old = pos_vector;
+
 			foreach (Piece piec in TableController.table)
 			{
 				if (this.team != piec.team)
@@ -488,12 +517,17 @@ namespace test.Pieces
 			{
 				foreach (AvailableMove na in notavailable)
 				{
-					if (results[i].move.X == na.move.X && results[i].move.Z == na.move.Z)
+
+					pos_vector = new Vector3(results[i].move.X,3, results[i].move.Z);
+
+					if (results[i].move.X == na.move.X && results[i].move.Z == na.move.Z || kingCheckWithoutKing() )
 					{
 						toRemove.Add(results[i]);
 					}
 				}
 			}
+
+			pos_vector = old;
 
 			foreach (AvailableMove move in toRemove)
 			{
@@ -504,7 +538,7 @@ namespace test.Pieces
 		}
 
 
-		protected List<AvailableMove> horseMoves(bool cover)
+		protected List<AvailableMove> horseMoves(bool cover, bool kingProtect = false)
 		{
 			List<AvailableMove> results = new List<AvailableMove>();
 
@@ -518,17 +552,18 @@ namespace test.Pieces
 					{
 						
 						
+
 						Vector3 newPosition = new Vector3(pos_vector.X + x, pos_vector.Y, pos_vector.Z + z);
 
-						
-						AvailableMove a = IsValidPosition(newPosition,cover);
+
+						AvailableMove a = IsValidPosition(newPosition,cover,kingProtect);
 						
 						if(a != null)
 						{
 							results.Add(a);
 						}
 
-
+						
 
 					}
 				}
@@ -539,30 +574,66 @@ namespace test.Pieces
 
 
 
-		private AvailableMove IsValidPosition(Vector3 position,bool cover)
+		private AvailableMove IsValidPosition(Vector3 position,bool cover, bool kingProtect = false)
 		{
 			int newX = (int)position.X;
 			int newZ = (int)position.Z;
 
+			Vector3 old = new Vector3();
+
+			if (kingProtect) { old = pos_vector; }
+
 
 			Vector3 vec = new Vector3(newX, pos_vector.Y, newZ);
 
+
 			target move = TableController.find(vec, this);
 
+
+			if (kingProtect) { pos_vector = vec; }
 
 			bool first = newX >= 1 && newX <= 8 && newZ >= 1 && newZ <= 8;
 
 			bool second = newX >= 1 && newX <= 8 && newZ >= 1 && newZ <= 8;
 
-			if (first && move.num == 0 || cover && first)
-			{
-				return new AvailableMove(vec, false);
 
-			}else if(second && move.num == 2 || cover && second)
+			if (!kingProtect)
 			{
-				
-				return new AvailableMove(vec, true, move.p);
+
+				if (first && move.num == 0 || cover && first)
+				{
+					return new AvailableMove(vec, false);
+
+				}
+				else if (second && move.num == 2 || cover && second)
+				{
+
+					return new AvailableMove(vec, true, move.p);
+				}
+
 			}
+			else
+			{
+
+
+				if (first && move.num == 0 && !kingIsInCheckSame())
+				{
+
+					pos_vector = old;
+					return new AvailableMove(vec, false);
+
+				}
+				else if (second && move.num == 2 && !kingIsInCheckSame(move.p))
+				{
+		
+					pos_vector = old;
+					return new AvailableMove(vec, true, move.p);
+				}
+
+			}
+
+
+			if (kingProtect) { pos_vector = old; };
 
 			return null;
 

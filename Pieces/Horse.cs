@@ -49,7 +49,7 @@ namespace test.Pieces
 		{
 			List<AvailableMove> ans = new List<AvailableMove>();
 
-			ans.AddRange(horseMoves(false));
+			ans.AddRange(horseMoves(false,true));
 
 			return ans;
 		}
