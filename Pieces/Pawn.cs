@@ -10,6 +10,8 @@ namespace test.Pieces
 {
 	public class Pawn : Piece
 	{
+
+
 		public Pawn(string position, int team) : base(position, team)
 		{
 
@@ -28,11 +30,11 @@ namespace test.Pieces
 
 		}
 
-		public override List<AvailableMove> CheckValidMoves()
+		public override List<AvailableMove> CheckValidMoves(bool s)
 		{
 			List<AvailableMove> ans = new List<AvailableMove>();
 
-			ans.AddRange(pawnMoves(false,false));
+			ans.AddRange(pawnMoves(false,false,s));
 
 			return ans;
 
@@ -44,7 +46,7 @@ namespace test.Pieces
 		{
 			List<AvailableMove> ans = new List<AvailableMove>();
 
-			ans.AddRange(pawnMoves(true,false));
+			ans.AddRange(pawnMoves(true,false,false));
 
 			return ans;
 		}
@@ -54,7 +56,7 @@ namespace test.Pieces
 		{
 			List<AvailableMove> ans = new List<AvailableMove>();
 
-			ans.AddRange(pawnMoves(false, true));
+			ans.AddRange(pawnMoves(false, true, true));
 
 			return ans;
 		}

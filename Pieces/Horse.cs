@@ -27,7 +27,7 @@ namespace test.Pieces
 
 		}
 
-		public override List<AvailableMove> CheckValidMoves()
+		public override List<AvailableMove> CheckValidMoves(bool s)
 		{
 			List<AvailableMove> ans = new List<AvailableMove>();
 

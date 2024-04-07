@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
 using test.Controllers;
+using test.Mode;
 using test.Pieces;
 
 public partial class main : Node3D
@@ -24,34 +25,10 @@ public partial class main : Node3D
 
 		TableController.table = table;
 
+		SetupBaseGame.AddPiecesStandardGame();
 
+		
 
-		Queen queen2 = new Queen("D6", 0);
-
-		Queen queen = new Queen("D1",1);
-
-		//Queen queen2 = new Queen("C2", 1);
-
-		//Queen queen3 = new Queen("G3", 1);
-
-		//Queen queen4 = new Queen("E5", 1);
-
-		//Queen queen5 = new Queen("G6", 1);
-
-
-		Rook rook = new Rook("F4", 0);
-
-		Bishop bishop = new Bishop("D4", 0);
-
-		King king = new King("E1", 1);
-
-		Horse horse = new Horse("A2", 1);
-
-
-		King king2 = new King("H6", 0);
-
-
-		Pawn pawn = new Pawn("E3", 1);
 
 	}
 

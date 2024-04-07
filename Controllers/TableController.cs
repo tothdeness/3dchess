@@ -14,13 +14,30 @@ namespace test.Controllers
 {
 	public static class TableController
 	{
-		private static int tableSize;
 
+
+
+		private static int tableSize;
 		public static List<Piece> table = new List<Piece>();
 		public static Node3D tableGraphics;
 		public static Piece current;
-
 		private static List<Node> visualizers = new List<Node>();
+		public struct enPassantStruct
+		{
+
+			public Piece target;
+			public Piece attacker;
+
+			public enPassantStruct(Piece target, Piece attacker)
+			{
+				this.target = target;
+				this.attacker = attacker;
+			}
+		}
+
+
+		public static List<enPassantStruct> enPassantpieces = new List<enPassantStruct>();
+
 
 
 		public static Vector3 convert(string coordinate)
@@ -61,6 +78,23 @@ namespace test.Controllers
 
 			return false;
 		}
+
+
+
+		public static Pawn findPawn(Vector3 vector,int team)
+		{
+			foreach (Piece piece in table)
+			{
+				if (piece.pos_vector.X == vector.X && piece.pos_vector.Z == vector.Z && piece.team != team && piece is Pawn)
+				{
+					return (Pawn) piece;
+				}
+
+			}
+
+			return null;
+		}
+
 
 
 		public struct target{
