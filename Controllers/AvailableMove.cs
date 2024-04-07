@@ -10,6 +10,7 @@ namespace test.Controllers
 {
 	public class AvailableMove
 	{
+	
 		public Vector3 move;
 
 		public bool attack;

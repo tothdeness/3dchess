@@ -20,7 +20,7 @@ namespace test.Pieces
 		//VERTICAL POS 3 (Y)
 		public Node node { get; set; }
 	  
-		private string position;
+		public string position;
 
 		protected int y = 3;
 
@@ -91,6 +91,14 @@ namespace test.Pieces
 
 			this.node.Set("position", vector);
 
+			if(this is Pawn)
+			{
+				Pawn p = (Pawn) this;
+
+				p.promotePawn();
+
+			}
+
 
 			kingIsInCheckEnemy();
 
@@ -125,11 +133,15 @@ namespace test.Pieces
 
 			}
 
+
+
 		}
 
 		public void Delete()
 		{
 			this.node.QueueFree();
+
+			DeleteVisualizers();
 
 			TableController.table.Remove(this);
 

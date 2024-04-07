@@ -40,7 +40,7 @@ public partial class Dummy : MeshInstance3D
 
 
 
-			if(mouse.ButtonIndex == MouseButton.Left)
+			if (mouse.ButtonIndex == MouseButton.Left)
 			{
 				figureLocked = false;
 
@@ -53,12 +53,12 @@ public partial class Dummy : MeshInstance3D
 				if (c != null && IsInstanceValid(c) && !c.IsQueuedForDeletion())
 				{
 
-					TableController.current.Move(c.Position,target);
+					TableController.current.Move(c.Position, target);
 
-				
-					if (target != null && target.attack) { target.target.Delete();};
 
-					
+					if (target != null && target.attack) { target.target.Delete(); };
+
+
 				}
 
 
@@ -66,18 +66,20 @@ public partial class Dummy : MeshInstance3D
 
 				Piece p = TableController.find(this);
 
+				if (p == null) { return; }
 
-				if(p.team == 1)
-				{
-					setColorWhite();
-				}
-				else
-				{
-					setColorBlack();
-				}
+					if (p.team == 1)
+					{
+						setColorWhite();
+					}
+					else
+					{
+						setColorBlack();
+					}
 
+					p.DeleteVisualizers();
 
-				p.DeleteVisualizers();
+	
 
 
 				//QueueFree();

@@ -41,6 +41,18 @@ namespace test.Pieces
 		}
 
 
+		public void promotePawn()
+		{
+			if(pos_vector.X == 8 || pos_vector.X == 1)
+			{
+				Queen q = new Queen(position, team);
+
+				Delete();
+			}
+
+		}
+
+
 
 		public override List<AvailableMove> CheckValidMovesWithCover()
 		{
