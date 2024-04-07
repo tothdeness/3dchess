@@ -32,8 +32,6 @@ public partial class validMove : MeshInstance3D
 		current = this;
 
 		static_target = target;
-
-		GD.Print(this.Position);
 	}
 
 

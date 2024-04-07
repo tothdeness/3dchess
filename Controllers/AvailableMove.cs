@@ -18,6 +18,12 @@ namespace test.Controllers
 
 		public bool cover;
 
+		public bool enPassant = false;
+
+		public Pawn canEnPassantRight;
+
+		public Pawn canEnPassantLeft;
+
 		public AvailableMove(Vector3 move, bool attack)
 		{
 			this.move = move;
@@ -35,6 +41,12 @@ namespace test.Controllers
 			this.cover = cover;
 		}
 
-
+		public AvailableMove(Vector3 move, bool attack, Piece target, bool cover, bool enPassant, Pawn canEnPassantRight, Pawn canEnPassantLeft) : this(move, attack, target)
+		{
+			this.cover = cover;
+			this.enPassant = enPassant;
+			this.canEnPassantRight = canEnPassantRight;
+			this.canEnPassantLeft = canEnPassantLeft;
+		}
 	}
 }

@@ -47,13 +47,15 @@ public partial class Dummy : MeshInstance3D
 
 				var c = validMove.current;
 
-				var target = validMove.static_target;
+				AvailableMove target = validMove.static_target;
+
 
 				if (c != null && IsInstanceValid(c) && !c.IsQueuedForDeletion())
 				{
-					TableController.current.Move(c.Position);
 
+					TableController.current.Move(c.Position,target);
 
+				
 					if (target != null && target.attack) { target.target.Delete();};
 
 					
@@ -73,12 +75,6 @@ public partial class Dummy : MeshInstance3D
 				{
 					setColorBlack();
 				}
-
-
-
-				GD.Print("Figura unlocked!");
-
-
 
 
 				p.DeleteVisualizers();
@@ -126,7 +122,7 @@ public partial class Dummy : MeshInstance3D
 
 				figureLocked = true;
 
-				GD.Print("Figura locked!");
+
 			}
 			
 

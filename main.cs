@@ -52,16 +52,6 @@ public partial class main : Node3D
 				draggingPosition = mouse.Position;
 				rightMouseButtonIsPressed = !rightMouseButtonIsPressed;
 
-				if (rightMouseButtonIsPressed)
-				{
-					GD.Print("Eger locked! " + draggingPosition);
-				}
-				else
-				{
-					GD.Print("Eger unlocked!");
-				}
-
-
 			}
 		
 

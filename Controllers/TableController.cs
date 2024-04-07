@@ -22,23 +22,8 @@ namespace test.Controllers
 		public static Node3D tableGraphics;
 		public static Piece current;
 		private static List<Node> visualizers = new List<Node>();
-		public struct enPassantStruct
-		{
 
-			public Piece target;
-			public Piece attacker;
-
-			public enPassantStruct(Piece target, Piece attacker)
-			{
-				this.target = target;
-				this.attacker = attacker;
-			}
-		}
-
-
-		public static List<enPassantStruct> enPassantpieces = new List<enPassantStruct>();
-
-
+		public static List<Pawn> enPassant = new List<Pawn>();
 
 		public static Vector3 convert(string coordinate)
 		{
@@ -52,6 +37,23 @@ namespace test.Controllers
 
 			return result;
 		}
+
+
+		public static void emptyEnpassant()
+		{
+
+			foreach(Pawn pawn in enPassant)
+			{
+				pawn.enPassant = false;
+				pawn.enPassantLeft = null;
+				pawn.enPassantRight = null;
+			}
+
+			enPassant.Clear();
+
+		}
+
+
 
 		public static string convertReverse(Vector3 vector)
 		{
@@ -186,6 +188,7 @@ namespace test.Controllers
 
 			current = piece;
 
+
 			foreach (AvailableMove p in list) {
 
 				PackedScene scene = GD.Load<PackedScene>("res://TSCN/" + (p.attack ? at : mo));
@@ -194,7 +197,8 @@ namespace test.Controllers
 				visualizers.Add(inst);
 				tableGraphics.AddChild(inst);
 
-				if (p.attack) {validMove a = (validMove)inst; a.target = p;}
+				validMove a = (validMove)inst; a.target = p;
+				//if (p.attack) {validMove a = (validMove)inst; a.target = p;}
 
 			}
 

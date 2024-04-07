@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Security.Cryptography;
@@ -30,11 +31,16 @@ namespace test.Pieces
 		//0 black, 1 white
 		public int team { get; set; }
 
-		public bool enPassantRight = false;
+		public bool pressed = false;
 
-		public bool enPassantLeft = false;
+		public List<AvailableMove> moves = new List<AvailableMove>();
 
-		public enPassantStruct ens;
+		public bool enPassant = false;
+
+		public Pawn enPassantRight;
+
+		public Pawn enPassantLeft;
+
 
 		public virtual List<AvailableMove> CheckValidMoves(bool special) { throw new NotImplementedException(); }
 
@@ -45,9 +51,25 @@ namespace test.Pieces
 		public virtual  List<AvailableMove> CheckValidMovesWithKingProtection() { throw new NotImplementedException(); }
 
 
-		public void ShowValidMoves()
+		public void ShowValidMoves(bool visul = true)
 		{
-			TableController.showVisualizers(TableController.calculateVisualizers(CheckValidMovesWithKingProtection()),this);
+			if (!pressed) {
+
+				var watch = new Stopwatch();
+				watch.Start();
+
+				moves = TableController.calculateVisualizers(CheckValidMovesWithKingProtection());
+				watch.Stop();
+
+				GD.Print(watch.ElapsedMilliseconds);
+
+				pressed = true;
+				ViewController.pressed.Add(this);
+			}
+
+			if (visul) { TableController.showVisualizers(moves, this); }
+	
+			
 		}
 
 		public void DeleteVisualizers() {
@@ -56,7 +78,7 @@ namespace test.Pieces
 
 		}
 
-		public void Move(Vector3 vector) {
+		public void Move(Vector3 vector,AvailableMove move) {
 
 			this.pos_vector = TableController.reversePosition(vector);
 
@@ -72,13 +94,37 @@ namespace test.Pieces
 
 			kingIsInCheckEnemy();
 
+			emptyEnpassant();
+
+			ViewController.deletePressed();
+
 			if (firstMove)
 			{
 				firstMove = false;
+
+				if (move.enPassant)
+				{
+
+					if(move.canEnPassantLeft is not null)
+					{
+						move.canEnPassantLeft.enPassantLeft = (Pawn)this;
+						move.canEnPassantLeft.enPassant = true;
+						TableController.enPassant.Add(move.canEnPassantLeft);
+					}
+
+					if(move.canEnPassantRight is not null)
+					{
+						move.canEnPassantRight.enPassantRight = (Pawn)this;
+						move.canEnPassantRight.enPassant = true;
+						TableController.enPassant.Add(move.canEnPassantRight);
+					}
+
+
+
+				}
+
 			}
 
-			//GD.Print("Uj pozizicio: " + position);
-			//GD.Print("test: "+pos_vector.X +"  "+ pos_vector.Z);
 		}
 
 		public void Delete()
@@ -128,7 +174,6 @@ namespace test.Pieces
 		{
 
 			var t = TableController.find(ij, this);
-
 
 			Vector3 old = pos_vector;
 
@@ -744,15 +789,15 @@ namespace test.Pieces
 
 					if (vec2.X < 9 && move2.num == 0 && move.num == 0 && !checkKing)
 					{
-						results.Add(new AvailableMove(vec2, false));
-						if (special)
-						{
 
-							vec2.Z--;
-							Pawn p = findPawn(vec2, team);
-							if (p != null) { GD.Print("TALALT EN PASSANT!"); GD.Print(pos_vector.X + " " + p.pos_vector.X); }
+						AvailableMove m = new AvailableMove(vec2, false);
 
-						};
+
+						checkEnPassant(vec2, m);
+
+
+						results.Add(m);
+
 					}
 					pos_vector = old;
 
@@ -764,53 +809,100 @@ namespace test.Pieces
 			}
 
 
-			//if(enPassantRight || enPassantLeft)
-			//{
+			if (enPassantRight != null || enPassantLeft != null)
+			{
 
-			//	if(enPassantLeft)
-			//	{
-			//		Vector3 vec2 = new Vector3(pos_vector.X + (1 * team), pos_vector.Y, pos_vector.Z + 1);
+				if (enPassantLeft != null)
+				{
+					Vector3 vec2 = new Vector3(pos_vector.X + (1 * team), pos_vector.Y, pos_vector.Z + 1);
 
-			//		if (kingProtection)
-			//		{
-			//			pos_vector = vec2;
-			//			checkKing = kingIsInCheckSame();
-			//		}
+					target move3 = TableController.find(vec2, this);
 
-			//		if (!kingProtection)
-			//		{
+					if (kingProtection)
+					{
+						pos_vector = vec2;
+						checkKing = kingIsInCheckSame();
+					}
 
-			//			if (vec.X < 9 && vec.Z > 0 || vec.X < 9 && vec.Z < 9 && cover)
-			//			{
-			//				results.Add(new AvailableMove(vec2, true, ens.target));
+					if (!kingProtection)
+					{
 
-			//			}
+						if (vec.X < 9 && vec.Z > 0 || vec.X < 9 && vec.Z < 9 && cover)
+						{
+							results.Add(new AvailableMove(vec2, true, enPassantLeft));
 
-			//		}
-			//		else
-			//		{
+						}
 
-			//			pos_vector = vec;
-			//			checkKing = kingIsInCheckSame(move.p);
+					}
+					else
+					{
 
-			//			if (vec.X < 9 && vec.Z > 0 && !checkKing)
-			//			{
-			//				results.Add(new AvailableMove(vec2, true, ens.target));
+						pos_vector = vec;
+						checkKing = kingIsInCheckSame(move3.p);
 
-			//			}
+						if (vec.X < 9 && vec.Z > 0 && !checkKing)
+						{
+							results.Add(new AvailableMove(vec2, true, enPassantLeft));
 
-			//			pos_vector = old;
+						}
 
-			//		}
+						pos_vector = old;
+
+					}
 
 
 
 
 
-			//	}
+				}
 
-			//}
-			
+				if (enPassantRight != null)
+				{
+					Vector3 vec2 = new Vector3(pos_vector.X + (1 * team), pos_vector.Y, pos_vector.Z - 1);
+					target move3 = TableController.find(vec2, this);
+
+
+					if (kingProtection)
+					{
+						pos_vector = vec2;
+						checkKing = kingIsInCheckSame();
+					}
+
+					if (!kingProtection)
+					{
+
+						if (vec.X < 9 && vec.Z > 0 || vec.X < 9 && vec.Z < 9 && cover)
+						{
+							results.Add(new AvailableMove(vec2, true, enPassantRight));
+
+						}
+
+					}
+					else
+					{
+
+						pos_vector = vec;
+						checkKing = kingIsInCheckSame(move3.p);
+
+						if (vec.X < 9 && vec.Z > 0 && !checkKing)
+						{
+							results.Add(new AvailableMove(vec2, true, enPassantRight));
+
+						}
+
+						pos_vector = old;
+
+					}
+
+
+
+
+
+				}
+
+
+			}
+
 
 
 
@@ -908,6 +1000,50 @@ namespace test.Pieces
 
 			return results;
 		}
+
+
+
+
+
+		private void checkEnPassant(Vector3 vector,  AvailableMove availablemove)
+		{
+
+
+			vector.Z--;
+
+			Pawn p = findPawn(vector, team);
+
+			if(p!=null) {
+
+
+
+				availablemove.enPassant = true;
+
+				availablemove.canEnPassantLeft = p;
+
+			}
+
+
+			vector.Z += 2;
+
+			p = findPawn(vector, team);
+
+
+			if (p != null)
+			{
+
+
+				availablemove.enPassant = true;
+
+				availablemove.canEnPassantRight = p;
+
+			}
+
+
+		}
+
+
+
 
 
 
