@@ -25,6 +25,35 @@ namespace test.Controllers
 
 		public static List<Pawn> enPassant = new List<Pawn>();
 
+		public static bool blackKingCheck = false;
+
+		public static bool whiteKingCheck = false;
+
+
+		public static bool checkCheck(int num)
+		{
+			if(num == -1) { return blackKingCheck; }
+
+			return whiteKingCheck;
+
+		}
+
+
+
+		public struct kingCheck{
+			public bool check;
+			public Piece attacker;
+
+			public kingCheck(bool check, Piece attacker)
+			{
+				this.check = check;
+				this.attacker = attacker;
+			}
+		}
+
+		public static List<kingCheck> kingChecks = new List<kingCheck>();
+
+
 		public static Vector3 convert(string coordinate)
 		{
 			Vector3 result = new Vector3();
