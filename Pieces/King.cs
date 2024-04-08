@@ -50,7 +50,7 @@ namespace test.Pieces
 		{
 			List<AvailableMove> ans = new List<AvailableMove>();
 
-			ans.AddRange(kingMoves());
+			ans.AddRange(kingMoves(true));
 
 			return ans;
 		}

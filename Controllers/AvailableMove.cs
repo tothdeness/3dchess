@@ -29,6 +29,10 @@ namespace test.Controllers
 
 		public Pawn canEnPassantLeft;
 
+		bool shortCastling;
+
+		bool longCastling;
+
 		public AvailableMove(Piece moving,Vector3 move, bool attack)
 		{
 			this.move = move;

@@ -545,9 +545,29 @@ namespace test.Pieces
 		}
 
 
+		protected bool kingCheckWithoutKing()
+		{
 
+			foreach (Piece piec in TableController.table)
+			{
+				if (this.team != piec.team && !(piec is King))
+				{
+					foreach (AvailableMove move in piec.CheckValidMoves(false))
+					{
 
-		protected List<AvailableMove> kingMoves()
+						if (move.target is King)
+						{
+							return true;
+						}
+					}
+				}
+
+			}
+
+			return false;
+		}
+
+		protected List<AvailableMove> kingMoves(bool calculateCastle = false)
 		{
 			List<AvailableMove> results = new List<AvailableMove>();
 			List<AvailableMove> notavailable = new List<AvailableMove>();
@@ -586,6 +606,76 @@ namespace test.Pieces
 
 			pos_vector = old;
 
+			if (calculateCastle && firstMove && !kingCheckWithoutKing())
+			{
+				foreach(Piece rook in TableController.table)
+				{
+					if(team == 1)
+					{
+
+						//KINGSIDE WHITE
+						if(rook.team == 1 && rook.firstMove && rook.position is "H1")
+						{
+
+							foreach(AvailableMove m in rook.straightMoves(false,true))
+							{
+							
+								if (m.move.X == pos_vector.X && pos_vector.Z == m.move.Z)
+								{
+									GD.Print("King can castle!" + (team == 1 ? " White " : " Black ") + " KINGSIDE WHITE AVAILABLE");
+								}
+
+							}
+						}
+
+						//QUEENSIDE WHITE
+
+						if (rook.team == 1 && rook.firstMove && rook.position is "A1")
+						{
+							foreach (AvailableMove m in rook.straightMoves(false, true))
+							{
+
+								if (m.move.X == pos_vector.X && pos_vector.Z == m.move.Z)
+								{
+									GD.Print("King can castle!" + (team == 1 ? " White " : " Black ") + " QUEENSIDE WHITE AVAILABLE");
+								}
+								
+							}
+						}
+
+					}
+
+					if(team == -1)
+					{
+
+						//KINGSIDE BLACK
+
+						if (rook.team == -1 && rook.firstMove && rook.position is "H8")
+						{
+							GD.Print("King can castle!" + (team == 1 ? " White " : " Black ") + " KINGSIDE BLACK AVAILABLE");
+						}
+
+
+						//QUEENSIDE BLACK
+
+						if (rook.team == -1 && rook.firstMove && rook.position is "A8")
+						{
+							GD.Print("King can castle!" + (team == 1 ? " White " : " Black ") + " QUEENSIDE BLACK AVAILABLE");
+						}
+
+					}
+
+				}
+
+			}
+
+			//debug
+			else
+			{
+				GD.Print("King cant castle!" + (team == 1 ? " White " : " Black "));
+			}
+
+
 			foreach (AvailableMove move in toRemove)
 			{
 				results.Remove(move);
@@ -593,6 +683,31 @@ namespace test.Pieces
 
 			return results;
 		}
+
+
+		private AvailableMove kingCastlingKingSide()
+		{
+			AvailableMove ans = null;
+
+			
+			
+
+	
+
+			return ans;
+		}
+
+
+		private AvailableMove kingCastlingQueenSide()
+		{
+			AvailableMove ans = null;
+
+
+
+
+			return ans;
+		}
+
 
 
 		protected List<AvailableMove> horseMoves(bool cover, bool kingProtect = false)
