@@ -487,36 +487,6 @@ namespace test.Pieces
 			return results;
 		}
 
-
-
-		protected bool kingIsInCheckEnemy()
-		{
-
-			foreach (Piece piec in TableController.table)
-			{
-				if (this.team == piec.team)
-				{
-					foreach(AvailableMove move in piec.CheckValidMoves(false))
-					{
-
-
-						if(move.target is King)
-						{
-			
-							return true;
-						}
-					}
-				}
-
-			}
-
-		
-			return false;
-		}
-
-
-
-		//improve this functions
 		protected bool kingIsInCheckSame(Piece target = null)
 		{
 
@@ -654,9 +624,16 @@ namespace test.Pieces
 							foreach (AvailableMove m in rook.straightMoves(false, true))
 							{
 
-								if (m.move.X == pos_vector.X && pos_vector.Z == m.move.Z)
+								if (m.move.X == pos_vector.X && pos_vector.Z == m.move.Z && kingCastlingQueenSideWhite(notavailable))
 								{
-									GD.Print("King can castle!" + (team == 1 ? " White " : " Black ") + " QUEENSIDE WHITE AVAILABLE");
+
+									AvailableMove whiteQueenSideCastle = new AvailableMove(this, new Vector3(1, 0, 3), rook, new Vector3(1, 0, 4));
+
+									whiteQueenSideCastle.queenSideCastling = true;
+
+									results.Add(whiteQueenSideCastle);
+
+
 								}
 								
 							}
@@ -664,25 +641,69 @@ namespace test.Pieces
 
 					}
 
-					if(team == -1)
+					if (team == -1)
 					{
 
-						//KINGSIDE BLACK
 
-						if (rook.team == -1 && rook.firstMove && rook.position is "H8")
-						{
-							GD.Print("King can castle!" + (team == 1 ? " White " : " Black ") + " KINGSIDE BLACK AVAILABLE");
+						
+							//KINGSIDE BLACK
+
+							if (rook.team == -1 && rook.firstMove && rook.position is "H8")
+							{
+								foreach (AvailableMove m in rook.straightMoves(false, true))
+								{
+
+									if (m.move.X == pos_vector.X && pos_vector.Z == m.move.Z && kingCastlingKingSideBlack(notavailable))
+									{
+
+
+									AvailableMove blackKingSideCastle = new AvailableMove(this, new Vector3(8, 0, 7), rook, new Vector3(8, 0, 6));
+
+									blackKingSideCastle.kingSideCastling = true;
+
+									results.Add(blackKingSideCastle);
+
+
+
+
+								}
+
+
+								}
+							}
+
+
+							//QUEENSIDE BLACK
+
+							if (rook.team == -1 && rook.firstMove && rook.position is "A8")
+							{
+								foreach (AvailableMove m in rook.straightMoves(false, true))
+								{
+									if (m.move.X == pos_vector.X && pos_vector.Z == m.move.Z && kingCastlingQueenSideBlack(notavailable))
+									{
+
+
+									AvailableMove blackQueenSideCastle = new AvailableMove(this, new Vector3(8, 0, 3), rook, new Vector3(8, 0, 4));
+
+									blackQueenSideCastle.queenSideCastling = true;
+
+									results.Add(blackQueenSideCastle);
+
+
+
+
+								}
+
+							}
+
+
 						}
 
-
-						//QUEENSIDE BLACK
-
-						if (rook.team == -1 && rook.firstMove && rook.position is "A8")
-						{
-							GD.Print("King can castle!" + (team == 1 ? " White " : " Black ") + " QUEENSIDE BLACK AVAILABLE");
-						}
 
 					}
+
+
+
 
 				}
 
@@ -707,7 +728,7 @@ namespace test.Pieces
 			foreach(AvailableMove move in moves)
 			{
 
-				if(move.move.X == 1 && move.move.Z == 6 || move.move.X == 1 && move.move.Z == 7)
+				if(move.move.X == 1 && move.move.Z == 7 || move.move.X == 1 && move.move.Z == 6)
 				{
 					return false;
 				}
@@ -718,15 +739,60 @@ namespace test.Pieces
 		}
 
 
-		private AvailableMove kingCastlingQueenSideWhite(List<AvailableMove> moves)
+		private bool kingCastlingQueenSideWhite(List<AvailableMove> moves)
 		{
-			AvailableMove ans = null;
+			foreach (AvailableMove move in moves)
+			{
 
+				if (move.move.X == 1 && move.move.Z == 4 || move.move.X == 1 && move.move.Z == 3)
+				{
+					return false;
+				}
 
+			}
+			return true;
 
-
-			return ans;
 		}
+
+
+
+		private bool kingCastlingKingSideBlack(List<AvailableMove> moves)
+		{
+			
+				foreach (AvailableMove move in moves)
+				{
+
+					if (move.move.X == 8 && move.move.Z == 7 || move.move.X == 8 && move.move.Z == 6)
+					{
+						return false;
+					}
+
+				}
+
+				return true;
+		}
+
+
+		private bool kingCastlingQueenSideBlack(List<AvailableMove> moves)
+		{
+				
+					foreach (AvailableMove move in moves)
+					{
+
+						if (move.move.X == 8 && move.move.Z == 4 || move.move.X == 8 && move.move.Z == 3)
+						{
+							return false;
+						}
+
+					}
+					return true;
+
+
+		}
+
+		
+
+
 
 
 
