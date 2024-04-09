@@ -68,11 +68,17 @@ namespace test.Pieces
 
 				moves.AddRange(TableController.calculateVisualizers(CheckValidMovesWithKingProtection()));
 
+				//for(int i = 0;i < 30000; i++)
+				//{
+				//	CheckValidMovesWithKingProtection();
+				//}
+
+
 				watch.Stop();
 
-
-
 				GD.Print(watch.ElapsedMilliseconds);
+
+				//GD.Print( (float) watch.ElapsedMilliseconds / 30000);
 
 				pressed = true;
 				ViewController.pressed.Add(this);
@@ -117,6 +123,10 @@ namespace test.Pieces
 
 
 
+			if (this is King && (move.kingSideCastling || move.queenSideCastling))
+
+			{ move.target.Move(TableController.calculatePosition(move.rookNewPos), new AvailableMove(move.target, move.rookNewPos, false)); }
+
 			emptyEnpassant();
 
 			ViewController.deletePressed();
@@ -151,6 +161,9 @@ namespace test.Pieces
 
 
 		}
+
+
+
 
 		public void Delete()
 		{
@@ -582,7 +595,8 @@ namespace test.Pieces
 			{
 				if (this.team != piec.team)
 				{
-					notavailable.AddRange(piec.CheckValidMovesWithCover());
+
+						notavailable.AddRange(piec.CheckValidMovesWithCover());
 				}
 			}
 
@@ -592,8 +606,6 @@ namespace test.Pieces
 				{
 
 					pos_vector = new Vector3(results[i].move.X,3, results[i].move.Z);
-
-					//check behind
 
 					if (results[i].move.X == na.move.X && results[i].move.Z == na.move.Z)
 					{
@@ -620,9 +632,16 @@ namespace test.Pieces
 							foreach(AvailableMove m in rook.straightMoves(false,true))
 							{
 							
-								if (m.move.X == pos_vector.X && pos_vector.Z == m.move.Z)
+								if (m.move.X == pos_vector.X && pos_vector.Z == m.move.Z && kingCastlingKingSideWhite(notavailable))
 								{
-									GD.Print("King can castle!" + (team == 1 ? " White " : " Black ") + " KINGSIDE WHITE AVAILABLE");
+
+									AvailableMove whiteKingSideCastle = new AvailableMove(this,new Vector3(1,0,7),rook,new Vector3(1,0,6));
+
+									whiteKingSideCastle.kingSideCastling = true;
+
+									results.Add(whiteKingSideCastle);
+
+
 								}
 
 							}
@@ -669,11 +688,9 @@ namespace test.Pieces
 
 			}
 
-			//debug
-			else
-			{
-				GD.Print("King cant castle!" + (team == 1 ? " White " : " Black "));
-			}
+
+
+
 
 
 			foreach (AvailableMove move in toRemove)
@@ -685,28 +702,32 @@ namespace test.Pieces
 		}
 
 
-		private AvailableMove kingCastlingKingSide()
+		private bool kingCastlingKingSideWhite(List<AvailableMove> moves)
+		{
+			foreach(AvailableMove move in moves)
+			{
+
+				if(move.move.X == 1 && move.move.Z == 6 || move.move.X == 1 && move.move.Z == 7)
+				{
+					return false;
+				}
+
+			}
+
+			return true;
+		}
+
+
+		private AvailableMove kingCastlingQueenSideWhite(List<AvailableMove> moves)
 		{
 			AvailableMove ans = null;
 
-			
-			
 
-	
+
 
 			return ans;
 		}
 
-
-		private AvailableMove kingCastlingQueenSide()
-		{
-			AvailableMove ans = null;
-
-
-
-
-			return ans;
-		}
 
 
 

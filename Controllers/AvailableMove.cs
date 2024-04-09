@@ -15,6 +15,8 @@ namespace test.Controllers
 
 		public Vector3 move;
 
+		public Vector3 rookNewPos;
+
 		public bool attack;
 
 		public Piece target;
@@ -29,9 +31,20 @@ namespace test.Controllers
 
 		public Pawn canEnPassantLeft;
 
-		bool shortCastling;
+		public bool kingSideCastling;
 
-		bool longCastling;
+		public bool queenSideCastling;
+
+
+
+
+		public AvailableMove(Piece moving,Vector3 move,Piece target,Vector3 rookNewPos)
+		{
+			this.moving = moving;
+			this.move = move;
+			this.target = target;
+			this.rookNewPos = rookNewPos;
+		}
 
 		public AvailableMove(Piece moving,Vector3 move, bool attack)
 		{
