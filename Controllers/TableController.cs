@@ -1,4 +1,4 @@
-﻿using Godot;
+using Godot;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,6 +17,7 @@ namespace test.Controllers
 
 
 
+		
 		private static int tableSize;
 		public static List<Piece> table = new List<Piece>();
 		public static Node3D tableGraphics;
@@ -29,14 +30,7 @@ namespace test.Controllers
 
 		public static bool whiteKingCheck = false;
 
-
-		public static bool checkCheck(int num)
-		{
-			if(num == -1) { return blackKingCheck; }
-
-			return whiteKingCheck;
-
-		}
+		public static GameController game;
 
 
 
@@ -66,6 +60,20 @@ namespace test.Controllers
 
 			return result;
 		}
+
+		public static Piece findPieceID(int id)
+		{
+			foreach(var piece in table)
+			{
+				if(piece.ID == id)
+				{
+					return piece;
+				}
+				
+			}
+			return null;
+		}
+
 
 
 		public static void emptyEnpassant()

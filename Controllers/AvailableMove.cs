@@ -48,6 +48,7 @@ namespace test.Controllers
 
 		public AvailableMove(Piece moving,Vector3 move, bool attack)
 		{
+			this.moving = moving;
 			this.move = move;
 			this.attack = attack;
 		}
@@ -77,5 +78,14 @@ namespace test.Controllers
 			this.canEnPassantRight = canEnPassantRight;
 			this.canEnPassantLeft = canEnPassantLeft;
 		}
+
+
+		public void toString()
+		{
+			GD.Print("CSapat: "+ this.moving.team  + " Mozgo babu: " + this.moving + " Jelenlegi pozi:  " + this.moving.position + " Uj pozi:  " + TableController.convertReverse(this.move) + (this.attack ? " TAMAD " : ""));
+		}
+
+
+
 	}
 }

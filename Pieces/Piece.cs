@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using test.Controllers;
@@ -18,6 +19,8 @@ namespace test.Pieces
 	public  class Piece
 	{
 		//VERTICAL POS 3 (Y)
+
+
 		public Node node { get; set; }
 	  
 		public string position;
@@ -25,6 +28,8 @@ namespace test.Pieces
 		protected int y = 3;
 
 		public bool firstMove = true;
+
+		public int ID;
 
 		public Vector3 pos_vector { get; set; }
 	
@@ -45,6 +50,8 @@ namespace test.Pieces
 
 		public int hit = 0;
 
+
+
 		public virtual List<AvailableMove> CheckValidMoves(bool special) { throw new NotImplementedException(); }
 
 
@@ -52,6 +59,16 @@ namespace test.Pieces
 
 
 		public virtual  List<AvailableMove> CheckValidMovesWithKingProtection() { throw new NotImplementedException(); }
+
+
+		public virtual List<AvailableMove> CheckValidMovesOnVirtualBoard(Board board) { throw new NotImplementedException(); }
+
+
+		public virtual List<AvailableMove> CheckValidMovesVirt(Board board) { throw new NotImplementedException(); }
+
+
+		public virtual Piece Clone(Piece p) { throw new NotImplementedException(); }
+
 
 
 		public void ShowValidMoves()
@@ -64,19 +81,19 @@ namespace test.Pieces
 
 
 
-				watch.Start();
+				//watch.Start();
 
 				moves.AddRange(TableController.calculateVisualizers(CheckValidMovesWithKingProtection()));
 
-				//for(int i = 0;i < 30000; i++)
+				// for(int i = 0;i < 30000; i++)
 				//{
 				//	CheckValidMovesWithKingProtection();
 				//}
 
 
-				watch.Stop();
+				//watch.Stop();
 
-				GD.Print(watch.ElapsedMilliseconds);
+				//GD.Print(watch.ElapsedMilliseconds);
 
 				//GD.Print( (float) watch.ElapsedMilliseconds / 30000);
 
@@ -100,20 +117,19 @@ namespace test.Pieces
 		public void Move(Vector3 vector,AvailableMove move) {
 
 
-
-
 			this.pos_vector = TableController.reversePosition(vector);
-
 
 			this.position = TableController.convertReverse(pos_vector);
 
 
 			vector.Y = y;
+		
+			this.node.CallDeferred("_bot_move2", vector);
+
+			if (move.target != null && move.attack) { move.target.Delete(); };
 
 
-			this.node.Set("position", vector);
-
-			if(this is Pawn)
+			if (this is Pawn)
 			{
 				Pawn p = (Pawn) this;
 
@@ -160,6 +176,8 @@ namespace test.Pieces
 
 
 
+			TableController.game.NextMove(team);
+
 		}
 
 
@@ -186,11 +204,24 @@ namespace test.Pieces
 			Vector3 p = TableController.convert(position);
 			p.Y = y;
 
-
-
 			pos_vector = p;
 			
 		}
+
+		protected Piece(string position, int team, Board board)
+		{
+			this.position = position;
+			this.team = team;
+
+			board.table.Add(this);
+
+			Vector3 p = TableController.convert(position);
+			p.Y = y;
+
+			pos_vector = p;
+
+		}
+
 
 
 		protected void setColor()
@@ -200,11 +231,11 @@ namespace test.Pieces
 
 
 			if(team == 1) {
-				d.setColorWhite();
+				d.CallDeferred("setColorWhite");
 			}
 			else
 			{
-				d.setColorBlack();
+				d.CallDeferred("setColorBlack");
 			}
 			
 
@@ -256,9 +287,6 @@ namespace test.Pieces
 					pos_vector = old;
 					return new AvailableMove(null, new Vector3(999, 999, 999), false);
 				}
-
-
-
 
 			}
 
@@ -809,9 +837,7 @@ namespace test.Pieces
 				{
 					if (Math.Abs(x) != Math.Abs(z)) // Ensure L-shaped moves
 					{
-						
-						
-
+					
 						Vector3 newPosition = new Vector3(pos_vector.X + x, pos_vector.Y, pos_vector.Z + z);
 
 
@@ -822,8 +848,6 @@ namespace test.Pieces
 							results.Add(a);
 						}
 
-						
-
 					}
 				}
 			}
@@ -832,7 +856,7 @@ namespace test.Pieces
 		}
 
 
-
+		//HORSE
 		private AvailableMove IsValidPosition(Vector3 position,bool cover, bool kingProtect = false)
 		{
 			int newX = (int)position.X;
@@ -891,7 +915,6 @@ namespace test.Pieces
 
 			}
 
-
 			if (kingProtect) { pos_vector = old; };
 
 			return null;
@@ -899,9 +922,13 @@ namespace test.Pieces
 		}
 
 
+
+
+
 		protected List<AvailableMove> pawnMoves(bool cover,bool kingProtection,bool special)
 		{
 			List<AvailableMove> results = new List<AvailableMove>();
+
 
 			Vector3 old = this.pos_vector;
 
@@ -1050,8 +1077,6 @@ namespace test.Pieces
 
 
 
-
-
 				}
 
 
@@ -1190,6 +1215,803 @@ namespace test.Pieces
 
 
 		}
+
+
+		/////////////////////////
+		/////////////////////////
+
+		///////////////////////// VIRTUAL BOARD
+		///////////////////////// VIRTUAL BOARD
+
+		///////////////////////// VIRTUAL BOARD
+		///////////////////////// VIRTUAL BOARD
+
+		/////////////////////////
+		/////////////////////////
+
+		public Board copyCurrentBoard()
+		{
+			return new Board(TableController.table,TableController.enPassant);
+		}
+
+		protected bool kingIsInCheckSame(Board board,Piece target = null)
+		{
+
+			//if (target != null)
+			//{
+			//	board.table.Remove(target);
+			//}
+
+
+			//foreach (Piece piec in board.table)
+			//{
+			//	if (this.team != piec.team)
+			//	{
+			//		foreach (AvailableMove move in piec.CheckValidMovesVirt(board))
+			//		{
+
+			//			if (move.target is King)
+			//			{
+
+			//				if (target != null)
+			//				{
+			//					board.table.Add(target);
+			//				}
+
+			//				return true;
+			//			}
+			//		}
+			//	}
+
+			//}
+
+
+			//if (target != null)
+			//{
+			//	board.table.Add(target);
+			//}
+
+			return false;
+		}
+
+
+
+		protected List<AvailableMove> pawnMoves(bool cover, bool kingProtection, Board board)
+		{
+			List<AvailableMove> results = new List<AvailableMove>();
+
+
+			if (pos_vector.X == 1) { return results; };
+
+
+			Vector3 old = this.pos_vector;
+
+
+			bool checkKing = false;
+
+			Vector3 vec = new Vector3(pos_vector.X + (1 * team), pos_vector.Y, pos_vector.Z);
+
+			Board.target move = board.find(vec, this);
+
+
+
+			if (firstMove)
+			{
+
+
+				Vector3 vec2 = new Vector3(pos_vector.X + (2 * team), pos_vector.Y, pos_vector.Z);
+
+				Board.target move2 = board.find(vec2, this);
+
+
+				if (kingProtection)
+				{
+					pos_vector = vec2;
+					checkKing = kingIsInCheckSame(board);
+				}
+
+
+				if (!kingProtection)
+				{
+					if (vec2.X < 9 && move2.num == 0 && move.num == 0 && !cover)
+					{
+						results.Add(new AvailableMove(this, vec2, false));
+					}
+				}
+				else
+				{
+
+					if (vec2.X < 9 && move2.num == 0 && move.num == 0 && !checkKing)
+					{
+
+						AvailableMove m = new AvailableMove(this, vec2, false);
+
+
+						checkEnPassant(vec2, m,board);
+
+
+						results.Add(m);
+
+					}
+					pos_vector = old;
+
+				}
+
+
+
+
+			}
+
+
+			if (enPassantRight != null || enPassantLeft != null)
+			{
+
+				if (enPassantLeft != null)
+				{
+					Vector3 vec2 = new Vector3(pos_vector.X + (1 * team), pos_vector.Y, pos_vector.Z + 1);
+
+					Board.target move3 = board.find(vec2, this);
+
+					if (kingProtection)
+					{
+						pos_vector = vec2;
+						checkKing = kingIsInCheckSame(board);
+					}
+
+					if (!kingProtection)
+					{
+
+						if (vec.X < 9 && vec.Z > 0 || vec.X < 9 && vec.Z < 9 && cover)
+						{
+							results.Add(new AvailableMove(this, vec2, true, enPassantLeft));
+
+						}
+
+					}
+					else
+					{
+
+						pos_vector = vec;
+						checkKing = kingIsInCheckSame(board,move3.p);
+
+						if (vec.X < 9 && vec.Z > 0 && !checkKing)
+						{
+							results.Add(new AvailableMove(this, vec2, true, enPassantLeft));
+
+						}
+
+						pos_vector = old;
+
+					}
+
+
+
+
+
+				}
+
+				if (enPassantRight != null)
+				{
+					Vector3 vec2 = new Vector3(pos_vector.X + (1 * team), pos_vector.Y, pos_vector.Z - 1);
+					Board.target move3 = board.find(vec2, this);
+
+
+					if (kingProtection)
+					{
+						pos_vector = vec2;
+						checkKing = kingIsInCheckSame(board);
+					}
+
+					if (!kingProtection)
+					{
+
+						if (vec.X < 9 && vec.Z > 0 || vec.X < 9 && vec.Z < 9 && cover)
+						{
+							results.Add(new AvailableMove(this, vec2, true, enPassantRight));
+
+						}
+
+					}
+					else
+					{
+
+						pos_vector = vec;
+						checkKing = kingIsInCheckSame(board, move3.p);
+
+						if (vec.X < 9 && vec.Z > 0 && !checkKing)
+						{
+							results.Add(new AvailableMove(this, vec2, true, enPassantRight));
+
+						}
+
+						pos_vector = old;
+
+					}
+
+
+
+				}
+
+
+			}
+
+
+			if (kingProtection)
+			{
+				pos_vector = vec;
+				checkKing = kingIsInCheckSame(board);
+			}
+
+
+
+
+
+			if (!kingProtection)
+			{
+				if (vec.X < 9 && move.num == 0 && !cover)
+				{
+					results.Add(new AvailableMove(this, vec, false));
+				}
+			}
+			else
+			{
+
+				if (vec.X < 9 && move.num == 0 && !checkKing)
+				{
+					results.Add(new AvailableMove(this, vec, false));
+				}
+				pos_vector = old;
+
+			}
+
+
+			vec = new Vector3(pos_vector.X + (1 * team), pos_vector.Y, pos_vector.Z + 1);
+			move = board.find(vec, this);
+
+
+
+			if (!kingProtection)
+			{
+				if (vec.X < 9 && vec.Z < 9 && move.num == 2 || vec.X < 9 && vec.Z < 9 && cover)
+				{
+					results.Add(new AvailableMove(this, vec, true, move.p));
+
+				}
+			}
+			else
+			{
+
+				pos_vector = vec;
+				checkKing = kingIsInCheckSame(board, move.p);
+
+				if (vec.X < 9 && vec.Z < 9 && move.num == 2 && !checkKing)
+				{
+					results.Add(new AvailableMove(this, vec, true, move.p));
+
+				}
+				pos_vector = old;
+
+			}
+
+			vec = new Vector3(pos_vector.X + (1 * team), pos_vector.Y, pos_vector.Z - 1);
+			move = board.find(vec, this);
+
+
+			if (!kingProtection)
+			{
+
+				if (vec.X < 9 && vec.Z > 0 && move.num == 2 || vec.X < 9 && vec.Z < 9 && cover)
+				{
+					results.Add(new AvailableMove(this, vec, true, move.p));
+
+				}
+
+			}
+			else
+			{
+
+				pos_vector = vec;
+				checkKing = kingIsInCheckSame(board,move.p);
+
+				if (vec.X < 9 && vec.Z > 0 && move.num == 2 && !checkKing)
+				{
+					results.Add(new AvailableMove(this, vec, true, move.p));
+
+				}
+
+				pos_vector = old;
+
+			}
+
+
+
+			return results;
+		}
+
+
+
+
+
+
+		private void checkEnPassant(Vector3 vector, AvailableMove availablemove,Board board)
+		{
+
+
+			vector.Z--;
+
+			Pawn p = board.findPawn(vector, team);
+
+			if (p != null)
+			{
+
+
+
+				availablemove.enPassant = true;
+
+				availablemove.canEnPassantLeft = p;
+
+			}
+
+
+			vector.Z += 2;
+
+			p = board.findPawn(vector, team);
+
+
+			if (p != null)
+			{
+
+
+				availablemove.enPassant = true;
+
+				availablemove.canEnPassantRight = p;
+
+			}
+
+
+		}
+
+
+
+
+
+
+
+
+		protected List<AvailableMove> horseMoves(bool cover, bool kingProtect, Board board)
+		{
+			List<AvailableMove> results = new List<AvailableMove>();
+
+			int[] offsets = { 1, 2, -1, -2 };
+
+			foreach (int x in offsets)
+			{
+				foreach (int z in offsets)
+				{
+					if (Math.Abs(x) != Math.Abs(z)) // Ensure L-shaped moves
+					{
+
+						Vector3 newPosition = new Vector3(pos_vector.X + x, pos_vector.Y, pos_vector.Z + z);
+
+
+						AvailableMove a = IsValidPosition(newPosition, cover, kingProtect, board);
+
+						if (a != null)
+						{
+							results.Add(a);
+						}
+
+					}
+				}
+			}
+
+			return results;
+		}
+
+		//HORSE
+		private AvailableMove IsValidPosition(Vector3 position, bool cover, bool kingProtect, Board board)
+		{
+			int newX = (int)position.X;
+			int newZ = (int)position.Z;
+
+			Vector3 old = new Vector3();
+
+			if (kingProtect) { old = pos_vector; }
+
+
+			Vector3 vec = new Vector3(newX, pos_vector.Y, newZ);
+
+
+			Board.target move = board.find(vec, this);
+
+
+			if (kingProtect) { pos_vector = vec; }
+
+			bool first = newX >= 1 && newX <= 8 && newZ >= 1 && newZ <= 8;
+
+			bool second = newX >= 1 && newX <= 8 && newZ >= 1 && newZ <= 8;
+
+
+			if (!kingProtect)
+			{
+
+				if (first && move.num == 0 || cover && first)
+				{
+					return new AvailableMove(this, vec, false);
+
+				}
+				else if (second && move.num == 2 || cover && second)
+				{
+
+					return new AvailableMove(this, vec, true, move.p);
+				}
+
+			}
+			else
+			{
+
+
+				if (first && move.num == 0 && !kingIsInCheckSame(board))
+				{
+
+					pos_vector = old;
+					return new AvailableMove(this, vec, false);
+
+				}
+				else if (second && move.num == 2 && !kingIsInCheckSame(board,move.p))
+				{
+
+					pos_vector = old;
+					return new AvailableMove(this, vec, true, move.p);
+				}
+
+			}
+
+			if (kingProtect) { pos_vector = old; };
+
+			return null;
+
+		}
+
+
+		private AvailableMove checkWithCover(Vector3 ij,Board board)
+		{
+
+			var t = board.find(ij, this);
+
+			if (t.num == 0)
+			{
+				return new AvailableMove(this, ij, false);
+			}
+			else if (t.num == 2)
+			{
+				return new AvailableMove(this, ij, true, t.p);
+			}
+
+			return new AvailableMove(this, ij, false, true);
+		}
+
+		private AvailableMove check(Vector3 ij,Board board, bool kingProtect = false)
+		{
+
+			var t = board.find(ij, this);
+
+			Vector3 old = pos_vector;
+
+			if (!kingProtect)
+			{
+
+				if (t.num == 0)
+				{
+					return new AvailableMove(this, ij, false);
+				}
+				else if (t.num == 2)
+				{
+					return new AvailableMove(this, ij, true, t.p);
+				}
+
+			}
+			else
+			{
+
+				pos_vector = ij;
+
+
+
+				if (t.num == 0 && !kingIsInCheckSame(board))
+				{
+					pos_vector = old;
+					return new AvailableMove(this, ij, false);
+				}
+				else if (t.num == 2 && !kingIsInCheckSame(board,t.p))
+				{
+					pos_vector = old;
+					return new AvailableMove(this, ij, true, t.p);
+				}
+				else if (t.num == 1)
+				{
+					pos_vector = old;
+					return new AvailableMove(null, new Vector3(999, 999, 999), false);
+				}
+				else if (t.num == 2)
+				{
+					pos_vector = old;
+					return new AvailableMove(null, new Vector3(999, 999, 999), false);
+				}
+
+
+
+
+			}
+
+			pos_vector = old;
+
+			return null;
+		}
+
+
+		private ans diagnolStraightmovesHelper(Vector3 ij, target t, bool kingProtect, bool cover, bool one_square,Board board)
+		{
+
+			ans ans = new ans(null, false);
+
+			if (ij.Z == 9 || ij.Z == 0) { ans.stop = true; return ans; }
+
+			AvailableMove a = check(ij,board,kingProtect);
+
+			if (cover) { a = checkWithCover(ij, board); }
+
+			if (a != null)
+			{
+				ans.move = a;
+				if (a.attack || a.cover || a.move.X == 999) { if (!(cover && a.target is King)) { ans.stop = true; } }
+			}
+			else { if (!kingProtect) { ans.stop = true; } }
+
+
+			if (one_square) { ans.stop = true; };
+
+			return ans;
+		}
+
+
+		protected List<AvailableMove> diagnolMoves(bool one_square, bool cover, Board board, bool kingProtect = false)
+		{
+			List<AvailableMove> results = new List<AvailableMove>();
+
+			Vector3 ij = pos_vector;
+
+			target t = new target();
+
+			ij.Z = pos_vector.Z + 1;
+
+			for (int i = (int)ij.X + 1; i <= 8; i++)
+			{
+				ij.X = i;
+
+				ans ans = diagnolStraightmovesHelper(ij, t, kingProtect, cover, one_square, board);
+
+				if (ans.move != null) { results.Add(ans.move); }
+
+				if (ans.stop) { break; }
+
+
+				ij.Z++;
+
+			}
+
+			ij.Z = pos_vector.Z - 1;
+			ij.X = pos_vector.X;
+
+			for (int i = (int)ij.X - 1; i >= 1; i--)
+			{
+				ij.X = i;
+
+				ans ans = diagnolStraightmovesHelper(ij, t, kingProtect, cover, one_square,board);
+
+				if (ans.move != null) { results.Add(ans.move); }
+
+				if (ans.stop) { break; }
+
+				ij.Z--;
+
+			}
+
+
+			ij.Z = pos_vector.Z - 1;
+			ij.X = pos_vector.X;
+
+			for (int i = (int)ij.X + 1; i <= 8; i++)
+			{
+				ij.X = i;
+
+				ans ans = diagnolStraightmovesHelper(ij, t, kingProtect, cover, one_square, board);
+
+				if (ans.move != null) { results.Add(ans.move); }
+
+				if (ans.stop) { break; }
+
+				ij.Z--;
+
+			}
+
+			ij.Z = pos_vector.Z + 1;
+			ij.X = pos_vector.X;
+
+			for (int i = (int)ij.X - 1; i >= 1; i--)
+			{
+				ij.X = i;
+
+				ans ans = diagnolStraightmovesHelper(ij, t, kingProtect, cover, one_square, board);
+
+				if (ans.move != null) { results.Add(ans.move); }
+
+				if (ans.stop) { break; }
+
+				ij.Z++;
+
+			}
+
+			return results;
+
+		}
+
+		protected List<AvailableMove> straightMoves(bool one_square, bool cover,Board board, bool kingProtect = false)
+		{
+			List<AvailableMove> results = new List<AvailableMove>();
+
+			Vector3 ij = new Vector3();
+
+			target t = new target();
+
+
+			ij.Z = pos_vector.Z + 1;
+			ij.X = pos_vector.X;
+
+			for (int i = (int)ij.Z; i < 9; i++)
+			{
+
+				ij.Z = i;
+
+				ans ans = diagnolStraightmovesHelper(ij, t, kingProtect, cover, one_square,board);
+
+				if (ans.move != null) { results.Add(ans.move); }
+
+				if (ans.stop) { break; }
+
+			}
+
+			ij.Z = pos_vector.Z - 1;
+
+
+			for (int i = (int)ij.Z; i > 0; i--)
+			{
+
+				ij.Z = i;
+
+				ans ans = diagnolStraightmovesHelper(ij, t, kingProtect, cover, one_square,board);
+
+				if (ans.move != null) { results.Add(ans.move); }
+
+				if (ans.stop) { break; }
+			}
+
+			ij.Z = pos_vector.Z;
+			ij.X = pos_vector.X + 1;
+
+			for (int i = (int)ij.X; i < 9; i++)
+			{
+
+				ij.X = i;
+
+				ans ans = diagnolStraightmovesHelper(ij, t, kingProtect, cover, one_square,board);
+
+				if (ans.move != null) { results.Add(ans.move); }
+
+				if (ans.stop) { break; }
+			}
+
+			ij.X = pos_vector.X - 1;
+
+
+			for (int i = (int)ij.X; i > 0; i--)
+			{
+
+				ij.X = i;
+
+				ans ans = diagnolStraightmovesHelper(ij, t, kingProtect, cover, one_square,board);
+
+				if (ans.move != null) { results.Add(ans.move); }
+
+				if (ans.stop) { break; }
+			}
+
+
+
+
+			return results;
+		}
+
+
+		protected List<AvailableMove> kingMoves(Board board)
+		{
+			List<AvailableMove> results = new List<AvailableMove>();
+
+			results.AddRange(straightMoves(true, false,board));
+			results.AddRange(diagnolMoves(true, false,board));
+
+			return results;
+		}
+
+
+		public void VirtualMove(Vector3 vector, AvailableMove move,Board board)
+		{
+
+
+			this.pos_vector = TableController.reversePosition(vector);
+
+			this.position = TableController.convertReverse(pos_vector);
+
+
+			vector.Y = y;
+
+			if (move.attack && move.target != null)
+			{
+				board.table.Remove(board.findPieceID(move.target.ID));
+			}
+
+
+			if (this is Pawn)
+			{
+				Pawn p = (Pawn)this;
+
+				p.promotePawn(board);
+
+			}
+
+
+
+			if (this is King && (move.kingSideCastling || move.queenSideCastling))
+
+			{ move.target.VirtualMove(TableController.calculatePosition(move.rookNewPos), new AvailableMove(move.target, move.rookNewPos, false),board); }
+
+			emptyEnpassant();
+
+
+
+			if (firstMove)
+			{
+				firstMove = false;
+
+				if (move.enPassant)
+				{
+
+					if (move.canEnPassantLeft is not null)
+					{
+						move.canEnPassantLeft.enPassantLeft = (Pawn)this;
+						move.canEnPassantLeft.enPassant = true;
+						board.enPassant.Add(move.canEnPassantLeft);
+					}
+
+					if (move.canEnPassantRight is not null)
+					{
+						move.canEnPassantRight.enPassantRight = (Pawn)this;
+						move.canEnPassantRight.enPassant = true;
+						board.enPassant.Add(move.canEnPassantRight);
+					}
+
+
+
+				}
+
+			}
+
+
+
+		}
+
+
+
 
 
 	}

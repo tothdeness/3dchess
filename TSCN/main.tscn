@@ -7,9 +7,6 @@
 transform = Transform3D(0.983026, 0, 0, 0, 0.983026, 0, 0, 0, 0.983026, 0, 0, 0)
 script = ExtResource("1_l830m")
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.413075, 0.929543, 0.0123033, -0.0122167, -0.00803415, 1.01716, 0.929544, -0.41318, 0.00790082, -61.9674, 16.7224, 12.8173)
-
 [node name="camera" type="Node3D" parent="."]
 transform = Transform3D(0.812137, -0.214081, 0, 0.177936, 0.977113, 0, 0, 0, 1.00045, 0, 0, 0)
 
@@ -18,3 +15,6 @@ transform = Transform3D(-4.44462e-08, 0.456178, -1.13534, 0, 0.943649, 0.379157,
 
 [node name="chess_table" parent="." instance=ExtResource("2_2d2u7")]
 transform = Transform3D(-8.74228e-08, 0, -2, 0, 2, 0, 2, 0, -8.74228e-08, 0, -2.66, 0)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1.01727, 0, 0, 0, 0.444328, 0.915098, 0, -0.915098, 0.444328, 0, 20.9154, 15.5423)

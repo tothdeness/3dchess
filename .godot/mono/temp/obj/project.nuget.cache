@@ -1,9 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "6X9wdnE+KBUeTELgrwfGHKsz5itTi6/P6BeFK0O0eP+LJ6OlL6OgT4/KlqUMe9fABojwhIWQVvBh6qZ794YzvQ==",
+  "dgSpecHash": "ayc0o4F5TirGdI6fxUC1lXoLFpGZBsvO31Lo0nmXHYdsVNeL4FouTwiWEaHk+W5BGNoRsu8nj5jgsgFYzSrUsw==",
   "success": true,
   "projectFilePath": "E:\\2023_24-Egyetem\\2.félév\\3dchess\\test.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\d\\.nuget\\packages\\ardalis.smartenum\\2.0.1\\ardalis.smartenum.2.0.1.nupkg.sha512",
+    "C:\\Users\\d\\.nuget\\packages\\gera.chess\\1.1.0\\gera.chess.1.1.0.nupkg.sha512",
     "C:\\Users\\d\\.nuget\\packages\\godot.sourcegenerators\\4.2.1\\godot.sourcegenerators.4.2.1.nupkg.sha512",
     "C:\\Users\\d\\.nuget\\packages\\godotsharp\\4.2.1\\godotsharp.4.2.1.nupkg.sha512",
     "C:\\Users\\d\\.nuget\\packages\\godotsharpeditor\\4.2.1\\godotsharpeditor.4.2.1.nupkg.sha512",

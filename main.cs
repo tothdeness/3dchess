@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using test.Controllers;
 using test.Mode;
 using test.Pieces;
@@ -19,22 +20,20 @@ public partial class main : Node3D
 	{
 		GD.Print("Udvozlet a 3D sakk jatekban!");
 
-		List<Piece> table = new List<Piece>();
-
-		TableController.tableGraphics = this;
-
-		TableController.table = table;
-
-		SetupBaseGame.AddPiecesStandardGame();
-
-		
-
+		GameController new_game = new GameController(true, 5 , this, -1);
 
 	}
 
 	public override void _Process(double delta)
 	{
 	}
+
+
+	public void add_child(Dummy child)
+	{
+		AddChild(child);
+	}
+
 
 	public override void _Input(InputEvent _event)
 	{

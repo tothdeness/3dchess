@@ -1,4 +1,4 @@
-﻿using Godot;
+using Godot;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -21,12 +21,24 @@ namespace test.Pieces
 
 			inst.Set("position", TableController.calculatePosition(pos_vector));
 
-			TableController.tableGraphics.AddChild(inst);
 
 			node = inst;
 
+			TableController.tableGraphics.CallDeferred("add_child", inst);
+
+
+			Random rand = new Random();
+			this.ID = rand.Next(000000000, 999999999);
+
 			setColor();
 
+		}
+
+
+		public Queen(string position, int team, Board board, bool firstMove, int ID) : base(position, team, board)
+		{
+			this.firstMove = firstMove;
+			this.ID = ID;
 		}
 
 		public override List<AvailableMove> CheckValidMoves(bool s)
@@ -58,5 +70,32 @@ namespace test.Pieces
 
 			return ans;
 		}
-	}
+
+
+
+
+		public override List<AvailableMove> CheckValidMovesOnVirtualBoard(Board board)
+		{
+			List<AvailableMove> ans = new List<AvailableMove>();
+
+			ans.AddRange(diagnolMoves(false, false, board));
+			ans.AddRange(straightMoves(false, false, board));
+
+			return ans;
+		}
+
+
+		public override List<AvailableMove> CheckValidMovesVirt(Board board)
+		{
+			List<AvailableMove> ans = new List<AvailableMove>();
+
+			ans.AddRange(diagnolMoves(false, false, board));
+			ans.AddRange(straightMoves(false, false, board));
+
+			return ans;
+		}
+
+
+
+		}
 }

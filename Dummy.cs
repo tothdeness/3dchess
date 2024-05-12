@@ -31,6 +31,14 @@ public partial class Dummy : MeshInstance3D
 
 
 
+
+	public void _bot_move2(Vector3 move)
+	{
+		this.Set("position", move);
+	}
+
+
+
 	public override void _Input(InputEvent _event)
 	{
 		if(_event is InputEventMouseButton && figureLocked)
@@ -55,10 +63,6 @@ public partial class Dummy : MeshInstance3D
 
 					TableController.current.Move(c.Position, target);
 
-
-					if (target != null && target.attack) { target.target.Delete(); };
-
-
 				}
 
 
@@ -81,8 +85,6 @@ public partial class Dummy : MeshInstance3D
 
 	
 
-
-				//QueueFree();
 			}
 
 		}

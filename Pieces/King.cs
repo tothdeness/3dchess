@@ -1,4 +1,4 @@
-﻿using Godot;
+using Godot;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,9 +21,20 @@ namespace test.Pieces
 
 			node = inst;
 
+			Random rand = new Random();
+			this.ID = rand.Next(000000000, 999999999);
+
 			setColor();
 
 		}
+
+
+		public King(string position, int team, Board board, bool firstMove, int ID) : base(position, team, board)
+		{
+			this.firstMove = firstMove;
+			this.ID = ID;
+		}
+
 
 		public override List<AvailableMove> CheckValidMoves(bool s)
 		{
@@ -54,6 +65,28 @@ namespace test.Pieces
 
 			return ans;
 		}
+
+
+		public override List<AvailableMove> CheckValidMovesOnVirtualBoard(Board board)
+		{
+			List<AvailableMove> ans = new List<AvailableMove>();
+
+			ans.AddRange(kingMoves(board));
+
+
+			return ans;
+		}
+
+
+		public override List<AvailableMove> CheckValidMovesVirt(Board board)
+		{
+			List<AvailableMove> ans = new List<AvailableMove>();
+
+			ans.AddRange(kingMoves( board));
+
+			return ans;
+		}
+
 
 	}
 }
