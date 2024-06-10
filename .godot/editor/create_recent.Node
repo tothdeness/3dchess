@@ -1,3 +1,7 @@
+Button
+VBoxContainer
+MarginContainer
+Control
 DirectionalLight3D
 CollisionShape3D
 StaticBody3D

@@ -10,9 +10,6 @@ namespace test.Bots.Resources
 	public static class SquareScore
 	{
 
-
-
-
 		public static float ReadSquareScoreKnight(Vector3 positon)
 		{
 
@@ -38,9 +35,6 @@ namespace test.Bots.Resources
 		{-0.50f, -0.40f, -0.30f, -0.30f, -0.30f, -0.30f, -0.40f, -0.50f}
 
 		};
-
-
-
 
 
 		public static float ReadSquareScorePawn(Vector3 positon, int team)

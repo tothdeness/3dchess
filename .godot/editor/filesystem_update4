@@ -1,1 +1,11 @@
 res://TSCN/main.tscn
+res://main.cs
+res://GUI/Menu.cs
+res://Dummy.cs
+res://validMove.cs
+res://TSCN/menu.tscn
+res://GUI/menu.gd
+res://GameState.gd
+res://goto_scene.gd
+res://scene_switcher.gd
+res://Bots/Bot.cs

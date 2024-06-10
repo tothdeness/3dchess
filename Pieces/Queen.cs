@@ -8,15 +8,19 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using test.Controllers;
 using static Godot.HttpRequest;
+using test.Pieces.Resources;
 
 namespace test.Pieces
 {
 	public class Queen : Piece
 	{
 
-		public Queen(string position, int team) : base(position,team)
+		public Queen(string position, int team, GameController game) : base(position,team, game)
 		{
-			PackedScene scene = GD.Load<PackedScene>("res://TSCN/mesh.tscn");
+
+			Mesh = "res://TSCN/mesh.tscn";
+
+			PackedScene scene = GD.Load<PackedScene>(Mesh);
 			Node inst = scene.Instantiate();
 
 			inst.Set("position", TableController.calculatePosition(pos_vector));
@@ -35,7 +39,7 @@ namespace test.Pieces
 		}
 
 
-		public Queen(string position, int team, Board board, bool firstMove, int ID) : base(position, team, board)
+		public Queen(string position, int team, Board board, bool firstMove, int ID, GameController game) : base(position, team, board, game)
 		{
 			this.firstMove = firstMove;
 			this.ID = ID;

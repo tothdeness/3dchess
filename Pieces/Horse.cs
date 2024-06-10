@@ -5,19 +5,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using test.Controllers;
+using test.Pieces.Resources;
 
 namespace test.Pieces
 {
-	public class Horse : Piece
+    public class Horse : Piece
 	{
-		public Horse(string position, int team) : base(position, team)
+		public Horse(string position, int team, GameController game) : base(position, team, game)
 		{
-			PackedScene scene = GD.Load<PackedScene>("res://TSCN/horse.tscn");
+			Mesh = "res://TSCN/horse.tscn";
+
+			PackedScene scene = GD.Load<PackedScene>(Mesh);
 			Node inst = scene.Instantiate();
 
-			y = 1;
+			pos_vector = new Vector3(pos_vector.X, 1, pos_vector.Z);
 
-			inst.Set("position", TableController.calculatePosition(new Vector3(pos_vector.X, y, pos_vector.Z)));
+			inst.Set("position", TableController.calculatePosition(pos_vector));
 
 			TableController.tableGraphics.AddChild(inst);
 
@@ -33,7 +36,7 @@ namespace test.Pieces
 		}
 
 
-		public Horse(string position, int team, Board board, bool firstMove, int ID) : base(position, team, board)
+		public Horse(string position, int team, Board board, bool firstMove, int ID, GameController game) : base(position, team, board, game)
 		{
 			this.firstMove = firstMove;
 			this.ID = ID;
@@ -75,7 +78,7 @@ namespace test.Pieces
 		{
 			List<AvailableMove> ans = new List<AvailableMove>();
 
-			ans.AddRange(horseMoves(false, true, board));
+			ans.AddRange(horseMoves(false, false, board));
 
 			return ans;
 		}

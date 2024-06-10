@@ -5,14 +5,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using test.Controllers;
+using test.Pieces.Resources;
 
 namespace test.Pieces
 {
-	public class Bishop : Piece
+    public class Bishop : Piece
 	{
-		public Bishop(string position, int team) : base(position, team)
+
+
+
+
+		public Bishop(string position, int team, GameController gameController) : base(position, team, gameController)
 		{
-			PackedScene scene = GD.Load<PackedScene>("res://TSCN/bishop.tscn");
+
+			Mesh = "res://TSCN/bishop.tscn";
+
+			PackedScene scene = GD.Load<PackedScene>(Mesh);
 			Node inst = scene.Instantiate();
 
 			inst.Set("position", TableController.calculatePosition(pos_vector));
@@ -28,7 +36,7 @@ namespace test.Pieces
 
 		}
 
-		public Bishop(string position, int team, Board board, bool firstMove, int ID) : base(position, team, board)
+		public Bishop(string position, int team, Board board, bool firstMove, int ID,GameController game) : base(position, team, board, game)
 		{
 			this.firstMove = firstMove;
 			this.ID = ID;

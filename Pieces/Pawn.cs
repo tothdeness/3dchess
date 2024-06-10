@@ -1,4 +1,4 @@
-﻿using Godot;
+using Godot;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,6 +7,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 using test.Controllers;
+using test.Pieces.Resources;
 
 
 
@@ -17,15 +18,18 @@ namespace test.Pieces
 	{
 
 
-		public Pawn(string position, int team) : base(position, team)
+		public Pawn(string position, int team, GameController game) : base(position, team, game)
 		{
-	
-				PackedScene scene = GD.Load<PackedScene>("res://TSCN/pawn.tscn");
+
+				Mesh = "res://TSCN/pawn.tscn";
+
+				PackedScene scene = GD.Load<PackedScene>(Mesh);
 				Node inst = scene.Instantiate();
 
-				y = 1;
 
-				inst.Set("position", TableController.calculatePosition(new Vector3(pos_vector.X, y, pos_vector.Z)));
+				pos_vector = new Vector3(pos_vector.X, 1, pos_vector.Z);
+
+				inst.Set("position", TableController.calculatePosition(pos_vector));
 
 				TableController.tableGraphics.AddChild(inst);
 
@@ -39,7 +43,7 @@ namespace test.Pieces
 		}
 
 
-		public Pawn(string position, int team, Board board, bool firstMove, int ID) : base(position, team, board) {
+		public Pawn(string position, int team, Board board, bool firstMove, int ID, GameController game) : base(position, team, board, game) {
 			this.firstMove = firstMove;
 			this.ID = ID;
 		}
@@ -61,7 +65,7 @@ namespace test.Pieces
 			{
 				Delete();
 
-				Queen q = new Queen(position, team);
+				Queen q = new Queen(position, team, this.gameController);
 
 			}
 
@@ -71,7 +75,7 @@ namespace test.Pieces
 		{
 			if (pos_vector.X == 8 || pos_vector.X == 1)
 			{
-				Queen q = new Queen(position, team, board, false, this.ID);
+				Queen q = new Queen(position, team, board, false, this.ID, this.gameController);
 
 				board.table.Remove(board.findPieceID(this.ID));
 			}
@@ -83,7 +87,7 @@ namespace test.Pieces
 
 		public override Pawn Clone(Piece p)
 		{
-			return new Pawn(p.position,p.team);
+			return new Pawn(p.position,p.team,this.gameController);
 		}
 
 
@@ -113,7 +117,7 @@ namespace test.Pieces
 		{
 			List<AvailableMove> ans = new List<AvailableMove>();
 
-			ans.AddRange(pawnMoves(false, true, board));
+			ans.AddRange(pawnMoves(false, false, board));
 
 			return ans;
 		}

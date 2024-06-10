@@ -1,4 +1,4 @@
-﻿using Godot;
+using Godot;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using test.Mode;
+using test.Pieces;
 
 namespace test.Controllers
 {
@@ -22,6 +23,8 @@ namespace test.Controllers
 
 		int player1;
 
+		public List<Piece> table;
+
 		int player2; //bot 
 
 		public GameController(bool botGame, int depth, Node3D tableGraphics,  int player1)
@@ -34,7 +37,8 @@ namespace test.Controllers
 			this.player2 = player1 * -1;
 			TableController.tableGraphics = tableGraphics;
 			TableController.game = this;
-			SetupBaseGame.AddPiecesStandardGame();
+			table = TableController.table;
+			SetupBaseGame.AddPiecesStandardGame(this);
 			if(player1 == -1) { NextMove(player1); }
 		}
 
@@ -46,11 +50,14 @@ namespace test.Controllers
 			if (team == player1 && botGame)
 			{
 
-		    	Bot.Bot bot = new Bot.Bot(depth,player2);
+				Bot.Bot bot = new Bot.Bot(depth,player2);
 
-				Thread bot_thread = new Thread(bot.executeNextMove);
+				Thread bot_thread = new Thread(bot.executeNextMove); 
 				
-				bot_thread.Start();
+			
+					bot_thread.Start();
+				
+
 			}
 
 

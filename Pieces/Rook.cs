@@ -1,19 +1,22 @@
-﻿using Godot;
+using Godot;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using test.Controllers;
+using test.Pieces.Resources;
 
 namespace test.Pieces
 {
 	public class Rook : Piece
 	{
-		public Rook(string position, int team) : base(position, team)
+		public Rook(string position, int team, GameController game) : base(position, team, game)
 		{
 
-			PackedScene scene = GD.Load<PackedScene>("res://TSCN/rook.tscn");
+			Mesh = "res://TSCN/rook.tscn";
+
+			PackedScene scene = GD.Load<PackedScene>(Mesh);
 			Node inst = scene.Instantiate();
 
 			inst.Set("position", TableController.calculatePosition(pos_vector));
@@ -30,7 +33,8 @@ namespace test.Pieces
 		}
 
 
-		public Rook(string position, int team, Board board, bool firstMove, int ID) : base(position, team, board)
+
+		public Rook(string position, int team, Board board, bool firstMove, int ID, GameController game) : base(position, team, board, game)
 		{
 			this.firstMove = firstMove;
 			this.ID = ID;

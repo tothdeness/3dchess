@@ -212,7 +212,7 @@ namespace test.Controllers
 
 		public static Vector3 reversePosition(Vector3 vec)
 		{
-			return new Vector3((vec.X + 18) / 4, 3, (vec.Z + 18) / 4);
+			return new Vector3((vec.X + 18) / 4, vec.Y, (vec.Z + 18) / 4);
 		}
 
 

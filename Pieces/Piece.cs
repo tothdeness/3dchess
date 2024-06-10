@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using test.Controllers;
+using test.Pieces.Resources;
 using static Godot.HttpRequest;
 using static test.Controllers.TableController;
 
@@ -20,7 +21,7 @@ namespace test.Pieces
 	{
 		//VERTICAL POS 3 (Y)
 
-
+		public string Mesh;
 		public Node node { get; set; }
 	  
 		public string position;
@@ -31,12 +32,13 @@ namespace test.Pieces
 
 		public int ID;
 
+		public GameController gameController;
+
 		public Vector3 pos_vector { get; set; }
 	
 		//-1 black, 1 white
 		public int team { get; set; }
 
-		public bool pressed = false;
 
 		public List<AvailableMove> moves = new List<AvailableMove>();
 
@@ -73,58 +75,44 @@ namespace test.Pieces
 
 		public void ShowValidMoves()
 		{
-			if (!pressed) {
-
-				var watch = new Stopwatch();
-				
-
-
-
-
-				//watch.Start();
-
-				moves.AddRange(TableController.calculateVisualizers(CheckValidMovesWithKingProtection()));
-
-				// for(int i = 0;i < 30000; i++)
-				//{
-				//	CheckValidMovesWithKingProtection();
-				//}
-
-
-				//watch.Stop();
-
-				//GD.Print(watch.ElapsedMilliseconds);
-
-				//GD.Print( (float) watch.ElapsedMilliseconds / 30000);
-
-				pressed = true;
-				ViewController.pressed.Add(this);
-			}
-
-
-
-			TableController.showVisualizers(moves, this);
-	
-			
+			TableController.showVisualizers(TableController.calculateVisualizers(CheckValidMovesWithKingProtection()), this);
 		}
+
+
 
 		public void DeleteVisualizers() {
-
 			TableController.removeVisualizers();
-
 		}
+
+
+		public void SetMesh()
+		{
+
+			PackedScene scene = GD.Load<PackedScene>(Mesh);
+			Node inst = scene.Instantiate();
+
+			inst.Set("position", TableController.calculatePosition(pos_vector));
+
+			TableController.tableGraphics.AddChild(inst);
+
+			node = inst;
+
+			setColor();
+		}
+
+
+
+
+
 
 		public void Move(Vector3 vector,AvailableMove move) {
 
+			vector.Y = pos_vector.Y;
 
 			this.pos_vector = TableController.reversePosition(vector);
 
 			this.position = TableController.convertReverse(pos_vector);
 
-
-			vector.Y = y;
-		
-			this.node.CallDeferred("_bot_move2", vector);
 
 			if (move.target != null && move.attack) { move.target.Delete(); };
 
@@ -138,14 +126,12 @@ namespace test.Pieces
 			}
 
 
-
 			if (this is King && (move.kingSideCastling || move.queenSideCastling))
 
 			{ move.target.Move(TableController.calculatePosition(move.rookNewPos), new AvailableMove(move.target, move.rookNewPos, false)); }
 
 			emptyEnpassant();
 
-			ViewController.deletePressed();
 
 			if (firstMove)
 			{
@@ -175,6 +161,9 @@ namespace test.Pieces
 			}
 
 
+			TableController.removeVisualizers();
+
+			this.node.CallDeferred("_bot_move2", vector);
 
 			TableController.game.NextMove(team);
 
@@ -185,19 +174,20 @@ namespace test.Pieces
 
 		public void Delete()
 		{
+			TableController.table.Remove(this);
+
 			this.node.QueueFree();
 
 			DeleteVisualizers();
 
-			TableController.table.Remove(this);
-
 		}
 
 
-		protected Piece(string position, int team)
+		protected Piece(string position, int team, GameController game)
 		{
 			this.position = position;
 			this.team = team;
+			this.gameController = game;
 
 			TableController.table.Add(this);
 
@@ -208,10 +198,11 @@ namespace test.Pieces
 			
 		}
 
-		protected Piece(string position, int team, Board board)
+		protected Piece(string position, int team, Board board, GameController game)
 		{
 			this.position = position;
 			this.team = team;
+			this.gameController = game;
 
 			board.table.Add(this);
 
@@ -1237,39 +1228,38 @@ namespace test.Pieces
 		protected bool kingIsInCheckSame(Board board,Piece target = null)
 		{
 
-			//if (target != null)
-			//{
-			//	board.table.Remove(target);
-			//}
+			if (target != null)
+			{
+				board.table.Remove(target);
+			}
 
 
-			//foreach (Piece piec in board.table)
-			//{
-			//	if (this.team != piec.team)
-			//	{
-			//		foreach (AvailableMove move in piec.CheckValidMovesVirt(board))
-			//		{
+			foreach (Piece piec in board.table)
+			{
+				if (this.team != piec.team)
+				{
+					foreach (AvailableMove move in piec.CheckValidMovesVirt(board))
+					{
 
-			//			if (move.target is King)
-			//			{
+						if (move.target is King)
+						{
 
-			//				if (target != null)
-			//				{
-			//					board.table.Add(target);
-			//				}
+							if (target != null)
+							{
+								board.table.Add(target);
+							}
 
-			//				return true;
-			//			}
-			//		}
-			//	}
+							return true;
+						}
+					}
+				}
 
-			//}
+			}
 
-
-			//if (target != null)
-			//{
-			//	board.table.Add(target);
-			//}
+			if (target != null)
+			{
+				board.table.Add(target);
+			}
 
 			return false;
 		}
@@ -1739,9 +1729,6 @@ namespace test.Pieces
 					return new AvailableMove(null, new Vector3(999, 999, 999), false);
 				}
 
-
-
-
 			}
 
 			pos_vector = old;
@@ -1750,187 +1737,109 @@ namespace test.Pieces
 		}
 
 
-		private ans diagnolStraightmovesHelper(Vector3 ij, target t, bool kingProtect, bool cover, bool one_square,Board board)
+	private ans diagnolStraightmovesHelper(Vector3 ij, bool kingProtect, bool cover, bool one_square, Board board)
+{
+	ans ans = new ans(null, false);
+
+	if (ij.Z < 1 || ij.Z > 8 || ij.X < 1 || ij.X > 8) 
+	{
+		ans.stop = true;
+		return ans;
+	}
+
+	AvailableMove a = check(ij, board, kingProtect);
+	if (cover) 
+	{ 
+		a = checkWithCover(ij, board); 
+	}
+
+	if (a != null)
+	{
+		ans.move = a;
+		if (a.attack || a.cover || a.move.X == 999) 
 		{
-
-			ans ans = new ans(null, false);
-
-			if (ij.Z == 9 || ij.Z == 0) { ans.stop = true; return ans; }
-
-			AvailableMove a = check(ij,board,kingProtect);
-
-			if (cover) { a = checkWithCover(ij, board); }
-
-			if (a != null)
-			{
-				ans.move = a;
-				if (a.attack || a.cover || a.move.X == 999) { if (!(cover && a.target is King)) { ans.stop = true; } }
+			if (!(cover && a.target is King)) 
+			{ 
+				ans.stop = true; 
 			}
-			else { if (!kingProtect) { ans.stop = true; } }
-
-
-			if (one_square) { ans.stop = true; };
-
-			return ans;
 		}
+	}
+	else 
+	{ 
+		if (!kingProtect) 
+		{ 
+			ans.stop = true; 
+		} 
+	}
 
+	if (one_square) 
+	{ 
+		ans.stop = true; 
+	}
 
-		protected List<AvailableMove> diagnolMoves(bool one_square, bool cover, Board board, bool kingProtect = false)
+	return ans;
+}
+
+	private List<AvailableMove> generateMoves(List<Vector3> directions, bool one_square, bool cover, Board board, bool kingProtect = false)
+{
+	List<AvailableMove> results = new List<AvailableMove>();
+
+	foreach (Vector3 direction in directions)
+	{
+		Vector3 ij = pos_vector;
+		while (true)
 		{
-			List<AvailableMove> results = new List<AvailableMove>();
+			ij.X += direction.X;
+			ij.Z += direction.Z;
 
-			Vector3 ij = pos_vector;
+			ans ans = diagnolStraightmovesHelper(ij, kingProtect, cover, one_square, board);
 
-			target t = new target();
-
-			ij.Z = pos_vector.Z + 1;
-
-			for (int i = (int)ij.X + 1; i <= 8; i++)
-			{
-				ij.X = i;
-
-				ans ans = diagnolStraightmovesHelper(ij, t, kingProtect, cover, one_square, board);
-
-				if (ans.move != null) { results.Add(ans.move); }
-
-				if (ans.stop) { break; }
-
-
-				ij.Z++;
-
+			if (ans.move != null) 
+			{ 
+				results.Add(ans.move); 
 			}
 
-			ij.Z = pos_vector.Z - 1;
-			ij.X = pos_vector.X;
-
-			for (int i = (int)ij.X - 1; i >= 1; i--)
-			{
-				ij.X = i;
-
-				ans ans = diagnolStraightmovesHelper(ij, t, kingProtect, cover, one_square,board);
-
-				if (ans.move != null) { results.Add(ans.move); }
-
-				if (ans.stop) { break; }
-
-				ij.Z--;
-
+			if (ans.stop) 
+			{ 
+				break; 
 			}
-
-
-			ij.Z = pos_vector.Z - 1;
-			ij.X = pos_vector.X;
-
-			for (int i = (int)ij.X + 1; i <= 8; i++)
-			{
-				ij.X = i;
-
-				ans ans = diagnolStraightmovesHelper(ij, t, kingProtect, cover, one_square, board);
-
-				if (ans.move != null) { results.Add(ans.move); }
-
-				if (ans.stop) { break; }
-
-				ij.Z--;
-
-			}
-
-			ij.Z = pos_vector.Z + 1;
-			ij.X = pos_vector.X;
-
-			for (int i = (int)ij.X - 1; i >= 1; i--)
-			{
-				ij.X = i;
-
-				ans ans = diagnolStraightmovesHelper(ij, t, kingProtect, cover, one_square, board);
-
-				if (ans.move != null) { results.Add(ans.move); }
-
-				if (ans.stop) { break; }
-
-				ij.Z++;
-
-			}
-
-			return results;
-
 		}
+	}
 
-		protected List<AvailableMove> straightMoves(bool one_square, bool cover,Board board, bool kingProtect = false)
-		{
-			List<AvailableMove> results = new List<AvailableMove>();
-
-			Vector3 ij = new Vector3();
-
-			target t = new target();
+	return results;
+}
 
 
-			ij.Z = pos_vector.Z + 1;
-			ij.X = pos_vector.X;
 
-			for (int i = (int)ij.Z; i < 9; i++)
-			{
+	protected List<AvailableMove> diagnolMoves(bool one_square, bool cover, Board board, bool kingProtect = false)
+	{
+	List<Vector3> diagonalDirections = new List<Vector3>
+	{
+		new Vector3(1, 0, 1),
+		new Vector3(-1, 0, -1),
+		new Vector3(1, 0, -1),
+		new Vector3(-1, 0, 1)
+	};
 
-				ij.Z = i;
-
-				ans ans = diagnolStraightmovesHelper(ij, t, kingProtect, cover, one_square,board);
-
-				if (ans.move != null) { results.Add(ans.move); }
-
-				if (ans.stop) { break; }
-
-			}
-
-			ij.Z = pos_vector.Z - 1;
-
-
-			for (int i = (int)ij.Z; i > 0; i--)
-			{
-
-				ij.Z = i;
-
-				ans ans = diagnolStraightmovesHelper(ij, t, kingProtect, cover, one_square,board);
-
-				if (ans.move != null) { results.Add(ans.move); }
-
-				if (ans.stop) { break; }
-			}
-
-			ij.Z = pos_vector.Z;
-			ij.X = pos_vector.X + 1;
-
-			for (int i = (int)ij.X; i < 9; i++)
-			{
-
-				ij.X = i;
-
-				ans ans = diagnolStraightmovesHelper(ij, t, kingProtect, cover, one_square,board);
-
-				if (ans.move != null) { results.Add(ans.move); }
-
-				if (ans.stop) { break; }
-			}
-
-			ij.X = pos_vector.X - 1;
-
-
-			for (int i = (int)ij.X; i > 0; i--)
-			{
-
-				ij.X = i;
-
-				ans ans = diagnolStraightmovesHelper(ij, t, kingProtect, cover, one_square,board);
-
-				if (ans.move != null) { results.Add(ans.move); }
-
-				if (ans.stop) { break; }
-			}
+	return generateMoves(diagonalDirections, one_square, cover, board, kingProtect);
+	}
 
 
 
 
-			return results;
-		}
+	protected List<AvailableMove> straightMoves(bool one_square, bool cover, Board board, bool kingProtect = false)
+	{
+	List<Vector3> straightDirections = new List<Vector3>
+	{
+		new Vector3(1, 0, 0),
+		new Vector3(-1, 0, 0),
+		new Vector3(0, 0, 1),
+		new Vector3(0, 0, -1)
+	};
+
+	return generateMoves(straightDirections, one_square, cover, board, kingProtect);
+	}
+
 
 
 		protected List<AvailableMove> kingMoves(Board board)
@@ -1969,15 +1878,11 @@ namespace test.Pieces
 
 			}
 
-
-
 			if (this is King && (move.kingSideCastling || move.queenSideCastling))
 
 			{ move.target.VirtualMove(TableController.calculatePosition(move.rookNewPos), new AvailableMove(move.target, move.rookNewPos, false),board); }
 
 			emptyEnpassant();
-
-
 
 			if (firstMove)
 			{
@@ -2005,8 +1910,6 @@ namespace test.Pieces
 				}
 
 			}
-
-
 
 		}
 

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using test.Bots.Resources;
 using test.Controllers;
 using test.Pieces;
+using test.Pieces.Resources;
 
 
 namespace test.Bot
@@ -36,7 +37,7 @@ namespace test.Bot
 
 		private static float queen = 9f;
 
-		private static float king = 100000f;
+		private static float king = 800000f;
 
 		public NodeStatus currBestNode;
 
@@ -63,20 +64,15 @@ namespace test.Bot
 			var best = new NodeStatus();
 
 
-
 			if (depth == 0)
 			{
-				var ans = evaluateBoard(board.table);
+				var ans = evaluateBoard(board,currPlayer);
 				return ans;
 			}
 
-
-
-
+	
 			var new_board = new Board(new List<Piece>(), new List<Pawn>());
 			copyPieces(board.table, new_board);
-
-
 
 
 			if (currPlayer == 1) {
@@ -86,8 +82,6 @@ namespace test.Bot
 
 				foreach (AvailableMove move in calculateCurrTeamAllMove(new_board, 1))
 				{
-
-
 
 					move.moving = new_board.findPieceID(move.moving.ID);
 					move.moving.VirtualMove(TableController.calculatePosition(move.move), move, new_board);
@@ -115,9 +109,11 @@ namespace test.Bot
 			}
 			else
 			{
-				 best = new NodeStatus(10000f, null);
+				best = new NodeStatus(10000f, null);
 
-				foreach (AvailableMove move in calculateCurrTeamAllMove(new_board, -1))
+				List<AvailableMove> moves = calculateCurrTeamAllMove(new_board, -1);
+
+				foreach (AvailableMove move in moves)
 				{
 					move.moving = new_board.findPieceID(move.moving.ID);
 
@@ -139,9 +135,9 @@ namespace test.Bot
 
 					beta = Math.Min(beta, val.positionPoints);
 					if (beta <= alpha) { break; }
-	
 
 				}
+
 
 
 			}
@@ -155,18 +151,16 @@ namespace test.Bot
 
 
 
-		private NodeStatus evaluateBoard(List<Piece> board)
+		private NodeStatus evaluateBoard(Board board, int currplayer)
 		{
 			NodeStatus ans = new NodeStatus(0f, null);
 
-			Stopwatch watch = new Stopwatch();
 
-	
+			
 
-			foreach (Piece piece in board)
-			{
 
-				
+			foreach (Piece piece in board.table)
+			{		
 
 				if (piece is Pawn) {
 
@@ -203,28 +197,13 @@ namespace test.Bot
 				}
 
 
-
-
 				if (piece is Bishop) { _ = piece.team == 1 ? ans.positionPoints += bishop : ans.positionPoints -= bishop; continue; }
 				if (piece is Rook) { _ = piece.team == 1 ? ans.positionPoints += rook : ans.positionPoints -= rook; continue; }
 				if (piece is Queen) { _ = piece.team == 1 ? ans.positionPoints += queen : ans.positionPoints -= queen; continue; }
 				if (piece is King) { _ = piece.team == 1 ? ans.positionPoints += king : ans.positionPoints -= king; continue; }
 
-
-
-			}
-
-
-			
-			
-
-
-
-
-			//GD.Print("Pontok: " + ans.positionPoints + " Fekete pawns: " + ans.blackPawns + " Fehér pawns: " + ans.whitePawns + " Fekete lo: " + ans.blackHorse + " Fehér lo: " + ans.whiteHorse);
-
-
-			numofEv++;
+			}	
+	
 
 			return ans;
 		}
@@ -238,23 +217,17 @@ namespace test.Bot
 
 			for (int i = 0; i < list.Count; i++)
 			{
-				if (list[i] is Pawn) { new Pawn(list[i].position, list[i].team, board, list[i].firstMove, list[i].ID); continue; }
-				if (list[i] is Horse) { new Horse(list[i].position, list[i].team, board, list[i].firstMove, list[i].ID); continue; }
-				if (list[i] is Bishop) { new Bishop(list[i].position, list[i].team, board, list[i].firstMove, list[i].ID); continue; }
-				if (list[i] is Rook) { new Rook(list[i].position, list[i].team, board, list[i].firstMove, list[i].ID); continue; }
-				if (list[i] is Queen) { new Queen(list[i].position, list[i].team, board, list[i].firstMove, list[i].ID); continue; }
-				if (list[i] is King) { new King(list[i].position, list[i].team, board, list[i].firstMove, list[i].ID); continue; }
+				if (list[i] is Pawn) { new Pawn(list[i].position, list[i].team, board, list[i].firstMove, list[i].ID, list[i].gameController); continue; }
+				if (list[i] is Horse) { new Horse(list[i].position, list[i].team, board, list[i].firstMove, list[i].ID, list[i].gameController); continue; }
+				if (list[i] is Bishop) { new Bishop(list[i].position, list[i].team, board, list[i].firstMove, list[i].ID, list[i].gameController); continue; }
+				if (list[i] is Rook) { new Rook(list[i].position, list[i].team, board, list[i].firstMove, list[i].ID, list[i].gameController); continue; }
+				if (list[i] is Queen) { new Queen(list[i].position, list[i].team, board, list[i].firstMove, list[i].ID, list[i].gameController); continue; }
+				if (list[i] is King) { new King(list[i].position, list[i].team, board, list[i].firstMove, list[i].ID, list[i].gameController); continue; }
 			}
 
 
 
 		}
-
-
-
-
-
-
 
 
 		public void executeNextMove()
@@ -283,7 +256,13 @@ namespace test.Bot
 			GD.Print("Generalasi ido: " + watch.ElapsedMilliseconds + " Masolas ido: " + copyTime + " Numof Evalution: " + numofEv);
 
 
-			s.move.moving.Move(TableController.calculatePosition(s.move.move), s.move);
+
+			try { s.move.moving.Move(TableController.calculatePosition(s.move.move), s.move); } catch
+			{
+				GD.Print("Off screen move!");
+			}
+			
+
 		}
 
 
@@ -326,10 +305,7 @@ namespace test.Bot
 
 						List<AvailableMove> temp = boardPieces[i].CheckValidMovesOnVirtualBoard(board);
 
-					
-						
 				
-
 						ans.AddRange(temp);
 
 
