@@ -19,6 +19,8 @@ namespace test.Pieces
 			PackedScene scene = GD.Load<PackedScene>(Mesh);
 			Node inst = scene.Instantiate();
 
+			pos_vector = new Vector3(pos_vector.X, -0.25f, pos_vector.Z);
+
 			inst.Set("position", TableController.calculatePosition(pos_vector));
 
 			TableController.tableGraphics.AddChild(inst);

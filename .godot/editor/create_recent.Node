@@ -1,11 +1,14 @@
-Button
+CollisionShape3D
+Label
+CheckButton
 VBoxContainer
+RichTextLabel
+HSlider
+Button
 MarginContainer
 Control
 DirectionalLight3D
-CollisionShape3D
 StaticBody3D
 MeshInstance3D
 Node3D
 CharacterBody3D
-Camera3D

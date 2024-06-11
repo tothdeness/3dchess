@@ -19,19 +19,21 @@ public partial class main : Node3D
 
 	public override void _Ready()
 	{
-
-
-
 		GD.Print("Udvozlet a 3D sakk jatekban!");
-
-
 	}
 
-	public void test()
+	public void StartNewBotGame(int depth,int team)
 	{
 		TableController.table.Clear();
-		GameController new_game = new GameController(true, 3, this, -1);
+		GameController new_game = new GameController(true, depth, this, team);
 	}
+
+	public void StartNewPvpGame()
+	{
+		TableController.table.Clear();
+		GameController new_game = new GameController(false,0,this,1);
+	}
+
 
 
 	public void SetMesh()

@@ -4,27 +4,22 @@ extends Control
 func _ready():
 	pass
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	pass
-
 func _on_settings_pressed():
-	pass
+	print("todo!")
 
 func _on_quit_pressed():
 	get_tree().quit()
 
 func _on_new_game_bot_pressed():
-	var switcher = SceneSwitcher
-	switcher.create_scene("res://TSCN/main.tscn")
-	switcher.curr.test()
-	switcher.switch_scene_withoutparam()
+	SceneSwitcher.switch_scene("res://TSCN/new_bot_game.tscn")
 	
 	
 
 func _on_new_game_player_pressed():
-	print("todo!")
-	
+	var switcher = SceneSwitcher
+	switcher.create_scene("res://TSCN/main.tscn")
+	switcher.curr.StartNewPvpGame()
+	switcher.switch_scene_withoutparam()
 	
 	
 func _input(event):
@@ -34,4 +29,5 @@ func _input(event):
 		switcher.curr.SetMesh()
 		switcher.switch_scene_withoutparam()
 		
+
 

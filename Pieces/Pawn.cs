@@ -27,7 +27,7 @@ namespace test.Pieces
 				Node inst = scene.Instantiate();
 
 
-				pos_vector = new Vector3(pos_vector.X, 1, pos_vector.Z);
+				pos_vector = new Vector3(pos_vector.X, -0.25f , pos_vector.Z);
 
 				inst.Set("position", TableController.calculatePosition(pos_vector));
 

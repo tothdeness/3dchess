@@ -1,19 +1,19 @@
 [gd_scene load_steps=4 format=3 uid="uid://4rtq8xgnif4y"]
 
+[ext_resource type="ArrayMesh" uid="uid://d5h8ulsmdenf" path="res://TSCN/horse.obj" id="1_6ol02"]
 [ext_resource type="Script" path="res://Dummy.cs" id="1_abnli"]
-
-[sub_resource type="PrismMesh" id="PrismMesh_q07n0"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_c17i4"]
 
 [node name="MeshInstance3D" type="MeshInstance3D"]
-transform = Transform3D(1.99999, 0.00601526, -0.00668651, -0.00341751, 3.49998, 0.00591782, 0.00669664, -0.0103361, 1.99998, 0, 0, 0)
-mesh = SubResource("PrismMesh_q07n0")
+transform = Transform3D(0.799994, 0.00137491, -0.0026746, -0.001367, 0.799995, 0.00236712, 0.00267865, -0.00236254, 0.799992, 0, 0, 0)
+mesh = ExtResource("1_6ol02")
 script = ExtResource("1_abnli")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="."]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(2.98154, 1.44792e-08, -2.79397e-09, -4.66207e-09, 6.27535, -7.45058e-09, 1.58325e-08, -2.6077e-08, 3.90249, 2.54659e-10, 3.092, -9.31323e-10)
 shape = SubResource("BoxShape3D_c17i4")
 
 [connection signal="input_event" from="StaticBody3D" to="." method="_on_static_body_3d_input_event"]

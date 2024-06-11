@@ -1,19 +1,19 @@
 [gd_scene load_steps=4 format=3 uid="uid://cm3dujumjtbuu"]
 
 [ext_resource type="Script" path="res://Dummy.cs" id="1_1tybw"]
-
-[sub_resource type="BoxMesh" id="BoxMesh_el0lu"]
+[ext_resource type="ArrayMesh" uid="uid://bho52l61hrmf2" path="res://TSCN/king.obj" id="1_wieyc"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_jyw6u"]
 
 [node name="MeshInstance3D" type="MeshInstance3D"]
-transform = Transform3D(1.99997, -0.00034264, 0.0103753, 5.20712e-05, 5.99989, 0.0119786, -0.0103758, -0.0359346, 1.99994, 0, 0, 0)
-mesh = SubResource("BoxMesh_el0lu")
+transform = Transform3D(0.849989, -4.85408e-05, 0.00440951, 2.21303e-05, 0.849985, 0.00509092, -0.00440972, -0.00509074, 0.849973, 0, 0, 0)
+mesh = ExtResource("1_wieyc")
 script = ExtResource("1_1tybw")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="."]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(2.7061, -5.23869e-10, 3.53903e-08, -5.16593e-10, 8.73516, 2.04891e-08, -1.86265e-08, 5.21541e-08, 3.33622, -2.91038e-11, 4.385, 3.72529e-09)
 shape = SubResource("BoxShape3D_jyw6u")
 
 [connection signal="input_event" from="StaticBody3D" to="." method="_on_static_body_3d_input_event"]
