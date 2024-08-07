@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
@@ -34,6 +35,10 @@ namespace test.Pieces
 
 		public GameController gameController;
 
+		public Dictionary<string,Vector3> directions = new Dictionary<string, Vector3>();
+
+		public List<Vector3> validDirections = new List<Vector3>();
+
 		public Vector3 pos_vector { get; set; }
 	
 		//-1 black, 1 white
@@ -52,8 +57,6 @@ namespace test.Pieces
 
 		public int hit = 0;
 
-
-
 		public virtual List<AvailableMove> CheckValidMoves(bool special) { throw new NotImplementedException(); }
 
 
@@ -65,6 +68,7 @@ namespace test.Pieces
 
 		public virtual List<AvailableMove> CheckValidMovesOnVirtualBoard(Board board) { throw new NotImplementedException(); }
 
+		public virtual List<AvailableMove> CheckValidCoveredMovesOnVirtualBoard(Board board) { throw new NotImplementedException(); }
 
 		public virtual List<AvailableMove> CheckValidMovesVirt(Board board) { throw new NotImplementedException(); }
 
@@ -73,15 +77,21 @@ namespace test.Pieces
 
 
 
-		public void ShowValidMoves()
+		public void ShowValidMoves(Board board)
 		{
-			TableController.showVisualizers(TableController.calculateVisualizers(CheckValidMovesWithKingProtection()), this);
+			TableController.showVisualizers(TableController.calculateVisualizers(CheckValidMovesVirt(board)), this);
 		}
 
 
 
 		public void DeleteVisualizers() {
 			TableController.removeVisualizers();
+		}
+
+
+		public void removeMoves(List<AvailableMove> moves,Board board)
+		{
+			moves.RemoveAll(item => !board.block.Contains(item.move.ToString()));
 		}
 
 
@@ -101,10 +111,6 @@ namespace test.Pieces
 		}
 
 
-
-
-
-
 		public void Move(Vector3 vector,AvailableMove move) {
 
 			vector.Y = pos_vector.Y;
@@ -121,7 +127,7 @@ namespace test.Pieces
 			{
 				Pawn p = (Pawn) this;
 
-				p.promotePawn();
+				//p.promotePawn();
 
 			}
 
@@ -130,34 +136,10 @@ namespace test.Pieces
 
 			{ move.target.Move(TableController.calculatePosition(move.rookNewPos), new AvailableMove(move.target, move.rookNewPos, false)); }
 
-			emptyEnpassant();
-
 
 			if (firstMove)
 			{
 				firstMove = false;
-
-				if (move.enPassant)
-				{
-
-					if(move.canEnPassantLeft is not null)
-					{
-						move.canEnPassantLeft.enPassantLeft = (Pawn)this;
-						move.canEnPassantLeft.enPassant = true;
-						TableController.enPassant.Add(move.canEnPassantLeft);
-					}
-
-					if(move.canEnPassantRight is not null)
-					{
-						move.canEnPassantRight.enPassantRight = (Pawn)this;
-						move.canEnPassantRight.enPassant = true;
-						TableController.enPassant.Add(move.canEnPassantRight);
-					}
-
-
-
-				}
-
 			}
 
 
@@ -165,7 +147,7 @@ namespace test.Pieces
 
 			this.node.CallDeferred("_bot_move2", vector);
 
-			TableController.game.NextMove(team);
+			gameController.NextMove(team);
 
 		}
 
@@ -218,7 +200,7 @@ namespace test.Pieces
 		protected void setColor()
 		{
 
-			Dummy d = (Dummy)node;
+			Dummy d = (Dummy) node;
 
 
 			if(team == 1) {
@@ -233,83 +215,7 @@ namespace test.Pieces
 		}
 
 
-		private AvailableMove check(Vector3 ij,bool kingProtect = false)
-		{
-
-			var t = TableController.find(ij, this);
-
-			Vector3 old = pos_vector;
-
-			if (!kingProtect)
-			{
-
-				if (t.num == 0)
-				{
-					return new AvailableMove(this,ij, false);
-				}
-				else if (t.num == 2)
-				{
-					return new AvailableMove(this,ij, true, t.p);
-				}
-
-			}
-			else
-			{
-
-				pos_vector = ij;
-
-
-
-				if (t.num == 0 && !kingIsInCheckSame())
-				{
-					pos_vector = old;
-					return new AvailableMove(this, ij, false);
-				}
-				else if (t.num == 2 && !kingIsInCheckSame(t.p))
-				{
-					pos_vector = old;
-					return new AvailableMove(this, ij, true, t.p);
-				}else if(t.num == 1)
-				{
-					pos_vector = old;
-					return new AvailableMove(null,new Vector3(999,999,999), false);
-				}else if(t.num == 2)
-				{
-					pos_vector = old;
-					return new AvailableMove(null, new Vector3(999, 999, 999), false);
-				}
-
-			}
-
-
-
-
-
-			pos_vector = old;
-
-			return null;
-		}
-
-
-
-		private AvailableMove checkWithCover(Vector3 ij)
-		{
-
-			var t = TableController.find(ij, this);
-
-			if (t.num == 0)
-			{
-				return new AvailableMove(this, ij, false);
-			}
-			else if (t.num == 2)
-			{
-				return new AvailableMove(this, ij, true, t.p);
-			}
-
-			return new AvailableMove(this,ij, false, true);
-		}
-
-
+		
 		struct ans
 		{
 			public AvailableMove move;
@@ -322,945 +228,8 @@ namespace test.Pieces
 			}
 		}
 
-
-
-		private ans diagnolStraightmovesHelper(Vector3 ij,target t,bool kingProtect,bool cover,bool one_square)
-		{
-
-			ans ans = new ans(null, false);
-
-			if (ij.Z == 9 || ij.Z == 0) { ans.stop = true; return ans; }
-
-			AvailableMove a = check(ij, kingProtect);
-
-			if (cover) { a = checkWithCover(ij); }
-
-			if (a != null)
-			{
-				ans.move = a;
-				if (a.attack || a.cover || a.move.X == 999) { if (!(cover && a.target is King)) { ans.stop = true; } }
-			}
-			else { if (!kingProtect) { ans.stop = true; } }
-
-
-			if (one_square) { ans.stop = true; };
-
-			return ans;
-		}
-
-
-		protected List<AvailableMove> diagnolMoves(bool one_square,bool cover,bool kingProtect = false)
-		{
-			List<AvailableMove> results = new List<AvailableMove>();
-
-			Vector3 ij = pos_vector;
-
-			target t = new target();
-
-			ij.Z = pos_vector.Z + 1;
-
-			for (int i = (int)ij.X  + 1; i <= 8; i++)
-			{
-				ij.X = i;
-
-				ans ans = diagnolStraightmovesHelper(ij, t, kingProtect, cover, one_square);
-
-				if (ans.move != null) { results.Add(ans.move); }
-
-				if (ans.stop) {break;}
-
-
-				ij.Z++;
-				
-			}
-
-			ij.Z = pos_vector.Z - 1;
-			ij.X = pos_vector.X;
-
-			for (int i = (int)ij.X - 1; i >= 1; i--)
-			{
-				ij.X = i;
-
-				ans ans = diagnolStraightmovesHelper(ij, t, kingProtect, cover, one_square);
-
-				if (ans.move != null) { results.Add(ans.move); }
-
-				if (ans.stop) { break; }
-
-				ij.Z--;
-
-			}
-
-
-			ij.Z = pos_vector.Z - 1;
-			ij.X = pos_vector.X;
-
-			for (int i = (int)ij.X + 1; i <= 8; i++)
-			{
-				ij.X = i;
-
-				ans ans = diagnolStraightmovesHelper(ij, t, kingProtect, cover, one_square);
-
-				if (ans.move != null) { results.Add(ans.move); }
-
-				if (ans.stop) { break; }
-
-				ij.Z--;
-
-			}
-
-			ij.Z = pos_vector.Z + 1;
-			ij.X = pos_vector.X;
-
-			for (int i = (int)ij.X - 1; i >= 1; i--)
-			{
-				ij.X = i;
-
-				ans ans = diagnolStraightmovesHelper(ij, t, kingProtect, cover, one_square);
-
-				if (ans.move != null) { results.Add(ans.move); }
-
-				if (ans.stop) { break; }
-
-				ij.Z++;
-
-			}
-
-			return results;
-
-		}
-
-
-		protected List<AvailableMove> straightMoves(bool one_square,bool cover,bool kingProtect = false)
-		{
-			List<AvailableMove> results = new List<AvailableMove>();
-
-			Vector3 ij = new Vector3();
-
-			target t = new target();
-
-
-			ij.Z = pos_vector.Z + 1;
-			ij.X = pos_vector.X;
-
-			for(int i = (int) ij.Z; i < 9 ; i++ ) {
-
-				ij.Z = i;
-
-				ans ans = diagnolStraightmovesHelper(ij, t, kingProtect, cover, one_square);
-
-				if (ans.move != null) { results.Add(ans.move); }
-
-				if (ans.stop) { break; }
-
-			}
-
-			ij.Z = pos_vector.Z - 1;
-
-
-			for (int i = (int)ij.Z; i > 0; i--)
-			{
-
-				ij.Z = i;
-
-				ans ans = diagnolStraightmovesHelper(ij, t, kingProtect, cover, one_square);
-
-				if (ans.move != null) { results.Add(ans.move); }
-
-				if (ans.stop) { break; }
-			}
-
-			ij.Z = pos_vector.Z;
-			ij.X = pos_vector.X + 1;
-
-			for (int i = (int)ij.X; i < 9; i++)
-			{
-
-				ij.X = i;
-
-				ans ans = diagnolStraightmovesHelper(ij, t, kingProtect, cover, one_square);
-
-				if (ans.move != null) { results.Add(ans.move); }
-
-				if (ans.stop) { break; }
-			}
-
-			ij.X = pos_vector.X - 1;
-
-
-			for (int i = (int)ij.X; i > 0; i--)
-			{
-
-				ij.X = i;
-
-				ans ans = diagnolStraightmovesHelper(ij, t, kingProtect, cover, one_square);
-
-				if (ans.move != null) { results.Add(ans.move); }
-
-				if (ans.stop) { break; }
-			}
-
-
-
-
-			return results;
-		}
-
-		protected bool kingIsInCheckSame(Piece target = null)
-		{
-
-			if(target != null)
-			{
-				TableController.table.Remove(target);
-			}
-
-
-			foreach (Piece piec in TableController.table)
-			{
-				if (this.team != piec.team)
-				{
-					foreach (AvailableMove move in piec.CheckValidMoves(false))
-					{
-
-						if (move.target is King)
-						{
-
-							if (target != null)
-							{
-								TableController.table.Add(target);
-							}
-							
-							return true;
-						}
-					}
-				}
-
-			}
-
-
-			if (target != null)
-			{
-				TableController.table.Add(target);
-			}
-
-			return false;
-		}
-
-
-		protected bool kingCheckWithoutKing()
-		{
-
-			foreach (Piece piec in TableController.table)
-			{
-				if (this.team != piec.team && !(piec is King))
-				{
-					foreach (AvailableMove move in piec.CheckValidMoves(false))
-					{
-
-						if (move.target is King)
-						{
-							return true;
-						}
-					}
-				}
-
-			}
-
-			return false;
-		}
-
-		protected List<AvailableMove> kingMoves(bool calculateCastle = false)
-		{
-			List<AvailableMove> results = new List<AvailableMove>();
-			List<AvailableMove> notavailable = new List<AvailableMove>();
-			List<AvailableMove> toRemove = new List<AvailableMove>();
-
-			results.AddRange(straightMoves(true, false));
-			results.AddRange(diagnolMoves(true, false));
-
-			Vector3 old = pos_vector;
-
-			foreach (Piece piec in TableController.table)
-			{
-				if (this.team != piec.team)
-				{
-
-						notavailable.AddRange(piec.CheckValidMovesWithCover());
-				}
-			}
-
-			for (int i = 0; i < results.Count(); i++)
-			{
-				foreach (AvailableMove na in notavailable)
-				{
-
-					pos_vector = new Vector3(results[i].move.X,3, results[i].move.Z);
-
-					if (results[i].move.X == na.move.X && results[i].move.Z == na.move.Z)
-					{
-						toRemove.Add(results[i]);
-					}
-
-
-				}
-			}
-
-			pos_vector = old;
-
-			if (calculateCastle && firstMove && !kingCheckWithoutKing())
-			{
-				foreach(Piece rook in TableController.table)
-				{
-					if(team == 1)
-					{
-
-						//KINGSIDE WHITE
-						if(rook.team == 1 && rook.firstMove && rook.position is "H1")
-						{
-
-							foreach(AvailableMove m in rook.straightMoves(false,true))
-							{
-							
-								if (m.move.X == pos_vector.X && pos_vector.Z == m.move.Z && kingCastlingKingSideWhite(notavailable))
-								{
-
-									AvailableMove whiteKingSideCastle = new AvailableMove(this,new Vector3(1,0,7),rook,new Vector3(1,0,6));
-
-									whiteKingSideCastle.kingSideCastling = true;
-
-									results.Add(whiteKingSideCastle);
-
-
-								}
-
-							}
-						}
-
-						//QUEENSIDE WHITE
-
-						if (rook.team == 1 && rook.firstMove && rook.position is "A1")
-						{
-							foreach (AvailableMove m in rook.straightMoves(false, true))
-							{
-
-								if (m.move.X == pos_vector.X && pos_vector.Z == m.move.Z && kingCastlingQueenSideWhite(notavailable))
-								{
-
-									AvailableMove whiteQueenSideCastle = new AvailableMove(this, new Vector3(1, 0, 3), rook, new Vector3(1, 0, 4));
-
-									whiteQueenSideCastle.queenSideCastling = true;
-
-									results.Add(whiteQueenSideCastle);
-
-
-								}
-								
-							}
-						}
-
-					}
-
-					if (team == -1)
-					{
-
-
-						
-							//KINGSIDE BLACK
-
-							if (rook.team == -1 && rook.firstMove && rook.position is "H8")
-							{
-								foreach (AvailableMove m in rook.straightMoves(false, true))
-								{
-
-									if (m.move.X == pos_vector.X && pos_vector.Z == m.move.Z && kingCastlingKingSideBlack(notavailable))
-									{
-
-
-									AvailableMove blackKingSideCastle = new AvailableMove(this, new Vector3(8, 0, 7), rook, new Vector3(8, 0, 6));
-
-									blackKingSideCastle.kingSideCastling = true;
-
-									results.Add(blackKingSideCastle);
-
-
-
-
-								}
-
-
-								}
-							}
-
-
-							//QUEENSIDE BLACK
-
-							if (rook.team == -1 && rook.firstMove && rook.position is "A8")
-							{
-								foreach (AvailableMove m in rook.straightMoves(false, true))
-								{
-									if (m.move.X == pos_vector.X && pos_vector.Z == m.move.Z && kingCastlingQueenSideBlack(notavailable))
-									{
-
-
-									AvailableMove blackQueenSideCastle = new AvailableMove(this, new Vector3(8, 0, 3), rook, new Vector3(8, 0, 4));
-
-									blackQueenSideCastle.queenSideCastling = true;
-
-									results.Add(blackQueenSideCastle);
-
-
-
-
-								}
-
-							}
-
-
-						}
-
-
-					}
-
-
-
-
-				}
-
-			}
-
-
-
-
-
-
-			foreach (AvailableMove move in toRemove)
-			{
-				results.Remove(move);
-			}
-
-			return results;
-		}
-
-
-		private bool kingCastlingKingSideWhite(List<AvailableMove> moves)
-		{
-			foreach(AvailableMove move in moves)
-			{
-
-				if(move.move.X == 1 && move.move.Z == 7 || move.move.X == 1 && move.move.Z == 6)
-				{
-					return false;
-				}
-
-			}
-
-			return true;
-		}
-
-
-		private bool kingCastlingQueenSideWhite(List<AvailableMove> moves)
-		{
-			foreach (AvailableMove move in moves)
-			{
-
-				if (move.move.X == 1 && move.move.Z == 4 || move.move.X == 1 && move.move.Z == 3)
-				{
-					return false;
-				}
-
-			}
-			return true;
-
-		}
-
-
-
-		private bool kingCastlingKingSideBlack(List<AvailableMove> moves)
-		{
-			
-				foreach (AvailableMove move in moves)
-				{
-
-					if (move.move.X == 8 && move.move.Z == 7 || move.move.X == 8 && move.move.Z == 6)
-					{
-						return false;
-					}
-
-				}
-
-				return true;
-		}
-
-
-		private bool kingCastlingQueenSideBlack(List<AvailableMove> moves)
-		{
-				
-					foreach (AvailableMove move in moves)
-					{
-
-						if (move.move.X == 8 && move.move.Z == 4 || move.move.X == 8 && move.move.Z == 3)
-						{
-							return false;
-						}
-
-					}
-					return true;
-
-
-		}
-
-		
-
-
-
-
-
-
-		protected List<AvailableMove> horseMoves(bool cover, bool kingProtect = false)
-		{
-			List<AvailableMove> results = new List<AvailableMove>();
-
-			int[] offsets = { 1, 2, -1, -2 };
-
-			foreach (int x in offsets)
-			{
-				foreach (int z in offsets)
-				{
-					if (Math.Abs(x) != Math.Abs(z)) // Ensure L-shaped moves
-					{
-					
-						Vector3 newPosition = new Vector3(pos_vector.X + x, pos_vector.Y, pos_vector.Z + z);
-
-
-						AvailableMove a = IsValidPosition(newPosition,cover,kingProtect);
-						
-						if(a != null)
-						{
-							results.Add(a);
-						}
-
-					}
-				}
-			}
-
-			return results;
-		}
-
-
-		//HORSE
-		private AvailableMove IsValidPosition(Vector3 position,bool cover, bool kingProtect = false)
-		{
-			int newX = (int)position.X;
-			int newZ = (int)position.Z;
-
-			Vector3 old = new Vector3();
-
-			if (kingProtect) { old = pos_vector; }
-
-
-			Vector3 vec = new Vector3(newX, pos_vector.Y, newZ);
-
-
-			target move = TableController.find(vec, this);
-
-
-			if (kingProtect) { pos_vector = vec; }
-
-			bool first = newX >= 1 && newX <= 8 && newZ >= 1 && newZ <= 8;
-
-			bool second = newX >= 1 && newX <= 8 && newZ >= 1 && newZ <= 8;
-
-
-			if (!kingProtect)
-			{
-
-				if (first && move.num == 0 || cover && first)
-				{
-					return new AvailableMove(this,vec, false);
-
-				}
-				else if (second && move.num == 2 || cover && second)
-				{
-
-					return new AvailableMove(this, vec, true, move.p);
-				}
-
-			}
-			else
-			{
-
-
-				if (first && move.num == 0 && !kingIsInCheckSame())
-				{
-
-					pos_vector = old;
-					return new AvailableMove(this, vec, false);
-
-				}
-				else if (second && move.num == 2 && !kingIsInCheckSame(move.p))
-				{
-		
-					pos_vector = old;
-					return new AvailableMove(this, vec, true, move.p);
-				}
-
-			}
-
-			if (kingProtect) { pos_vector = old; };
-
-			return null;
-
-		}
-
-
-
-
-
-		protected List<AvailableMove> pawnMoves(bool cover,bool kingProtection,bool special)
-		{
-			List<AvailableMove> results = new List<AvailableMove>();
-
-
-			Vector3 old = this.pos_vector;
-
-
-			bool checkKing = false;
-
-			Vector3 vec = new Vector3(pos_vector.X + (1 * team), pos_vector.Y, pos_vector.Z);
-
-			target move = TableController.find(vec, this);
-
-
-
-
-			if (firstMove)
-			{
-
-
-				Vector3 vec2 = new Vector3(pos_vector.X + (2 * team), pos_vector.Y, pos_vector.Z);
-
-				target move2 = TableController.find(vec2, this);
-
-
-				if (kingProtection)
-				{
-					pos_vector = vec2;
-					checkKing = kingIsInCheckSame();
-				}
-
-			
-				if (!kingProtection)
-				{
-					if (vec2.X < 9 && move2.num == 0 && move.num == 0 && !cover)
-					{ 
-						results.Add(new AvailableMove(this, vec2, false));
-					}
-				}
-				else
-				{
-
-					if (vec2.X < 9 && move2.num == 0 && move.num == 0 && !checkKing)
-					{
-
-						AvailableMove m = new AvailableMove(this, vec2, false);
-
-
-						checkEnPassant(vec2, m);
-
-
-						results.Add(m);
-
-					}
-					pos_vector = old;
-
-				}
-
-
-
-
-			}
-
-
-			if (enPassantRight != null || enPassantLeft != null)
-			{
-
-				if (enPassantLeft != null)
-				{
-					Vector3 vec2 = new Vector3(pos_vector.X + (1 * team), pos_vector.Y, pos_vector.Z + 1);
-
-					target move3 = TableController.find(vec2, this);
-
-					if (kingProtection)
-					{
-						pos_vector = vec2;
-						checkKing = kingIsInCheckSame();
-					}
-
-					if (!kingProtection)
-					{
-
-						if (vec.X < 9 && vec.Z > 0 || vec.X < 9 && vec.Z < 9 && cover)
-						{
-							results.Add(new AvailableMove(this, vec2, true, enPassantLeft));
-
-						}
-
-					}
-					else
-					{
-
-						pos_vector = vec;
-						checkKing = kingIsInCheckSame(move3.p);
-
-						if (vec.X < 9 && vec.Z > 0 && !checkKing)
-						{
-							results.Add(new AvailableMove(this, vec2, true, enPassantLeft));
-
-						}
-
-						pos_vector = old;
-
-					}
-
-
-
-
-
-				}
-
-				if (enPassantRight != null)
-				{
-					Vector3 vec2 = new Vector3(pos_vector.X + (1 * team), pos_vector.Y, pos_vector.Z - 1);
-					target move3 = TableController.find(vec2, this);
-
-
-					if (kingProtection)
-					{
-						pos_vector = vec2;
-						checkKing = kingIsInCheckSame();
-					}
-
-					if (!kingProtection)
-					{
-
-						if (vec.X < 9 && vec.Z > 0 || vec.X < 9 && vec.Z < 9 && cover)
-						{
-							results.Add(new AvailableMove(this, vec2, true, enPassantRight));
-
-						}
-
-					}
-					else
-					{
-
-						pos_vector = vec;
-						checkKing = kingIsInCheckSame(move3.p);
-
-						if (vec.X < 9 && vec.Z > 0 && !checkKing)
-						{
-							results.Add(new AvailableMove(this, vec2, true, enPassantRight));
-
-						}
-
-						pos_vector = old;
-
-					}
-
-
-
-				}
-
-
-			}
-
-
-			if (kingProtection)
-			{
-				pos_vector = vec;
-				checkKing = kingIsInCheckSame();
-			}
-
-
-
-
-
-			if (!kingProtection)
-			{
-				if (vec.X < 9 && move.num == 0 && !cover)
-				{
-					results.Add(new AvailableMove(this, vec, false));
-				}
-			}
-			else
-			{
-
-				if (vec.X < 9 && move.num == 0 && !checkKing)
-				{
-					results.Add(new AvailableMove(this, vec, false));
-				}
-				pos_vector = old;
-
-			}
-
-
-			vec = new Vector3(pos_vector.X + (1 * team), pos_vector.Y, pos_vector.Z + 1);
-			move = TableController.find(vec, this);
-
-
-
-			if (!kingProtection)
-			{
-				if (vec.X < 9 && vec.Z < 9 && move.num == 2 || vec.X < 9 && vec.Z < 9 && cover)
-				{
-					results.Add(new AvailableMove(this, vec, true, move.p));
-
-				}
-			}
-			else
-			{
-
-				pos_vector = vec;
-				checkKing = kingIsInCheckSame(move.p);
-
-				if (vec.X < 9 && vec.Z < 9 && move.num == 2 && !checkKing)
-				{
-					results.Add(new AvailableMove(this, vec, true, move.p));
-
-				}
-				pos_vector = old;
-
-			}
-
-			vec = new Vector3(pos_vector.X + (1 * team), pos_vector.Y, pos_vector.Z - 1);
-			move = TableController.find(vec, this);
-
-
-			if (!kingProtection)
-			{
-
-				if (vec.X < 9 && vec.Z > 0 && move.num == 2 || vec.X < 9 && vec.Z < 9 && cover)
-				{
-					results.Add(new AvailableMove(this, vec, true, move.p));
-
-				}
-
-			}
-			else
-			{
-
-				pos_vector = vec;
-				checkKing = kingIsInCheckSame(move.p);
-
-				if (vec.X < 9 && vec.Z > 0 && move.num == 2 && !checkKing)
-				{
-					results.Add(new AvailableMove(this,	vec, true, move.p));
-
-				}
-
-				pos_vector = old;
-
-			}
-
-
-
-			return results;
-		}
-
-
-
-
-
-		private void checkEnPassant(Vector3 vector,  AvailableMove availablemove)
-		{
-
-
-			vector.Z--;
-
-			Pawn p = findPawn(vector, team);
-
-			if(p!=null) {
-
-
-
-				availablemove.enPassant = true;
-
-				availablemove.canEnPassantLeft = p;
-
-			}
-
-
-			vector.Z += 2;
-
-			p = findPawn(vector, team);
-
-
-			if (p != null)
-			{
-
-
-				availablemove.enPassant = true;
-
-				availablemove.canEnPassantRight = p;
-
-			}
-
-
-		}
-
-
-		/////////////////////////
-		/////////////////////////
-
-		///////////////////////// VIRTUAL BOARD
-		///////////////////////// VIRTUAL BOARD
-
-		///////////////////////// VIRTUAL BOARD
-		///////////////////////// VIRTUAL BOARD
-
-		/////////////////////////
-		/////////////////////////
-
-		public Board copyCurrentBoard()
-		{
-			return new Board(TableController.table,TableController.enPassant);
-		}
-
 		protected bool kingIsInCheckSame(Board board,Piece target = null)
 		{
-
-			if (target != null)
-			{
-				board.table.Remove(target);
-			}
-
-
-			foreach (Piece piec in board.table)
-			{
-				if (this.team != piec.team)
-				{
-					foreach (AvailableMove move in piec.CheckValidMovesVirt(board))
-					{
-
-						if (move.target is King)
-						{
-
-							if (target != null)
-							{
-								board.table.Add(target);
-							}
-
-							return true;
-						}
-					}
-				}
-
-			}
-
-			if (target != null)
-			{
-				board.table.Add(target);
-			}
-
 			return false;
 		}
 
@@ -1274,296 +243,49 @@ namespace test.Pieces
 			if (pos_vector.X == 1) { return results; };
 
 
-			Vector3 old = this.pos_vector;
-
-
-			bool checkKing = false;
-
 			Vector3 vec = new Vector3(pos_vector.X + (1 * team), pos_vector.Y, pos_vector.Z);
 
 			Board.target move = board.find(vec, this);
 
-
-
-			if (firstMove)
+			if (!Board.checkboundries(vec) && move.num == 0 && !cover)
 			{
+				AvailableMove m = new AvailableMove(this, vec, false);
+				results.Add(m);
+			}
 
-
+			if (firstMove && !cover)
+			{
 				Vector3 vec2 = new Vector3(pos_vector.X + (2 * team), pos_vector.Y, pos_vector.Z);
 
 				Board.target move2 = board.find(vec2, this);
 
-
-				if (kingProtection)
+				if (move2.num == 0 && move.num == 0)
 				{
-					pos_vector = vec2;
-					checkKing = kingIsInCheckSame(board);
-				}
-
-
-				if (!kingProtection)
-				{
-					if (vec2.X < 9 && move2.num == 0 && move.num == 0 && !cover)
-					{
-						results.Add(new AvailableMove(this, vec2, false));
-					}
-				}
-				else
-				{
-
-					if (vec2.X < 9 && move2.num == 0 && move.num == 0 && !checkKing)
-					{
-
-						AvailableMove m = new AvailableMove(this, vec2, false);
-
-
-						checkEnPassant(vec2, m,board);
-
-
-						results.Add(m);
-
-					}
-					pos_vector = old;
+					AvailableMove m = new AvailableMove(this, vec2, false);
+					results.Add(m);
 
 				}
-
-
-
-
 			}
 
-
-			if (enPassantRight != null || enPassantLeft != null)
-			{
-
-				if (enPassantLeft != null)
-				{
-					Vector3 vec2 = new Vector3(pos_vector.X + (1 * team), pos_vector.Y, pos_vector.Z + 1);
-
-					Board.target move3 = board.find(vec2, this);
-
-					if (kingProtection)
-					{
-						pos_vector = vec2;
-						checkKing = kingIsInCheckSame(board);
-					}
-
-					if (!kingProtection)
-					{
-
-						if (vec.X < 9 && vec.Z > 0 || vec.X < 9 && vec.Z < 9 && cover)
+			foreach(KeyValuePair<string, Vector3> entry in directions)
+				{	
+					if(entry.Value.Z != 0)
 						{
-							results.Add(new AvailableMove(this, vec2, true, enPassantLeft));
+							vec = new Vector3(pos_vector.X + entry.Value.X, pos_vector.Y, pos_vector.Z + entry.Value.Z);
+							move = board.find(vec,this);
+
+							if (move.num == 2 || cover)
+								{
+									AvailableMove m = new AvailableMove(this, vec, true, move.p);
+									results.Add(m);
+								}
 
 						}
-
-					}
-					else
-					{
-
-						pos_vector = vec;
-						checkKing = kingIsInCheckSame(board,move3.p);
-
-						if (vec.X < 9 && vec.Z > 0 && !checkKing)
-						{
-							results.Add(new AvailableMove(this, vec2, true, enPassantLeft));
-
-						}
-
-						pos_vector = old;
-
-					}
-
-
-
-
-
+				
 				}
 
-				if (enPassantRight != null)
-				{
-					Vector3 vec2 = new Vector3(pos_vector.X + (1 * team), pos_vector.Y, pos_vector.Z - 1);
-					Board.target move3 = board.find(vec2, this);
-
-
-					if (kingProtection)
-					{
-						pos_vector = vec2;
-						checkKing = kingIsInCheckSame(board);
-					}
-
-					if (!kingProtection)
-					{
-
-						if (vec.X < 9 && vec.Z > 0 || vec.X < 9 && vec.Z < 9 && cover)
-						{
-							results.Add(new AvailableMove(this, vec2, true, enPassantRight));
-
-						}
-
-					}
-					else
-					{
-
-						pos_vector = vec;
-						checkKing = kingIsInCheckSame(board, move3.p);
-
-						if (vec.X < 9 && vec.Z > 0 && !checkKing)
-						{
-							results.Add(new AvailableMove(this, vec2, true, enPassantRight));
-
-						}
-
-						pos_vector = old;
-
-					}
-
-
-
-				}
-
-
+				return results;
 			}
-
-
-			if (kingProtection)
-			{
-				pos_vector = vec;
-				checkKing = kingIsInCheckSame(board);
-			}
-
-
-
-
-
-			if (!kingProtection)
-			{
-				if (vec.X < 9 && move.num == 0 && !cover)
-				{
-					results.Add(new AvailableMove(this, vec, false));
-				}
-			}
-			else
-			{
-
-				if (vec.X < 9 && move.num == 0 && !checkKing)
-				{
-					results.Add(new AvailableMove(this, vec, false));
-				}
-				pos_vector = old;
-
-			}
-
-
-			vec = new Vector3(pos_vector.X + (1 * team), pos_vector.Y, pos_vector.Z + 1);
-			move = board.find(vec, this);
-
-
-
-			if (!kingProtection)
-			{
-				if (vec.X < 9 && vec.Z < 9 && move.num == 2 || vec.X < 9 && vec.Z < 9 && cover)
-				{
-					results.Add(new AvailableMove(this, vec, true, move.p));
-
-				}
-			}
-			else
-			{
-
-				pos_vector = vec;
-				checkKing = kingIsInCheckSame(board, move.p);
-
-				if (vec.X < 9 && vec.Z < 9 && move.num == 2 && !checkKing)
-				{
-					results.Add(new AvailableMove(this, vec, true, move.p));
-
-				}
-				pos_vector = old;
-
-			}
-
-			vec = new Vector3(pos_vector.X + (1 * team), pos_vector.Y, pos_vector.Z - 1);
-			move = board.find(vec, this);
-
-
-			if (!kingProtection)
-			{
-
-				if (vec.X < 9 && vec.Z > 0 && move.num == 2 || vec.X < 9 && vec.Z < 9 && cover)
-				{
-					results.Add(new AvailableMove(this, vec, true, move.p));
-
-				}
-
-			}
-			else
-			{
-
-				pos_vector = vec;
-				checkKing = kingIsInCheckSame(board,move.p);
-
-				if (vec.X < 9 && vec.Z > 0 && move.num == 2 && !checkKing)
-				{
-					results.Add(new AvailableMove(this, vec, true, move.p));
-
-				}
-
-				pos_vector = old;
-
-			}
-
-
-
-			return results;
-		}
-
-
-
-
-
-
-		private void checkEnPassant(Vector3 vector, AvailableMove availablemove,Board board)
-		{
-
-
-			vector.Z--;
-
-			Pawn p = board.findPawn(vector, team);
-
-			if (p != null)
-			{
-
-
-
-				availablemove.enPassant = true;
-
-				availablemove.canEnPassantLeft = p;
-
-			}
-
-
-			vector.Z += 2;
-
-			p = board.findPawn(vector, team);
-
-
-			if (p != null)
-			{
-
-
-				availablemove.enPassant = true;
-
-				availablemove.canEnPassantRight = p;
-
-			}
-
-
-		}
-
-
-
-
 
 
 
@@ -1583,6 +305,7 @@ namespace test.Pieces
 
 						Vector3 newPosition = new Vector3(pos_vector.X + x, pos_vector.Y, pos_vector.Z + z);
 
+						if (Board.checkboundries(newPosition)) { continue; }
 
 						AvailableMove a = IsValidPosition(newPosition, cover, kingProtect, board);
 
@@ -1601,63 +324,20 @@ namespace test.Pieces
 		//HORSE
 		private AvailableMove IsValidPosition(Vector3 position, bool cover, bool kingProtect, Board board)
 		{
-			int newX = (int)position.X;
-			int newZ = (int)position.Z;
-
-			Vector3 old = new Vector3();
-
-			if (kingProtect) { old = pos_vector; }
+	
+			Board.target move = board.find(position, this);
 
 
-			Vector3 vec = new Vector3(newX, pos_vector.Y, newZ);
-
-
-			Board.target move = board.find(vec, this);
-
-
-			if (kingProtect) { pos_vector = vec; }
-
-			bool first = newX >= 1 && newX <= 8 && newZ >= 1 && newZ <= 8;
-
-			bool second = newX >= 1 && newX <= 8 && newZ >= 1 && newZ <= 8;
-
-
-			if (!kingProtect)
-			{
-
-				if (first && move.num == 0 || cover && first)
+				if (move.num == 2 || cover)
 				{
-					return new AvailableMove(this, vec, false);
-
+					return new AvailableMove(this, position, true, move.p);
+					
 				}
-				else if (second && move.num == 2 || cover && second)
+				else if (move.num == 0 || cover)
 				{
 
-					return new AvailableMove(this, vec, true, move.p);
+					return new AvailableMove(this, position, false);
 				}
-
-			}
-			else
-			{
-
-
-				if (first && move.num == 0 && !kingIsInCheckSame(board))
-				{
-
-					pos_vector = old;
-					return new AvailableMove(this, vec, false);
-
-				}
-				else if (second && move.num == 2 && !kingIsInCheckSame(board,move.p))
-				{
-
-					pos_vector = old;
-					return new AvailableMove(this, vec, true, move.p);
-				}
-
-			}
-
-			if (kingProtect) { pos_vector = old; };
 
 			return null;
 
@@ -1686,11 +366,6 @@ namespace test.Pieces
 
 			var t = board.find(ij, this);
 
-			Vector3 old = pos_vector;
-
-			if (!kingProtect)
-			{
-
 				if (t.num == 0)
 				{
 					return new AvailableMove(this, ij, false);
@@ -1700,45 +375,12 @@ namespace test.Pieces
 					return new AvailableMove(this, ij, true, t.p);
 				}
 
-			}
-			else
-			{
-
-				pos_vector = ij;
-
-
-
-				if (t.num == 0 && !kingIsInCheckSame(board))
-				{
-					pos_vector = old;
-					return new AvailableMove(this, ij, false);
-				}
-				else if (t.num == 2 && !kingIsInCheckSame(board,t.p))
-				{
-					pos_vector = old;
-					return new AvailableMove(this, ij, true, t.p);
-				}
-				else if (t.num == 1)
-				{
-					pos_vector = old;
-					return new AvailableMove(null, new Vector3(999, 999, 999), false);
-				}
-				else if (t.num == 2)
-				{
-					pos_vector = old;
-					return new AvailableMove(null, new Vector3(999, 999, 999), false);
-				}
-
-			}
-
-			pos_vector = old;
-
 			return null;
 		}
 
 
 	private ans diagnolStraightmovesHelper(Vector3 ij, bool kingProtect, bool cover, bool one_square, Board board)
-{
+	{
 	ans ans = new ans(null, false);
 
 	if (ij.Z < 1 || ij.Z > 8 || ij.X < 1 || ij.X > 8) 
@@ -1747,16 +389,22 @@ namespace test.Pieces
 		return ans;
 	}
 
-	AvailableMove a = check(ij, board, kingProtect);
+	AvailableMove a = null;
+
 	if (cover) 
 	{ 
-		a = checkWithCover(ij, board); 
+		a = checkWithCover(ij, board);
 	}
+	else
+	{
+		a = check(ij, board, kingProtect);
+	}
+
 
 	if (a != null)
 	{
 		ans.move = a;
-		if (a.attack || a.cover || a.move.X == 999) 
+		if (a.attack || a.cover) 
 		{
 			if (!(cover && a.target is King)) 
 			{ 
@@ -1766,10 +414,7 @@ namespace test.Pieces
 	}
 	else 
 	{ 
-		if (!kingProtect) 
-		{ 
-			ans.stop = true; 
-		} 
+			ans.stop = true;  
 	}
 
 	if (one_square) 
@@ -1778,7 +423,7 @@ namespace test.Pieces
 	}
 
 	return ans;
-}
+	}
 
 	private List<AvailableMove> generateMoves(List<Vector3> directions, bool one_square, bool cover, Board board, bool kingProtect = false)
 {
@@ -1813,6 +458,7 @@ namespace test.Pieces
 
 	protected List<AvailableMove> diagnolMoves(bool one_square, bool cover, Board board, bool kingProtect = false)
 	{
+	
 	List<Vector3> diagonalDirections = new List<Vector3>
 	{
 		new Vector3(1, 0, 1),
@@ -1821,7 +467,9 @@ namespace test.Pieces
 		new Vector3(-1, 0, 1)
 	};
 
+
 	return generateMoves(diagonalDirections, one_square, cover, board, kingProtect);
+
 	}
 
 
@@ -1829,6 +477,7 @@ namespace test.Pieces
 
 	protected List<AvailableMove> straightMoves(bool one_square, bool cover, Board board, bool kingProtect = false)
 	{
+
 	List<Vector3> straightDirections = new List<Vector3>
 	{
 		new Vector3(1, 0, 0),
@@ -1841,6 +490,12 @@ namespace test.Pieces
 	}
 
 
+	protected List<AvailableMove> slidingMoves(bool one_square, bool cover, Board board,List<Vector3> directions, bool kingProtect = false)
+	{
+		return generateMoves(directions, one_square, cover, board, kingProtect);
+	}
+
+
 
 		protected List<AvailableMove> kingMoves(Board board)
 		{
@@ -1849,7 +504,17 @@ namespace test.Pieces
 			results.AddRange(straightMoves(true, false,board));
 			results.AddRange(diagnolMoves(true, false,board));
 
-			return results;
+			List<AvailableMove> ans = new List<AvailableMove>();
+
+			foreach (var move in results)
+			{
+				if (!board.attackedSquares.Contains(TableController.convertReverse(move.move)))
+				{
+					ans.Add(move);
+				}
+			}
+
+			return ans;
 		}
 
 
@@ -1869,12 +534,11 @@ namespace test.Pieces
 				board.table.Remove(board.findPieceID(move.target.ID));
 			}
 
-
 			if (this is Pawn)
 			{
 				Pawn p = (Pawn)this;
 
-				p.promotePawn(board);
+				//p.promotePawn(board);
 
 			}
 
@@ -1882,33 +546,9 @@ namespace test.Pieces
 
 			{ move.target.VirtualMove(TableController.calculatePosition(move.rookNewPos), new AvailableMove(move.target, move.rookNewPos, false),board); }
 
-			emptyEnpassant();
-
 			if (firstMove)
 			{
 				firstMove = false;
-
-				if (move.enPassant)
-				{
-
-					if (move.canEnPassantLeft is not null)
-					{
-						move.canEnPassantLeft.enPassantLeft = (Pawn)this;
-						move.canEnPassantLeft.enPassant = true;
-						board.enPassant.Add(move.canEnPassantLeft);
-					}
-
-					if (move.canEnPassantRight is not null)
-					{
-						move.canEnPassantRight.enPassantRight = (Pawn)this;
-						move.canEnPassantRight.enPassant = true;
-						board.enPassant.Add(move.canEnPassantRight);
-					}
-
-
-
-				}
-
 			}
 
 		}

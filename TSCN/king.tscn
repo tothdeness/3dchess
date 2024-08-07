@@ -6,7 +6,7 @@
 [sub_resource type="BoxShape3D" id="BoxShape3D_jyw6u"]
 
 [node name="MeshInstance3D" type="MeshInstance3D"]
-transform = Transform3D(0.849989, -4.85408e-05, 0.00440951, 2.21303e-05, 0.849985, 0.00509092, -0.00440972, -0.00509074, 0.849973, 0, 0, 0)
+transform = Transform3D(-3.71547e-08, -0.00445057, 0.849988, 0, 0.849989, 0.00445057, -0.85, 1.94541e-10, -3.71542e-08, 0, 0, 0)
 mesh = ExtResource("1_wieyc")
 script = ExtResource("1_1tybw")
 

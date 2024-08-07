@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using test.Controllers;
 using test.Pieces;
+using test.Pieces.Resources;
 
 namespace test.Mode
 {
@@ -16,7 +17,7 @@ namespace test.Mode
 
 
 
-		public static void AddPiecesStandardGame(GameController game)
+		public static void AddPiecesStandardGame(GameController game, Board board)
 		{
 
 			// WHITE
@@ -48,6 +49,7 @@ namespace test.Mode
 			Bishop black_bishop2 = new Bishop("C8", -1, game);
 			King black_king = new King("E8", -1, game);
 
+			board.kingBlack = black_king;
 
 			Pawn black_pawn1 = new Pawn("A7", -1, game);
 			Pawn black_pawn2 = new Pawn("B7", -1, game);
@@ -60,6 +62,8 @@ namespace test.Mode
 
 			Queen black_queen = new Queen("D8", -1, game);
 			Queen white_queen = new Queen("D1", 1, game);
+
+			board.kingWhite = white_king;
 
 		}
 

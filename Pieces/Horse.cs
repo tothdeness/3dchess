@@ -43,55 +43,28 @@ namespace test.Pieces
 		}
 
 
-		public override List<AvailableMove> CheckValidMoves(bool s)
-		{
-			List<AvailableMove> ans = new List<AvailableMove>();
-
-			ans.AddRange(horseMoves(false));
-
-			return ans;
-		}
-
-		public override List<AvailableMove> CheckValidMovesWithCover()
-		{
-			List<AvailableMove> ans = new List<AvailableMove>();
-
-			ans.AddRange(horseMoves(true));
-
-			return ans;
-		}
-
-		public override List<AvailableMove> CheckValidMovesWithKingProtection()
-		{
-			List<AvailableMove> ans = new List<AvailableMove>();
-
-			ans.AddRange(horseMoves(false,true));
-
-			return ans;
-		}
-
-
-
-
-
-		public override List<AvailableMove> CheckValidMovesOnVirtualBoard(Board board)
-		{
-			List<AvailableMove> ans = new List<AvailableMove>();
-
-			ans.AddRange(horseMoves(false, false, board));
-
-			return ans;
-		}
 
 
 		public override List<AvailableMove> CheckValidMovesVirt(Board board)
 		{
 			List<AvailableMove> ans = new List<AvailableMove>();
 
+			if (board.kingIsInDoubleCheck || this.validDirections.Count > 0) { return ans; }
+
 			ans.AddRange(horseMoves(false, false, board));
+
+			if (board.kingIsInCheck) { removeMoves(ans, board); }
 
 			return ans;
 
+		}
+
+
+		public override List<AvailableMove> CheckValidCoveredMovesOnVirtualBoard(Board board)
+		{
+			List<AvailableMove> ans = new List<AvailableMove>();
+			ans.AddRange(horseMoves(true, false, board));
+			return ans;
 		}
 
 

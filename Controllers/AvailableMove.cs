@@ -86,6 +86,17 @@ namespace test.Controllers
 		}
 
 
+		public string to_String()
+		{
+			return "CSapat: " + this.moving.team + " Mozgo babu: " + this.moving + " Jelenlegi pozi:  " + this.moving.position + " Uj pozi:  " + TableController.convertReverse(this.move) + (this.attack ? " TAMAD " : "");
+		}
+
+		public string hit_String()
+		{
+			return TableController.convertReverse(this.move);
+		}
+
+
 
 	}
 }

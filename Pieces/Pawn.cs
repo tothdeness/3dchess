@@ -39,7 +39,29 @@ namespace test.Pieces
 				this.ID = rand.Next(000000000, 999999999);
 
 				setColor();
-	
+				setDirections();
+		}
+
+		private void setDirections()
+		{
+			if(team == 1)
+			{
+				directions = new Dictionary<string, Vector3>
+				{
+					{ "(1, 0, 1)", new Vector3(1, 0, 1) },
+					{ "(1, 0, -1)", new Vector3(1, 0, -1) },
+					{ "(1, 0, 0)", new Vector3(1, 0, 0) },
+				};
+			}
+			else
+			{
+				directions = new Dictionary<string, Vector3>
+				{
+					{ "(-1, 0, -1)", new Vector3(-1, 0, -1) },
+					{ "(-1, 0, 1)", new Vector3(-1, 0, 1) },
+					{ "(-1, 0, 0)", new Vector3(1, 0, 0) },
+				};
+			}
 		}
 
 
@@ -49,27 +71,6 @@ namespace test.Pieces
 		}
 
 
-		public override List<AvailableMove> CheckValidMoves(bool s)
-		{
-			List<AvailableMove> ans = new List<AvailableMove>();
-
-			ans.AddRange(pawnMoves(false,false,s));
-
-			return ans;
-
-		}
-
-		public void promotePawn()
-		{
-			if(pos_vector.X == 8 || pos_vector.X == 1)
-			{
-				Delete();
-
-				Queen q = new Queen(position, team, this.gameController);
-
-			}
-
-		}
 
 		public void promotePawn(Board board)
 		{
@@ -82,9 +83,6 @@ namespace test.Pieces
 
 		}
 
-
-
-
 		public override Pawn Clone(Piece p)
 		{
 			return new Pawn(p.position,p.team,this.gameController);
@@ -92,47 +90,48 @@ namespace test.Pieces
 
 
 
-		public override List<AvailableMove> CheckValidMovesWithCover()
-		{
-			List<AvailableMove> ans = new List<AvailableMove>();
-
-			ans.AddRange(pawnMoves(true,false,false));
-
-			return ans;
-		}
-
-
-		public override List<AvailableMove> CheckValidMovesWithKingProtection()
-		{
-			List<AvailableMove> ans = new List<AvailableMove>();
-
-			ans.AddRange(pawnMoves(false, true, true));
-
-			return ans;
-		}
-
-
-
-		public override List<AvailableMove> CheckValidMovesOnVirtualBoard(Board board)
-		{
-			List<AvailableMove> ans = new List<AvailableMove>();
-
-			ans.AddRange(pawnMoves(false, false, board));
-
-			return ans;
-		}
-
-
 		public override List<AvailableMove> CheckValidMovesVirt(Board board)
 		{
 			List<AvailableMove> ans = new List<AvailableMove>();
 
+			if (board.kingIsInDoubleCheck) { return ans; }
+
+			bool locked = validDirections.Count > 0;
+
+			string direc = "";
+
+			if (locked) { direc = validDirections[0].ToString(); }
+
+			if (locked && !directions.ContainsKey(direc)) { return ans; }
+
 			ans.AddRange(pawnMoves(false, false, board));
+
+			if (locked)
+			{
+				if (firstMove && (direc == "(1, 0, 0)" || direc == "(-1, 0, 0)") )
+				{
+					ans.RemoveAll(item => item.move.Z != pos_vector.Z);
+
+				}
+				else
+				{
+					ans.RemoveAll(item => item.move != validDirections[0] + pos_vector);
+				}
+
+			}
+
+			if (board.kingIsInCheck) { removeMoves(ans, board); }
 
 			return ans;
 
 		}
 
+		public override List<AvailableMove> CheckValidCoveredMovesOnVirtualBoard(Board board)
+		{
+			List<AvailableMove> ans = new List<AvailableMove>();
+			ans.AddRange(pawnMoves(true, false, board));
+			return ans;
+		}
 
 
 

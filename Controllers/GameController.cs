@@ -6,7 +6,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using test.Mode;
+using test.Moves;
 using test.Pieces;
+using test.Pieces.Resources;
 
 namespace test.Controllers
 {
@@ -27,6 +29,8 @@ namespace test.Controllers
 
 		int player2; //bot 
 
+		public Board board;
+
 		public GameController(bool botGame, int depth, Node3D tableGraphics,  int player1)
 		{
 			this.botGame = botGame;
@@ -36,28 +40,32 @@ namespace test.Controllers
 			this.player1 = player1;
 			this.player2 = player1 * -1;
 			TableController.tableGraphics = tableGraphics;
-			TableController.game = this;
 			table = TableController.table;
-			SetupBaseGame.AddPiecesStandardGame(this);
+			board = new Board(table, null);
+			SetupBaseGame.AddPiecesStandardGame(this, board);
 			if(player1 == -1) { NextMove(player1); }
 		}
 
 
 		public void NextMove(int team)
 		{
-			currPlayer *= -1;
+	
+			board.current = team * -1;
+
+			MoveGenerator.checkValidMoves(board);
+
+			List<AvailableMove> moves = board.checkAllMoves();
+
+			GD.Print(board.checkGameState(moves).name);
 
 			if (team == player1 && botGame)
 			{
-
 				Bot.Bot bot = new Bot.Bot(depth,player2);
 
 				Thread bot_thread = new Thread(bot.executeNextMove); 
 				
-			
-					bot_thread.Start();
+				bot_thread.Start();
 				
-
 			}
 
 

@@ -303,7 +303,7 @@ namespace test.Bot
 					{
 
 
-						List<AvailableMove> temp = boardPieces[i].CheckValidMovesOnVirtualBoard(board);
+						List<AvailableMove> temp = boardPieces[i].CheckValidMovesVirt(board);
 
 				
 						ans.AddRange(temp);

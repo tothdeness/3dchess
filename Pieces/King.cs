@@ -42,36 +42,6 @@ namespace test.Pieces
 		}
 
 
-		public override List<AvailableMove> CheckValidMoves(bool s)
-		{
-			List<AvailableMove> ans = new List<AvailableMove>();
-
-			ans.AddRange(kingMoves());
-
-			return ans;
-		}
-
-
-		public override List<AvailableMove> CheckValidMovesWithCover()
-		{
-			List<AvailableMove> ans = new List<AvailableMove>();
-
-			ans.AddRange(diagnolMoves(true,true));
-			ans.AddRange(straightMoves(true, true));
-
-
-			return ans;
-		}
-
-		public override List<AvailableMove> CheckValidMovesWithKingProtection()
-		{
-			List<AvailableMove> ans = new List<AvailableMove>();
-
-			ans.AddRange(kingMoves(true));
-
-			return ans;
-		}
-
 
 		public override List<AvailableMove> CheckValidMovesOnVirtualBoard(Board board)
 		{
@@ -93,6 +63,13 @@ namespace test.Pieces
 			return ans;
 		}
 
+		public override List<AvailableMove> CheckValidCoveredMovesOnVirtualBoard(Board board)
+		{
+			List<AvailableMove> ans = new List<AvailableMove>();
+			ans.AddRange(straightMoves(true, true, board));
+			ans.AddRange(diagnolMoves(true, true, board));
+			return ans;
+		}
 
 	}
 }

@@ -39,6 +39,19 @@ namespace test.Pieces
 
 			setColor();
 
+
+			directions = new Dictionary<string, Vector3>
+		{
+			{ "(1, 0, 0)", new Vector3(1, 0, 0) },
+			{ "(-1, 0, 0)", new Vector3(-1, 0, 0) },
+			{ "(0, 0, 1)", new Vector3(0, 0, 1) },
+			{ "(0, 0, -1)", new Vector3(0, 0, -1) },
+			{ "(1, 0, 1)", new Vector3(1, 0, 1) },
+			{ "(-1, 0, -1)", new Vector3(-1, 0, -1) },
+			{ "(1, 0, -1)", new Vector3(1, 0, -1) },
+			{ "(-1, 0, 1)", new Vector3(-1, 0, 1) }
+		};
+
 		}
 
 
@@ -48,61 +61,38 @@ namespace test.Pieces
 			this.ID = ID;
 		}
 
-		public override List<AvailableMove> CheckValidMoves(bool s)
-		{
-			List<AvailableMove> ans = new List<AvailableMove>();
-
-			ans.AddRange(diagnolMoves(false, false));
-			ans.AddRange(straightMoves(false, false));
-
-			return ans;
-		}
-
-		public override List<AvailableMove> CheckValidMovesWithCover()
-		{
-			List<AvailableMove> ans = new List<AvailableMove>();
-
-			ans.AddRange(diagnolMoves(false, true));
-			ans.AddRange(straightMoves(false, true));
-
-			return ans;
-		}
-
-		public override List<AvailableMove> CheckValidMovesWithKingProtection()
-		{
-			List<AvailableMove> ans = new List<AvailableMove>();
-
-			ans.AddRange(diagnolMoves(false, false, true));
-			ans.AddRange(straightMoves(false, false, true));
-
-			return ans;
-		}
-
-
-
-
-		public override List<AvailableMove> CheckValidMovesOnVirtualBoard(Board board)
-		{
-			List<AvailableMove> ans = new List<AvailableMove>();
-
-			ans.AddRange(diagnolMoves(false, false, board));
-			ans.AddRange(straightMoves(false, false, board));
-
-			return ans;
-		}
-
-
 		public override List<AvailableMove> CheckValidMovesVirt(Board board)
 		{
 			List<AvailableMove> ans = new List<AvailableMove>();
 
-			ans.AddRange(diagnolMoves(false, false, board));
-			ans.AddRange(straightMoves(false, false, board));
+			if (board.kingIsInDoubleCheck) { return ans; }
+
+			if (this.validDirections.Count > 0)
+			{
+				ans.AddRange(slidingMoves(false, false, board, validDirections));
+			}
+			else
+			{
+				ans.AddRange(diagnolMoves(false, false, board));
+				ans.AddRange(straightMoves(false, false, board));
+			}
+
+			if (board.kingIsInCheck) { removeMoves(ans, board); }
 
 			return ans;
 		}
 
 
-
+		public override List<AvailableMove> CheckValidCoveredMovesOnVirtualBoard(Board board)
+		{
+			List<AvailableMove> ans = new List<AvailableMove>();
+			ans.AddRange(diagnolMoves(false, true, board));
+			ans.AddRange(straightMoves(false, true, board));
+			return ans;
 		}
+
+
+
+
+	}
 }

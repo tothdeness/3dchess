@@ -120,7 +120,7 @@ public partial class Dummy : MeshInstance3D
 
 				Piece p = TableController.find(this);
 
-				p.ShowValidMoves();
+				p.ShowValidMoves(p_del.gameController.board);
 
 
 

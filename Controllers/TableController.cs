@@ -17,36 +17,11 @@ namespace test.Controllers
 
 
 
-		
-		private static int tableSize;
+	
 		public static List<Piece> table = new List<Piece>();
 		public static Node3D tableGraphics;
 		public static Piece current;
 		private static List<Node> visualizers = new List<Node>();
-
-		public static List<Pawn> enPassant = new List<Pawn>();
-
-		public static bool blackKingCheck = false;
-
-		public static bool whiteKingCheck = false;
-
-		public static GameController game;
-
-
-
-		public struct kingCheck{
-			public bool check;
-			public Piece attacker;
-
-			public kingCheck(bool check, Piece attacker)
-			{
-				this.check = check;
-				this.attacker = attacker;
-			}
-		}
-
-		public static List<kingCheck> kingChecks = new List<kingCheck>();
-
 
 		public static Vector3 convert(string coordinate)
 		{
@@ -75,23 +50,6 @@ namespace test.Controllers
 		}
 
 
-
-		public static void emptyEnpassant()
-		{
-
-			foreach(Pawn pawn in enPassant)
-			{
-				pawn.enPassant = false;
-				pawn.enPassantLeft = null;
-				pawn.enPassantRight = null;
-			}
-
-			enPassant.Clear();
-
-		}
-
-
-
 		public static string convertReverse(Vector3 vector)
 		{
 			int x = (int)vector.Z + 64;
@@ -102,38 +60,6 @@ namespace test.Controllers
 
 			return $"{charX}{charZ}";
 		}
-
-
-		public static bool find(Vector3 vector)
-		{
-			foreach(Piece piece in table)
-			{
-				if(piece.pos_vector.X == vector.X && piece.pos_vector.Z == vector.Z)
-				{
-					return true;
-				}
-
-			}
-
-			return false;
-		}
-
-
-
-		public static Pawn findPawn(Vector3 vector,int team)
-		{
-			foreach (Piece piece in table)
-			{
-				if (piece.pos_vector.X == vector.X && piece.pos_vector.Z == vector.Z && piece.team != team && piece is Pawn)
-				{
-					return (Pawn) piece;
-				}
-
-			}
-
-			return null;
-		}
-
 
 
 		public struct target{
@@ -148,26 +74,6 @@ namespace test.Controllers
 			}
 
 		}
-
-		public static target find(Vector3 vector,Piece curr)
-		{
-			foreach (Piece piece in table)
-			{
-				if (piece.pos_vector.X == vector.X && piece.pos_vector.Z == vector.Z && piece.team == curr.team)
-				{
-					return new target(1,piece);
-
-				} else if(piece.pos_vector.X == vector.X && piece.pos_vector.Z == vector.Z && piece.team != curr.team)
-				{
-					return new target(2,piece);
-				}
-
-			}
-
-			return new target(0,null);
-		}
-
-
 
 
 		public static Piece find(Node node)
@@ -185,9 +91,6 @@ namespace test.Controllers
 
 			return null;
 		}
-
-
-
 
 
 
@@ -239,12 +142,10 @@ namespace test.Controllers
 
 			}
 
-
 			//GD.Print(piece.y + " " + piece.x);
 
 
 		}
-
 
 		public static void removeVisualizers()
 		{
@@ -259,8 +160,6 @@ namespace test.Controllers
 
 
 		}
-
-
 
 
 

@@ -14,7 +14,6 @@ func _on_new_game_bot_pressed():
 	SceneSwitcher.switch_scene("res://TSCN/new_bot_game.tscn")
 	
 	
-
 func _on_new_game_player_pressed():
 	var switcher = SceneSwitcher
 	switcher.create_scene("res://TSCN/main.tscn")
