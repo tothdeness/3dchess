@@ -134,7 +134,7 @@ namespace test.Pieces
 
 			if (this is King && (move.kingSideCastling || move.queenSideCastling))
 
-			{ move.target.Move(TableController.calculatePosition(move.rookNewPos), new AvailableMove(move.target, move.rookNewPos, false)); }
+			{ move.target.Move(TableController.calculatePosition(move.rookNewPos), new AvailableMove(move.target, move.rookNewPos, false, pos_vector)); }
 
 
 			if (firstMove)
@@ -171,7 +171,7 @@ namespace test.Pieces
 			this.team = team;
 			this.gameController = game;
 
-			TableController.table.Add(this);
+			game.table.Add(this);
 
 			Vector3 p = TableController.convert(position);
 			p.Y = y;
@@ -228,10 +228,6 @@ namespace test.Pieces
 			}
 		}
 
-		protected bool kingIsInCheckSame(Board board,Piece target = null)
-		{
-			return false;
-		}
 
 
 
@@ -249,7 +245,7 @@ namespace test.Pieces
 
 			if (!Board.checkboundries(vec) && move.num == 0 && !cover)
 			{
-				AvailableMove m = new AvailableMove(this, vec, false);
+				AvailableMove m = new AvailableMove(this, vec, false,pos_vector);
 				results.Add(m);
 			}
 
@@ -261,7 +257,7 @@ namespace test.Pieces
 
 				if (move2.num == 0 && move.num == 0)
 				{
-					AvailableMove m = new AvailableMove(this, vec2, false);
+					AvailableMove m = new AvailableMove(this, vec2, false, pos_vector);
 					results.Add(m);
 
 				}
@@ -276,7 +272,7 @@ namespace test.Pieces
 
 							if (move.num == 2 || cover)
 								{
-									AvailableMove m = new AvailableMove(this, vec, true, move.p);
+									AvailableMove m = new AvailableMove(this, vec, true, move.p,pos_vector);
 									results.Add(m);
 								}
 
@@ -309,10 +305,7 @@ namespace test.Pieces
 
 						AvailableMove a = IsValidPosition(newPosition, cover, kingProtect, board);
 
-						if (a != null)
-						{
-							results.Add(a);
-						}
+						if (a != null) { results.Add(a); }
 
 					}
 				}
@@ -330,13 +323,13 @@ namespace test.Pieces
 
 				if (move.num == 2 || cover)
 				{
-					return new AvailableMove(this, position, true, move.p);
+					return new AvailableMove(this, position, true, move.p, pos_vector);
 					
 				}
 				else if (move.num == 0 || cover)
 				{
 
-					return new AvailableMove(this, position, false);
+					return new AvailableMove(this, position, false, pos_vector);
 				}
 
 			return null;
@@ -351,14 +344,14 @@ namespace test.Pieces
 
 			if (t.num == 0)
 			{
-				return new AvailableMove(this, ij, false);
+				return new AvailableMove(this, ij, false, pos_vector);
 			}
 			else if (t.num == 2)
 			{
-				return new AvailableMove(this, ij, true, t.p);
+				return new AvailableMove(this, ij, true, t.p, pos_vector);
 			}
 
-			return new AvailableMove(this, ij, false, true);
+			return new AvailableMove(this, ij, false, true, pos_vector);
 		}
 
 		private AvailableMove check(Vector3 ij,Board board, bool kingProtect = false)
@@ -368,11 +361,11 @@ namespace test.Pieces
 
 				if (t.num == 0)
 				{
-					return new AvailableMove(this, ij, false);
+					return new AvailableMove(this, ij, false, pos_vector);
 				}
 				else if (t.num == 2)
 				{
-					return new AvailableMove(this, ij, true, t.p);
+					return new AvailableMove(this, ij, true, t.p, pos_vector);
 				}
 
 			return null;
@@ -544,7 +537,7 @@ namespace test.Pieces
 
 			if (this is King && (move.kingSideCastling || move.queenSideCastling))
 
-			{ move.target.VirtualMove(TableController.calculatePosition(move.rookNewPos), new AvailableMove(move.target, move.rookNewPos, false),board); }
+			{ move.target.VirtualMove(TableController.calculatePosition(move.rookNewPos), new AvailableMove(move.target, move.rookNewPos, false, pos_vector),board); }
 
 			if (firstMove)
 			{

@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using test.Bots.Resources;
 using test.Controllers;
+using test.Moves;
 using test.Pieces;
 using test.Pieces.Resources;
 
@@ -36,8 +37,6 @@ namespace test.Bot
 		private static float rook = 5f;
 
 		private static float queen = 9f;
-
-		private static float king = 800000f;
 
 		public NodeStatus currBestNode;
 
@@ -70,9 +69,6 @@ namespace test.Bot
 				return ans;
 			}
 
-	
-			var new_board = new Board(new List<Piece>(), new List<Pawn>());
-			copyPieces(board.table, new_board);
 
 
 			if (currPlayer == 1) {
@@ -80,14 +76,14 @@ namespace test.Bot
 
 				 best = new NodeStatus(-10000f, null);
 
-				foreach (AvailableMove move in calculateCurrTeamAllMove(new_board, 1))
+				foreach (AvailableMove move in calculateCurrTeamAllMove(board, 1))
 				{
 
-					move.moving = new_board.findPieceID(move.moving.ID);
-					move.moving.VirtualMove(TableController.calculatePosition(move.move), move, new_board);
+					move.moving = board.findPieceID(move.moving.ID);
+					move.moving.VirtualMove(TableController.calculatePosition(move.move), move, board);
 
 
-					var val = miniMax(depth - 1, new_board, alpha, beta,  -1);
+					var val = miniMax(depth - 1, board, alpha, beta,  -1);
 
 					if (val.positionPoints > best.positionPoints)
 					{
@@ -95,9 +91,7 @@ namespace test.Bot
 						best.move = move;
 					}
 
-					new_board = new Board(new List<Piece>(), new List<Pawn>());
-					copyPieces(board.table, new_board);
-
+					board.takeBackMove(move);
 
 					alpha = Math.Max(alpha, val.positionPoints);
 					if(beta <= alpha) { break; }
@@ -111,15 +105,15 @@ namespace test.Bot
 			{
 				best = new NodeStatus(10000f, null);
 
-				List<AvailableMove> moves = calculateCurrTeamAllMove(new_board, -1);
+				List<AvailableMove> moves = calculateCurrTeamAllMove(board, -1);
 
 				foreach (AvailableMove move in moves)
 				{
-					move.moving = new_board.findPieceID(move.moving.ID);
+					move.moving = board.findPieceID(move.moving.ID);
 
-					move.moving.VirtualMove(TableController.calculatePosition(move.move), move, new_board);
+					move.moving.VirtualMove(TableController.calculatePosition(move.move), move, board);
 
-					var val = miniMax(depth - 1, new_board, alpha, beta, 1);
+					var val = miniMax(depth - 1, board, alpha, beta, 1);
 
 
 					//GD.Print(val.positionPoints + " BEST: " + best.positionPoints);
@@ -130,8 +124,7 @@ namespace test.Bot
 						best.move = move;
 					}
 
-					new_board = new Board(new List<Piece>(), new List<Pawn>());
-					copyPieces(board.table, new_board);
+					board.takeBackMove(move);
 
 					beta = Math.Min(beta, val.positionPoints);
 					if (beta <= alpha) { break; }
@@ -154,10 +147,6 @@ namespace test.Bot
 		private NodeStatus evaluateBoard(Board board, int currplayer)
 		{
 			NodeStatus ans = new NodeStatus(0f, null);
-
-
-			
-
 
 			foreach (Piece piece in board.table)
 			{		
@@ -200,7 +189,6 @@ namespace test.Bot
 				if (piece is Bishop) { _ = piece.team == 1 ? ans.positionPoints += bishop : ans.positionPoints -= bishop; continue; }
 				if (piece is Rook) { _ = piece.team == 1 ? ans.positionPoints += rook : ans.positionPoints -= rook; continue; }
 				if (piece is Queen) { _ = piece.team == 1 ? ans.positionPoints += queen : ans.positionPoints -= queen; continue; }
-				if (piece is King) { _ = piece.team == 1 ? ans.positionPoints += king : ans.positionPoints -= king; continue; }
 
 			}	
 	
@@ -210,51 +198,12 @@ namespace test.Bot
 
 
 
-		public void copyPieces(List<Piece> list,Board board)
+		public void executeNextMove(Board board)
 		{
-
-
-
-			for (int i = 0; i < list.Count; i++)
-			{
-				if (list[i] is Pawn) { new Pawn(list[i].position, list[i].team, board, list[i].firstMove, list[i].ID, list[i].gameController); continue; }
-				if (list[i] is Horse) { new Horse(list[i].position, list[i].team, board, list[i].firstMove, list[i].ID, list[i].gameController); continue; }
-				if (list[i] is Bishop) { new Bishop(list[i].position, list[i].team, board, list[i].firstMove, list[i].ID, list[i].gameController); continue; }
-				if (list[i] is Rook) { new Rook(list[i].position, list[i].team, board, list[i].firstMove, list[i].ID, list[i].gameController); continue; }
-				if (list[i] is Queen) { new Queen(list[i].position, list[i].team, board, list[i].firstMove, list[i].ID, list[i].gameController); continue; }
-				if (list[i] is King) { new King(list[i].position, list[i].team, board, list[i].firstMove, list[i].ID, list[i].gameController); continue; }
-			}
-
-
-
-		}
-
-
-		public void executeNextMove()
-		{
-			var watch = new Stopwatch();
-			watch.Start();
-
-			copyTime = 0;
-			numofEv = 0;
-
-
-			Board board = new Board(new List<Piece>(), new List<Pawn>());
-
-			copyPieces(TableController.table.ToList(),board);
-
 
 			NodeStatus s = miniMax(depth, board, -1000000, 1000000, team);
 
 			normalizeMove(s.move);
-
-			GD.Print("Pontok: " + s.positionPoints);
-
-
-			watch.Stop();
-
-			GD.Print("Generalasi ido: " + watch.ElapsedMilliseconds + " Masolas ido: " + copyTime + " Numof Evalution: " + numofEv);
-
 
 
 			try { s.move.moving.Move(TableController.calculatePosition(s.move.move), s.move); } catch
@@ -285,6 +234,11 @@ namespace test.Bot
 
 		public List<AvailableMove> calculateCurrTeamAllMove(Board board, int currteam)
 		{
+
+			board.current = currteam;
+
+			MoveGenerator.checkValidMoves(board);
+
 			List<AvailableMove> ans = new List<AvailableMove>();
 
 			List<Piece> boardPieces = board.table.ToList();

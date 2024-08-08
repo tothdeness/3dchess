@@ -62,7 +62,7 @@ namespace test.Controllers
 			{
 				Bot.Bot bot = new Bot.Bot(depth,player2);
 
-				Thread bot_thread = new Thread(bot.executeNextMove); 
+				Thread bot_thread = new Thread(() => bot.executeNextMove(board)); 
 				
 				bot_thread.Start();
 				

@@ -85,7 +85,6 @@ namespace test.Moves
 						if (last_piece.team == piece.team || !contains) { 
 							break; 
 						} else { 
-							GD.Print(last_piece.position + " Valid direction:  " + direction);
 							last_piece.validDirections.Add(direction);
 							break;
 						}
@@ -95,7 +94,6 @@ namespace test.Moves
 
 					if(piece.team != board.current && piece.directions.ContainsKey(direction.ToString()) )
 					{
-						GD.Print(board.current + " KING IS IN CHECK BY A SLIDING PIECE!");
 						board.block = validPositionsToBlockCheck(direction,ij,safeKingPosition);
 						return;
 					} else if (piece.team != board.current)
@@ -142,15 +140,14 @@ namespace test.Moves
 									{
 										kingCheckCounter++;
 
-										GD.Print(move.moving);
+
 
 										board.block.Add(move.moving.pos_vector.ToString());
 
 										board.kingIsInCheck = true;
 										
 										if(kingCheckCounter > 1) {
-
-										GD.Print("ONLY KING CAN MOVE!");		
+	
 										
 										board.kingIsInDoubleCheck = true;
 
@@ -177,7 +174,6 @@ namespace test.Moves
 			{
 				kingPosition += direction;
 				ans.Add(kingPosition.ToString());
-				GD.Print(TableController.convertReverse(kingPosition));
 			}
 
 			return ans;

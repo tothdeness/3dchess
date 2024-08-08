@@ -13,6 +13,8 @@ namespace test.Controllers
 
 		public Piece moving;
 
+		public Vector3 oldPositon;
+
 		public Vector3 move;
 
 		public Vector3 rookNewPos;
@@ -38,28 +40,22 @@ namespace test.Controllers
 
 
 
-		public AvailableMove(Piece moving,Vector3 move,Piece target,Vector3 rookNewPos)
-		{
-			this.moving = moving;
-			this.move = move;
-			this.target = target;
-			this.rookNewPos = rookNewPos;
-		}
-
-		public AvailableMove(Piece moving,Vector3 move, bool attack)
+		public AvailableMove(Piece moving,Vector3 move, bool attack, Vector3 oldPositon)
 		{
 			this.moving = moving;
 			this.move = move;
 			this.attack = attack;
+			this.oldPositon = oldPositon;
+
 		}
 
 
-		public AvailableMove(Piece moving,Vector3 move, bool attack, Piece target) : this(moving, move, attack)
+		public AvailableMove(Piece moving,Vector3 move, bool attack, Piece target, Vector3 oldPositon) : this(moving, move, attack, oldPositon)
 		{
 			this.target = target;
 		}
 
-		public AvailableMove(Piece moving, Vector3 move, bool attack, bool cover) : this(moving,move, attack)
+		public AvailableMove(Piece moving, Vector3 move, bool attack, bool cover, Vector3 oldPositon) : this(moving,move, attack, oldPositon)
 		{
 			this.cover = cover;
 		}
@@ -71,7 +67,7 @@ namespace test.Controllers
 		}
 
 
-		public AvailableMove(Piece moving,Vector3 move, bool attack, Piece target, bool cover, bool enPassant, Pawn canEnPassantRight, Pawn canEnPassantLeft) : this(moving, move, attack, target)
+		public AvailableMove(Piece moving,Vector3 move, bool attack, Piece target, bool cover, bool enPassant, Pawn canEnPassantRight, Pawn canEnPassantLeft, Vector3 oldPositon) : this(moving, move, attack, target, oldPositon)
 		{
 			this.cover = cover;
 			this.enPassant = enPassant;

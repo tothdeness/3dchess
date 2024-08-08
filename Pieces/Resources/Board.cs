@@ -46,38 +46,6 @@ namespace test.Pieces.Resources
         }
 
 
-        public bool find(Vector3 vector)
-        {
-            foreach (Piece piece in table)
-            {
-                if (piece.pos_vector.X == vector.X && piece.pos_vector.Z == vector.Z)
-                {
-                    return true;
-                }
-
-            }
-
-            return false;
-        }
-
-
-
-        public Pawn findPawn(Vector3 vector, int team)
-        {
-            foreach (Piece piece in table)
-            {
-                if (piece.pos_vector.X == vector.X && piece.pos_vector.Z == vector.Z && piece.team != team && piece is Pawn)
-                {
-                    return (Pawn)piece;
-                }
-
-            }
-
-            return null;
-        }
-
-
-
         public struct target
         {
 
@@ -129,23 +97,6 @@ namespace test.Pieces.Resources
 
 
 
-
-		public Piece find(Node node)
-        {
-
-            foreach (Piece piece in table)
-            {
-                if (piece.node.Equals(node))
-                {
-                    return piece;
-
-                }
-
-            }
-
-            return null;
-        }
-
         //return true if the target position is outside of the map
         public static bool checkboundries(Vector3 ij)
         {
@@ -164,6 +115,20 @@ namespace test.Pieces.Resources
             }
             return moves;
         }
+
+
+
+        public void takeBackMove(AvailableMove move)
+        {
+            if (move.attack)
+            {
+                table.Add(move.target);
+            }
+
+            move.moving.pos_vector = move.oldPositon;
+
+        }
+
 
 
         public struct gameState
