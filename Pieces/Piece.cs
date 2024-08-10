@@ -27,7 +27,7 @@ namespace test.Pieces
 	  
 		public string position;
 
-		protected int y = 3;
+		protected float y = -0.25f;
 
 		public bool firstMove = true;
 
@@ -120,7 +120,10 @@ namespace test.Pieces
 			this.position = TableController.convertReverse(pos_vector);
 
 
-			if (move.target != null && move.attack) { move.target.Delete(); };
+			if (move.target != null && move.attack) { move.target.Delete(move); } else
+			{
+				gameController.board.updatekey(move);
+			}
 
 
 			if (this is Pawn)
@@ -142,7 +145,6 @@ namespace test.Pieces
 				firstMove = false;
 			}
 
-
 			TableController.removeVisualizers();
 
 			this.node.CallDeferred("_bot_move2", vector);
@@ -154,12 +156,10 @@ namespace test.Pieces
 
 
 
-		public void Delete()
+		public void Delete(AvailableMove move)
 		{
-			TableController.table.Remove(this);
-
+			gameController.board.updateWithAttack(move);
 			this.node.QueueFree();
-
 			DeleteVisualizers();
 
 		}
@@ -171,13 +171,13 @@ namespace test.Pieces
 			this.team = team;
 			this.gameController = game;
 
-			game.table.Add(this);
 
 			Vector3 p = TableController.convert(position);
 			p.Y = y;
-
 			pos_vector = p;
-			
+
+			game.table.Add(pos_vector.ToString(), this);
+
 		}
 
 		protected Piece(string position, int team, Board board, GameController game)
@@ -186,13 +186,12 @@ namespace test.Pieces
 			this.team = team;
 			this.gameController = game;
 
-			board.table.Add(this);
-
 			Vector3 p = TableController.convert(position);
 			p.Y = y;
 
 			pos_vector = p;
 
+			board.table.Add(pos_vector.ToString(), this);
 		}
 
 
@@ -201,7 +200,6 @@ namespace test.Pieces
 		{
 
 			Dummy d = (Dummy) node;
-
 
 			if(team == 1) {
 				d.CallDeferred("setColorWhite");
@@ -514,17 +512,17 @@ namespace test.Pieces
 		public void VirtualMove(Vector3 vector, AvailableMove move,Board board)
 		{
 
-
 			this.pos_vector = TableController.reversePosition(vector);
 
 			this.position = TableController.convertReverse(pos_vector);
 
-
-			vector.Y = y;
-
 			if (move.attack && move.target != null)
 			{
-				board.table.Remove(board.findPieceID(move.target.ID));
+				board.updateWithAttack(move);
+			}
+			else
+			{
+				board.updatekey(move);
 			}
 
 			if (this is Pawn)
@@ -539,10 +537,7 @@ namespace test.Pieces
 
 			{ move.target.VirtualMove(TableController.calculatePosition(move.rookNewPos), new AvailableMove(move.target, move.rookNewPos, false, pos_vector),board); }
 
-			if (firstMove)
-			{
-				firstMove = false;
-			}
+			if (firstMove) firstMove = false;
 
 		}
 

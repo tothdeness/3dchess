@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -18,7 +19,7 @@ namespace test.Controllers
 
 
 	
-		public static List<Piece> table = new List<Piece>();
+		public static Dictionary<string,Piece> table = new Dictionary<string, Piece>();
 		public static Node3D tableGraphics;
 		public static Piece current;
 		private static List<Node> visualizers = new List<Node>();
@@ -35,20 +36,6 @@ namespace test.Controllers
 
 			return result;
 		}
-
-		public static Piece findPieceID(int id)
-		{
-			foreach(var piece in table)
-			{
-				if(piece.ID == id)
-				{
-					return piece;
-				}
-				
-			}
-			return null;
-		}
-
 
 		public static string convertReverse(Vector3 vector)
 		{
@@ -79,11 +66,11 @@ namespace test.Controllers
 		public static Piece find(Node node)
 		{
 
-			foreach(Piece piece in table)
+			foreach(KeyValuePair<string,Piece> piece in table)
 			{
-				if (piece.node.Equals(node))
+				if (piece.Value.node.Equals(node))
 				{
-					return piece;
+					return piece.Value;
 
 				}
 

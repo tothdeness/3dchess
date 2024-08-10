@@ -26,7 +26,6 @@ namespace test.Pieces
 
 			node = inst;
 
-
 			Random rand = new Random();
 			this.ID = rand.Next(000000000, 999999999);
 
@@ -52,6 +51,7 @@ namespace test.Pieces
 			if (board.kingIsInDoubleCheck || this.validDirections.Count > 0) { return ans; }
 
 			ans.AddRange(horseMoves(false, false, board));
+
 
 			if (board.kingIsInCheck) { removeMoves(ans, board); }
 

@@ -41,9 +41,9 @@ public partial class main : Node3D
 
 		TableController.tableGraphics = this;
 
-		foreach(var item in TableController.table)
+		foreach(KeyValuePair<string,Piece> item in TableController.table)
 		{
-			item.SetMesh();
+			item.Value.SetMesh();
 		}
 
 	}

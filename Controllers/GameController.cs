@@ -25,7 +25,7 @@ namespace test.Controllers
 
 		int player1;
 
-		public List<Piece> table;
+		public Dictionary<string,Piece> table;
 
 		int player2; //bot 
 
@@ -56,7 +56,7 @@ namespace test.Controllers
 
 			List<AvailableMove> moves = board.checkAllMoves();
 
-			GD.Print(board.checkGameState(moves).name);
+			//GD.Print(board.checkGameState(moves).name);
 
 			if (team == player1 && botGame)
 			{

@@ -26,6 +26,8 @@ namespace test.Bot
 
 		public int team;
 
+		public int numOfEv;
+
 		public List<Piece> currentBoard;
 
 		private static float pawn = 1f;
@@ -65,11 +67,10 @@ namespace test.Bot
 
 			if (depth == 0)
 			{
-				var ans = evaluateBoard(board,currPlayer);
+				var ans = evaluateBoard(board);
+				numOfEv++;
 				return ans;
 			}
-
-
 
 			if (currPlayer == 1) {
 
@@ -78,8 +79,6 @@ namespace test.Bot
 
 				foreach (AvailableMove move in calculateCurrTeamAllMove(board, 1))
 				{
-
-					move.moving = board.findPieceID(move.moving.ID);
 					move.moving.VirtualMove(TableController.calculatePosition(move.move), move, board);
 
 
@@ -109,14 +108,11 @@ namespace test.Bot
 
 				foreach (AvailableMove move in moves)
 				{
-					move.moving = board.findPieceID(move.moving.ID);
 
 					move.moving.VirtualMove(TableController.calculatePosition(move.move), move, board);
 
 					var val = miniMax(depth - 1, board, alpha, beta, 1);
 
-
-					//GD.Print(val.positionPoints + " BEST: " + best.positionPoints);
 
 					if (val.positionPoints < best.positionPoints)
 					{
@@ -144,18 +140,18 @@ namespace test.Bot
 
 
 
-		private NodeStatus evaluateBoard(Board board, int currplayer)
+		private NodeStatus evaluateBoard(Board board)
 		{
 			NodeStatus ans = new NodeStatus(0f, null);
 
-			foreach (Piece piece in board.table)
+			foreach (KeyValuePair<string,Piece> piece in board.table)
 			{		
 
-				if (piece is Pawn) {
+				if (piece.Value is Pawn) {
 
-					float score = pawn + SquareScore.ReadSquareScorePawn(piece.pos_vector,piece.team);
+					float score = pawn + SquareScore.ReadSquareScorePawn(piece.Value.pos_vector,piece.Value.team);
 
-					if(piece.team == 1)
+					if(piece.Value.team == 1)
 					{
 						ans.positionPoints += score;
 					}
@@ -168,11 +164,11 @@ namespace test.Bot
 				}
 
 
-				if (piece is Horse) {
+				if (piece.Value is Horse) {
 
-					float score = knight + SquareScore.ReadSquareScoreKnight(piece.pos_vector);
+					float score = knight + SquareScore.ReadSquareScoreKnight(piece.Value.pos_vector);
 
-					if(piece.team == 1)
+					if(piece.Value.team == 1)
 					{
 						ans.positionPoints += score;
 					}
@@ -186,9 +182,9 @@ namespace test.Bot
 				}
 
 
-				if (piece is Bishop) { _ = piece.team == 1 ? ans.positionPoints += bishop : ans.positionPoints -= bishop; continue; }
-				if (piece is Rook) { _ = piece.team == 1 ? ans.positionPoints += rook : ans.positionPoints -= rook; continue; }
-				if (piece is Queen) { _ = piece.team == 1 ? ans.positionPoints += queen : ans.positionPoints -= queen; continue; }
+				if (piece.Value is Bishop) { _ = piece.Value.team == 1 ? ans.positionPoints += bishop : ans.positionPoints -= bishop; continue; }
+				if (piece.Value is Rook) { _ = piece.Value.team == 1 ? ans.positionPoints += rook : ans.positionPoints -= rook; continue; }
+				if (piece.Value is Queen) { _ = piece.Value.team == 1 ? ans.positionPoints += queen : ans.positionPoints -= queen; continue; }
 
 			}	
 	
@@ -201,9 +197,13 @@ namespace test.Bot
 		public void executeNextMove(Board board)
 		{
 
+			numOfEv = 0;
+			Stopwatch stop = new Stopwatch();
+			stop.Start();
 			NodeStatus s = miniMax(depth, board, -1000000, 1000000, team);
+			stop.Stop();
 
-			normalizeMove(s.move);
+			GD.Print("ELAPSED MILISEC: " + stop.ElapsedMilliseconds +" "+ "KIERTEKELT: " + numOfEv);
 
 
 			try { s.move.moving.Move(TableController.calculatePosition(s.move.move), s.move); } catch
@@ -217,19 +217,6 @@ namespace test.Bot
 
 
 
-		private void normalizeMove(AvailableMove move)
-		{
-
-			move.moving = TableController.findPieceID(move.moving.ID);
-
-			if (move.attack)
-			{
-				move.target = TableController.findPieceID(move.target.ID);
-			}
-
-		}
-
-
 		//fixed
 
 		public List<AvailableMove> calculateCurrTeamAllMove(Board board, int currteam)
@@ -241,27 +228,14 @@ namespace test.Bot
 
 			List<AvailableMove> ans = new List<AvailableMove>();
 
-			List<Piece> boardPieces = board.table.ToList();
-
-
-			Stopwatch stopwatch = new Stopwatch();
-
-			stopwatch.Start();
-
-
-			for (int i = 0; i < boardPieces.Count;i++)
+			foreach (KeyValuePair<string,Piece> item in board.table)
 			{
-
-
-					if (boardPieces[i].team == currteam)
+					if (item.Value.team == currteam)
 					{
 
+						List<AvailableMove> temp = item.Value.CheckValidMovesVirt(board);
 
-						List<AvailableMove> temp = boardPieces[i].CheckValidMovesVirt(board);
-
-				
 						ans.AddRange(temp);
-
 
 					}
 
@@ -269,12 +243,6 @@ namespace test.Bot
 
 
 			ans.Sort((left, right) => sorting(left, right));
-
-
-
-			stopwatch.Stop();
-
-			copyTime += (double)stopwatch.ElapsedTicks / Stopwatch.Frequency * 1000;
 
 			return ans;
 		}

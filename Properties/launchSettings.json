@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "Start in Godot": {
+      "commandName": "Executable",
+      "executablePath": "E:\\2023_24-Egyetem\\2.félév\\Godot\\Godot_v4.2.1-stable_mono_win64.exe",
+      "commandLineArgs": "--path . --verbose",
+      "workingDirectory": ".",
+      "nativeDebugging": true
+    }
+  }
+}

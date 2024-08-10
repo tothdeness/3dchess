@@ -78,7 +78,7 @@ namespace test.Pieces
 			{
 				Queen q = new Queen(position, team, board, false, this.ID, this.gameController);
 
-				board.table.Remove(board.findPieceID(this.ID));
+				//board.table.Remove(board.findPieceID(this.ID));
 			}
 
 		}

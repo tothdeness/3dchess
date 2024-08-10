@@ -84,7 +84,7 @@ namespace test.Moves
 
 						if (last_piece.team == piece.team || !contains) { 
 							break; 
-						} else { 
+						} else {
 							last_piece.validDirections.Add(direction);
 							break;
 						}
@@ -92,7 +92,7 @@ namespace test.Moves
 					}
 
 
-					if(piece.team != board.current && piece.directions.ContainsKey(direction.ToString()) )
+					if(piece.team != board.current && piece.directions.ContainsKey(direction.ToString()) && piece is not Pawn )
 					{
 						board.block = validPositionsToBlockCheck(direction,ij,safeKingPosition);
 						return;
@@ -128,19 +128,17 @@ namespace test.Moves
 
 			int kingCheckCounter = 0;
 
-			foreach(Piece hit in board.table)
+			foreach(KeyValuePair<string,Piece> hit in board.table)
 			{
-				if(hit.team != board.current)
+				if(hit.Value.team != board.current)
 				{
-					foreach(AvailableMove move in hit.CheckValidCoveredMovesOnVirtualBoard(board))
+					foreach(AvailableMove move in hit.Value.CheckValidCoveredMovesOnVirtualBoard(board))
 							{
 								map.Add(TableController.convertReverse(move.move));
 								
 								if(move.target is King && move.moving.team != move.target.team)
 									{
 										kingCheckCounter++;
-
-
 
 										board.block.Add(move.moving.pos_vector.ToString());
 
@@ -174,6 +172,7 @@ namespace test.Moves
 			{
 				kingPosition += direction;
 				ans.Add(kingPosition.ToString());
+
 			}
 
 			return ans;
@@ -185,9 +184,9 @@ namespace test.Moves
 		private static void reset(Board board)
 		{
 
-			foreach(Piece pic in board.table)
+			foreach(KeyValuePair<string,Piece> pic in board.table)
 			{
-				pic.validDirections.Clear();
+				pic.Value.validDirections.Clear();
 			}
 
 			board.block.Clear();
@@ -196,18 +195,6 @@ namespace test.Moves
 			board.kingIsInDoubleCheck = false;
 
 		}
-
-		private static void printOutHitMap(HashSet<string> map)
-		{
-			foreach(string hit in map)
-			{
-				GD.Print(hit);
-			}
-
-			GD.Print();
-
-		}	
-
 
 
 
