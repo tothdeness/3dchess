@@ -243,7 +243,7 @@ namespace test.Pieces
 
 			if (!Board.checkboundries(vec) && move.num == 0 && !cover)
 			{
-				AvailableMove m = new AvailableMove(this, vec, false,pos_vector);
+				AvailableMove m = new AvailableMove(this, vec, false,pos_vector,firstMove);
 				results.Add(m);
 			}
 
@@ -255,7 +255,7 @@ namespace test.Pieces
 
 				if (move2.num == 0 && move.num == 0)
 				{
-					AvailableMove m = new AvailableMove(this, vec2, false, pos_vector);
+					AvailableMove m = new AvailableMove(this, vec2, false, pos_vector, firstMove);
 					results.Add(m);
 
 				}
@@ -270,7 +270,7 @@ namespace test.Pieces
 
 							if (move.num == 2 || cover)
 								{
-									AvailableMove m = new AvailableMove(this, vec, true, move.p,pos_vector);
+									AvailableMove m = new AvailableMove(this, vec, true, move.p,pos_vector,firstMove);
 									results.Add(m);
 								}
 

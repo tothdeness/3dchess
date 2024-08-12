@@ -114,6 +114,8 @@ namespace test.Pieces.Resources
 
 		public void takeBackMove(AvailableMove move)
 		{
+			if (move.firstMove) { move.moving.firstMove = true; }
+
 			if (move.attack)
 			{
 				table[move.moving.pos_vector.ToString()] = move.target;

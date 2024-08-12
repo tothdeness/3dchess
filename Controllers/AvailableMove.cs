@@ -37,7 +37,7 @@ namespace test.Controllers
 
 		public bool queenSideCastling;
 
-
+		public bool firstMove;
 
 
 		public AvailableMove(Piece moving,Vector3 move, bool attack, Vector3 oldPositon)
@@ -49,11 +49,23 @@ namespace test.Controllers
 
 		}
 
+		public AvailableMove(Piece moving,Vector3 move,bool attack,Vector3 oldPositon,bool firstMove) : this(moving, move, attack, oldPositon)
+		{
+			this.firstMove = firstMove;
+		}
+
 
 		public AvailableMove(Piece moving,Vector3 move, bool attack, Piece target, Vector3 oldPositon) : this(moving, move, attack, oldPositon)
 		{
 			this.target = target;
 		}
+
+		public AvailableMove(Piece moving, Vector3 move, bool attack, Piece target, Vector3 oldPositon, bool firstMove) : this(moving, move, attack, oldPositon)
+		{
+			this.target = target;
+			this.firstMove=firstMove;
+		}
+
 
 		public AvailableMove(Piece moving, Vector3 move, bool attack, bool cover, Vector3 oldPositon) : this(moving,move, attack, oldPositon)
 		{
