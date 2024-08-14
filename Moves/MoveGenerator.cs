@@ -42,8 +42,6 @@ namespace test.Moves
 				checkPins(board);
 			}
 
-
-
 		}
 
 		private static King currentKingPosition(Board board)

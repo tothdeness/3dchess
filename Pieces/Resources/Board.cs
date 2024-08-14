@@ -127,7 +127,6 @@ namespace test.Pieces.Resources
 			move.moving.pos_vector = move.oldPositon;
 			table.Remove(move.move.ToString());
 			table.Add(move.oldPositon.ToString(), move.moving);
-
 		}
 
 

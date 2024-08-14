@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://cm3dujumjtbuu"]
+[gd_scene load_steps=4 format=3 uid="uid://c0qw6u8igu6oj"]
 
 [ext_resource type="Script" path="res://Dummy.cs" id="1_1tybw"]
 [ext_resource type="ArrayMesh" uid="uid://bho52l61hrmf2" path="res://TSCN/king.obj" id="1_wieyc"]

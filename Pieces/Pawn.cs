@@ -20,25 +20,7 @@ namespace test.Pieces
 
 		public Pawn(string position, int team, GameController game) : base(position, team, game)
 		{
-
-				Mesh = "res://TSCN/pawn.tscn";
-
-				PackedScene scene = GD.Load<PackedScene>(Mesh);
-				Node inst = scene.Instantiate();
-
-
 				pos_vector = new Vector3(pos_vector.X, -0.25f , pos_vector.Z);
-
-				inst.Set("position", TableController.calculatePosition(pos_vector));
-
-				TableController.tableGraphics.AddChild(inst);
-
-				node = inst;
-
-				Random rand = new Random();
-				this.ID = rand.Next(000000000, 999999999);
-
-				setColor();
 				setDirections();
 		}
 
@@ -64,30 +46,47 @@ namespace test.Pieces
 			}
 		}
 
+		public override void addVisuals()
+		{
 
-		public Pawn(string position, int team, Board board, bool firstMove, int ID, GameController game) : base(position, team, board, game) {
-			this.firstMove = firstMove;
-			this.ID = ID;
+			Mesh = "res://TSCN/pawn.tscn";
+
+			PackedScene scene = GD.Load<PackedScene>(Mesh);
+			Node inst = scene.Instantiate();
+
+			inst.Set("position", TableController.calculatePosition(pos_vector));
+
+			TableController.tableGraphics.AddChild(inst);
+
+			node = inst;
+
+			Random rand = new Random();
+			this.ID = rand.Next(000000000, 999999999);
+
+			setColor();
 		}
 
 
 
-		public void promotePawn(Board board)
+		public void promotePawn(Board board,AvailableMove move, bool visual)
 		{
 			if (pos_vector.X == 8 || pos_vector.X == 1)
 			{
-				Queen q = new Queen(position, team, board, false, this.ID, this.gameController);
 
-				//board.table.Remove(board.findPieceID(this.ID));
+				var addQueen = new Queen(position, team, gameController);
+
+				board.table[pos_vector.ToString()] = addQueen;
+
+				if (visual)
+				{
+					Delete();
+					addQueen.addVisuals();
+				}
+
+				move.promoted = true;
 			}
 
 		}
-
-		public override Pawn Clone(Piece p)
-		{
-			return new Pawn(p.position,p.team,this.gameController);
-		}
-
 
 
 		public override List<AvailableMove> CheckValidMovesVirt(Board board)

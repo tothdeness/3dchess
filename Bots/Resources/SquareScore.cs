@@ -39,6 +39,7 @@ namespace test.Bots.Resources
 
 		public static float ReadSquareScorePawn(Vector3 positon, int team)
 		{
+
 			if(team == 1)
 			{
 				return pawns[(int)(8 - positon.X  ), (int)positon.Z -  1 ];

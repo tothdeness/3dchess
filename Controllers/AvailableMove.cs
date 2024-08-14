@@ -39,6 +39,7 @@ namespace test.Controllers
 
 		public bool firstMove;
 
+		public bool promoted;
 
 		public AvailableMove(Piece moving,Vector3 move, bool attack, Vector3 oldPositon)
 		{

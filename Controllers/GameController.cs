@@ -56,7 +56,7 @@ namespace test.Controllers
 
 			List<AvailableMove> moves = board.checkAllMoves();
 
-			//GD.Print(board.checkGameState(moves).name);
+			GD.Print(board.checkGameState(moves).name);
 
 			if (team == player1 && botGame)
 			{
@@ -67,7 +67,6 @@ namespace test.Controllers
 				bot_thread.Start();
 				
 			}
-
 
 		}
 

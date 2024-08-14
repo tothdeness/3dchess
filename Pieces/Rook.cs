@@ -12,9 +12,15 @@ namespace test.Pieces
 	public class Rook : Piece
 	{
 
-
-
 		public Rook(string position, int team, GameController game) : base(position, team, game)
+		{
+
+			pos_vector = new Vector3(pos_vector.X, -0.25f, pos_vector.Z);
+			setDirecitons();
+		}
+
+
+		public override void addVisuals()
 		{
 
 			Mesh = "res://TSCN/rook.tscn";
@@ -23,38 +29,29 @@ namespace test.Pieces
 			Node inst = scene.Instantiate();
 
 
-			pos_vector = new Vector3(pos_vector.X, -0.25f, pos_vector.Z);
-
-
 			inst.Set("position", TableController.calculatePosition(pos_vector));
 
 			TableController.tableGraphics.AddChild(inst);
 
 			node = inst;
 
-			Random rand = new Random();
-			this.ID = rand.Next(000000000, 999999999);
-
 			setColor();
+		}
 
+		private void setDirecitons()
+		{
 
 			directions = new Dictionary<string, Vector3>
-		{
-			{ "(1, 0, 0)", new Vector3(1, 0, 0) },
-			{ "(-1, 0, 0)", new Vector3(-1, 0, 0) },
-			{ "(0, 0, 1)", new Vector3(0, 0, 1) },
-			{ "(0, 0, -1)", new Vector3(0, 0, -1) }
-		};
+			{
+				{ "(1, 0, 0)", new Vector3(1, 0, 0) },
+				{ "(-1, 0, 0)", new Vector3(-1, 0, 0) },
+				{ "(0, 0, 1)", new Vector3(0, 0, 1) },
+				{ "(0, 0, -1)", new Vector3(0, 0, -1) }
+			};
+
 
 		}
 
-
-
-		public Rook(string position, int team, Board board, bool firstMove, int ID, GameController game) : base(position, team, board, game)
-		{
-			this.firstMove = firstMove;
-			this.ID = ID;
-		}
 
 		public override List<AvailableMove> CheckValidMovesVirt(Board board)
 		{

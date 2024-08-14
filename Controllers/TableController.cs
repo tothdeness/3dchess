@@ -15,9 +15,6 @@ namespace test.Controllers
 {
 	public static class TableController
 	{
-
-
-
 	
 		public static Dictionary<string,Piece> table = new Dictionary<string, Piece>();
 		public static Node3D tableGraphics;
@@ -31,8 +28,6 @@ namespace test.Controllers
 			result.Z = coordinate[0] - 'A' + 1;
 
 			result.X = int.Parse(coordinate[1].ToString());
-
-
 
 			return result;
 		}

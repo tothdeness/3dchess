@@ -13,13 +13,16 @@ namespace test.Pieces
 	{
 		public King(string position, int team,GameController game) : base(position, team, game)
 		{
+			pos_vector = new Vector3(pos_vector.X, -0.25f, pos_vector.Z);
+		}
+
+		public override void addVisuals()
+		{
 
 			Mesh = "res://TSCN/king.tscn";
 
 			PackedScene scene = GD.Load<PackedScene>(Mesh);
 			Node inst = scene.Instantiate();
-
-			pos_vector = new Vector3(pos_vector.X, -0.25f, pos_vector.Z);
 
 			inst.Set("position", TableController.calculatePosition(pos_vector));
 
@@ -27,11 +30,7 @@ namespace test.Pieces
 
 			node = inst;
 
-			Random rand = new Random();
-			this.ID = rand.Next(000000000, 999999999);
-
 			setColor();
-
 		}
 
 

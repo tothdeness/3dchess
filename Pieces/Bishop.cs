@@ -16,24 +16,12 @@ namespace test.Pieces
 		public Bishop(string position, int team, GameController gameController) : base(position, team, gameController)
 		{
 
-			Mesh = "res://TSCN/bishop.tscn";
-
-			PackedScene scene = GD.Load<PackedScene>(Mesh);
-			Node inst = scene.Instantiate();
-
 			pos_vector = new Vector3(pos_vector.X, -0.25f, pos_vector.Z);
-
-			inst.Set("position", TableController.calculatePosition(pos_vector));
-
-			TableController.tableGraphics.AddChild(inst);
-
-			node = inst;
-
-			Random rand = new Random();
-			this.ID = rand.Next(000000000, 999999999);
-
-			setColor();
-
+			setDirections();
+		}
+		
+		private void setDirections()
+		{
 			directions = new Dictionary<string, Vector3>
 			{
 				{ "(1, 0, 1)", new Vector3(1, 0, 1) },
@@ -44,11 +32,23 @@ namespace test.Pieces
 
 		}
 
-		public Bishop(string position, int team, Board board, bool firstMove, int ID,GameController game) : base(position, team, board, game)
+		public override void addVisuals()
 		{
-			this.firstMove = firstMove;
-			this.ID = ID;
+			Mesh = "res://TSCN/bishop.tscn";
+
+			PackedScene scene = GD.Load<PackedScene>(Mesh);
+			Node inst = scene.Instantiate();
+
+			inst.Set("position", TableController.calculatePosition(pos_vector));
+
+			TableController.tableGraphics.AddChild(inst);
+
+			node = inst;
+
+			setColor();
+
 		}
+
 
 		public override List<AvailableMove> CheckValidMovesVirt(Board board)
 		{

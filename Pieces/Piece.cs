@@ -72,9 +72,12 @@ namespace test.Pieces
 
 		public virtual List<AvailableMove> CheckValidMovesVirt(Board board) { throw new NotImplementedException(); }
 
+		public virtual void addVisuals() { throw new NotImplementedException(); }
 
-		public virtual Piece Clone(Piece p) { throw new NotImplementedException(); }
-
+		public void addToGame()
+		{
+			gameController.board.table.Add(pos_vector.ToString(), this);
+		}
 
 
 		public void ShowValidMoves(Board board)
@@ -119,8 +122,12 @@ namespace test.Pieces
 
 			this.position = TableController.convertReverse(pos_vector);
 
-
-			if (move.target != null && move.attack) { move.target.Delete(move); } else
+			if (move.target != null && move.attack)
+			{
+				gameController.board.updateWithAttack(move);
+				move.target.Delete(); 
+			}
+			else
 			{
 				gameController.board.updatekey(move);
 			}
@@ -128,12 +135,9 @@ namespace test.Pieces
 
 			if (this is Pawn)
 			{
-				Pawn p = (Pawn) this;
-
-				//p.promotePawn();
-
+				Pawn pawn = (Pawn)this;
+				pawn.promotePawn(gameController.board, move, true);
 			}
-
 
 			if (this is King && (move.kingSideCastling || move.queenSideCastling))
 
@@ -156,9 +160,8 @@ namespace test.Pieces
 
 
 
-		public void Delete(AvailableMove move)
+		public void Delete()
 		{
-			gameController.board.updateWithAttack(move);
 			this.node.QueueFree();
 			DeleteVisualizers();
 
@@ -175,8 +178,6 @@ namespace test.Pieces
 			Vector3 p = TableController.convert(position);
 			p.Y = y;
 			pos_vector = p;
-
-			game.table.Add(pos_vector.ToString(), this);
 
 		}
 
@@ -527,10 +528,8 @@ namespace test.Pieces
 
 			if (this is Pawn)
 			{
-				Pawn p = (Pawn)this;
-
-				//p.promotePawn(board);
-
+				Pawn pawn = (Pawn) this;
+				pawn.promotePawn(gameController.board, move, false);
 			}
 
 			if (this is King && (move.kingSideCastling || move.queenSideCastling))
