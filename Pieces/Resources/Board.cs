@@ -6,11 +6,10 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using test.Controllers;
 
 namespace test.Pieces.Resources
 {
-	public class Board
+    public class Board
 	{
 		public Dictionary<string,Piece> table = new Dictionary<string, Piece>();
 

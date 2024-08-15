@@ -12,7 +12,7 @@ using test.Pieces.Resources;
 
 namespace test.Controllers
 {
-	public class GameController
+    public class GameController
 	{
 
 		bool botGame;

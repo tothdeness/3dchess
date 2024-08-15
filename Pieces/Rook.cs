@@ -9,7 +9,7 @@ using test.Pieces.Resources;
 
 namespace test.Pieces
 {
-	public class Rook : Piece
+    public class Rook : Piece
 	{
 
 		public Rook(string position, int team, GameController game) : base(position, team, game)

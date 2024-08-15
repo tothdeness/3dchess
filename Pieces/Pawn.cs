@@ -14,7 +14,7 @@ using test.Pieces.Resources;
 namespace test.Pieces
 {
 
-	public class Pawn : Piece
+    public class Pawn : Piece
 	{
 
 
@@ -59,9 +59,6 @@ namespace test.Pieces
 			TableController.tableGraphics.AddChild(inst);
 
 			node = inst;
-
-			Random rand = new Random();
-			this.ID = rand.Next(000000000, 999999999);
 
 			setColor();
 		}

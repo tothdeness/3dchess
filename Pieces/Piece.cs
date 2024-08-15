@@ -18,7 +18,7 @@ using static test.Controllers.TableController;
 
 namespace test.Pieces
 {
-	public  class Piece
+    public  class Piece
 	{
 		//VERTICAL POS 3 (Y)
 
@@ -31,8 +31,6 @@ namespace test.Pieces
 
 		public bool firstMove = true;
 
-		public int ID;
-
 		public GameController gameController;
 
 		public Dictionary<string,Vector3> directions = new Dictionary<string, Vector3>();
@@ -43,30 +41,6 @@ namespace test.Pieces
 	
 		//-1 black, 1 white
 		public int team { get; set; }
-
-
-		public List<AvailableMove> moves = new List<AvailableMove>();
-
-		public bool enPassant = false;
-
-		public Pawn enPassantRight;
-
-		public Pawn enPassantLeft;
-
-		public int covered = 0;
-
-		public int hit = 0;
-
-		public virtual List<AvailableMove> CheckValidMoves(bool special) { throw new NotImplementedException(); }
-
-
-		public virtual  List<AvailableMove> CheckValidMovesWithCover() { throw new NotImplementedException(); }
-
-
-		public virtual  List<AvailableMove> CheckValidMovesWithKingProtection() { throw new NotImplementedException(); }
-
-
-		public virtual List<AvailableMove> CheckValidMovesOnVirtualBoard(Board board) { throw new NotImplementedException(); }
 
 		public virtual List<AvailableMove> CheckValidCoveredMovesOnVirtualBoard(Board board) { throw new NotImplementedException(); }
 
@@ -79,13 +53,10 @@ namespace test.Pieces
 			gameController.board.table.Add(pos_vector.ToString(), this);
 		}
 
-
 		public void ShowValidMoves(Board board)
 		{
 			TableController.showVisualizers(TableController.calculateVisualizers(CheckValidMovesVirt(board)), this);
 		}
-
-
 
 		public void DeleteVisualizers() {
 			TableController.removeVisualizers();
@@ -132,7 +103,6 @@ namespace test.Pieces
 				gameController.board.updatekey(move);
 			}
 
-
 			if (this is Pawn)
 			{
 				Pawn pawn = (Pawn)this;
@@ -144,16 +114,44 @@ namespace test.Pieces
 			{ move.target.Move(TableController.calculatePosition(move.rookNewPos), new AvailableMove(move.target, move.rookNewPos, false, pos_vector)); }
 
 
-			if (firstMove)
-			{
-				firstMove = false;
-			}
+			if (firstMove) firstMove = false;
 
 			TableController.removeVisualizers();
 
 			this.node.CallDeferred("_bot_move2", vector);
 
 			gameController.NextMove(team);
+
+		}
+
+
+		public void VirtualMove(Vector3 vector, AvailableMove move, Board board)
+		{
+
+			this.pos_vector = TableController.reversePosition(vector);
+
+			this.position = TableController.convertReverse(pos_vector);
+
+			if (move.attack && move.target != null)
+			{
+				board.updateWithAttack(move);
+			}
+			else
+			{
+				board.updatekey(move);
+			}
+
+			if (this is Pawn)
+			{
+				Pawn pawn = (Pawn)this;
+				pawn.promotePawn(gameController.board, move, false);
+			}
+
+			if (this is King && (move.kingSideCastling || move.queenSideCastling))
+
+			{ move.target.VirtualMove(TableController.calculatePosition(move.rookNewPos), new AvailableMove(move.target, move.rookNewPos, false, pos_vector), board); }
+
+			if (firstMove) firstMove = false;
 
 		}
 
@@ -180,22 +178,6 @@ namespace test.Pieces
 			pos_vector = p;
 
 		}
-
-		protected Piece(string position, int team, Board board, GameController game)
-		{
-			this.position = position;
-			this.team = team;
-			this.gameController = game;
-
-			Vector3 p = TableController.convert(position);
-			p.Y = y;
-
-			pos_vector = p;
-
-			board.table.Add(pos_vector.ToString(), this);
-		}
-
-
 
 		protected void setColor()
 		{
@@ -343,14 +325,14 @@ namespace test.Pieces
 
 			if (t.num == 0)
 			{
-				return new AvailableMove(this, ij, false, pos_vector);
+				return new AvailableMove(this, ij, false, pos_vector, firstMove);
 			}
 			else if (t.num == 2)
 			{
-				return new AvailableMove(this, ij, true, t.p, pos_vector);
+				return new AvailableMove(this, ij, true, t.p, pos_vector, firstMove);
 			}
 
-			return new AvailableMove(this, ij, false, true, pos_vector);
+			return new AvailableMove(this, ij, false, true, pos_vector, firstMove);
 		}
 
 		private AvailableMove check(Vector3 ij,Board board, bool kingProtect = false)
@@ -360,11 +342,11 @@ namespace test.Pieces
 
 				if (t.num == 0)
 				{
-					return new AvailableMove(this, ij, false, pos_vector);
+					return new AvailableMove(this, ij, false, pos_vector, firstMove);
 				}
 				else if (t.num == 2)
 				{
-					return new AvailableMove(this, ij, true, t.p, pos_vector);
+					return new AvailableMove(this, ij, true, t.p, pos_vector, firstMove);
 				}
 
 			return null;
@@ -509,36 +491,6 @@ namespace test.Pieces
 			return ans;
 		}
 
-
-		public void VirtualMove(Vector3 vector, AvailableMove move,Board board)
-		{
-
-			this.pos_vector = TableController.reversePosition(vector);
-
-			this.position = TableController.convertReverse(pos_vector);
-
-			if (move.attack && move.target != null)
-			{
-				board.updateWithAttack(move);
-			}
-			else
-			{
-				board.updatekey(move);
-			}
-
-			if (this is Pawn)
-			{
-				Pawn pawn = (Pawn) this;
-				pawn.promotePawn(gameController.board, move, false);
-			}
-
-			if (this is King && (move.kingSideCastling || move.queenSideCastling))
-
-			{ move.target.VirtualMove(TableController.calculatePosition(move.rookNewPos), new AvailableMove(move.target, move.rookNewPos, false, pos_vector),board); }
-
-			if (firstMove) firstMove = false;
-
-		}
 
 
 

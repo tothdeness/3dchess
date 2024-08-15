@@ -15,20 +15,20 @@ using test.Pieces.Resources;
 
 namespace test.Bot
 {
-	public class Bot
+    public class Bot
 	{
 
-		public double copyTime;
+		private double copyTime;
 
-		public int numofEv;
+		private int numofEv;
 
-		public int depth;
+		private int depth;
 
-		public int team;
+		private int team;
 
-		public int numOfEv;
+		private int numOfEv;
 
-		public List<Piece> currentBoard;
+		private List<Piece> currentBoard;
 
 		private static float pawn = 1f;
 
@@ -40,13 +40,34 @@ namespace test.Bot
 
 		private static float queen = 9f;
 
-		public NodeStatus currBestNode;
+		private NodeStatus currBestNode;
 
 		public Bot(int depth, int team) { this.depth = depth; this.team = team; }
 
+		public void executeNextMove(Board board)
+		{
+
+			numOfEv = 0;
+			Stopwatch stop = new Stopwatch();
+			stop.Start();
+			NodeStatus s = miniMax(depth, board, -1000000, 1000000, team);
+			stop.Stop();
+
+			GD.Print("ELAPSED MILISEC: " + stop.ElapsedMilliseconds + " " + "KIERTEKELT: " + numOfEv);
 
 
-		public struct NodeStatus
+			try { s.move.moving.Move(TableController.calculatePosition(s.move.move), s.move); }
+			catch
+			{
+				GD.Print("Off screen move!");
+			}
+
+		}
+
+
+
+
+		private struct NodeStatus
 		{
 			public float positionPoints;
 			public AvailableMove move;
@@ -59,7 +80,7 @@ namespace test.Bot
 		}
 
 
-		public NodeStatus miniMax(int depth, Board board, float alpha, float beta, int currPlayer = 0)
+		private NodeStatus miniMax(int depth, Board board, float alpha, float beta, int currPlayer = 0)
 		{
 
 			var best = new NodeStatus();
@@ -194,32 +215,11 @@ namespace test.Bot
 
 
 
-		public void executeNextMove(Board board)
-		{
-
-			numOfEv = 0;
-			Stopwatch stop = new Stopwatch();
-			stop.Start();
-			NodeStatus s = miniMax(depth, board, -1000000, 1000000, team);
-			stop.Stop();
-
-			GD.Print("ELAPSED MILISEC: " + stop.ElapsedMilliseconds +" "+ "KIERTEKELT: " + numOfEv);
-
-
-			try { s.move.moving.Move(TableController.calculatePosition(s.move.move), s.move); } catch
-			{
-				GD.Print("Off screen move!");
-			}
-			
-
-		}
-
-
 
 
 		//fixed
 
-		public List<AvailableMove> calculateCurrTeamAllMove(Board board, int currteam)
+		private List<AvailableMove> calculateCurrTeamAllMove(Board board, int currteam)
 		{
 
 			board.current = currteam;
@@ -248,7 +248,7 @@ namespace test.Bot
 		}
 
 
-		public int sorting(AvailableMove left, AvailableMove right)
+		private int sorting(AvailableMove left, AvailableMove right)
 		{
 			int left_move_value = 0;
 			int right_move_value = 0;

@@ -2,6 +2,7 @@ using Godot;
 using System;
 using test.Controllers;
 using test.Pieces;
+using test.Pieces.Resources;
 
 public partial class Dummy : MeshInstance3D
 {

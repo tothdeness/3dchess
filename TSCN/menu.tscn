@@ -63,9 +63,9 @@ grow_horizontal = 2
 theme_override_font_sizes/font_size = 35
 text = "Főmenü"
 
-[connection signal="pressed" from="VBoxContainer/new_game_player" to="." method="_on_new_game_pressed"]
 [connection signal="pressed" from="VBoxContainer/new_game_player" to="." method="_on_new_game_player_pressed"]
-[connection signal="pressed" from="VBoxContainer/new_game_bot" to="." method="_on_new_game_pressed"]
+[connection signal="pressed" from="VBoxContainer/new_game_player" to="." method="_on_new_game_pressed"]
 [connection signal="pressed" from="VBoxContainer/new_game_bot" to="." method="_on_new_game_bot_pressed"]
+[connection signal="pressed" from="VBoxContainer/new_game_bot" to="." method="_on_new_game_pressed"]
 [connection signal="pressed" from="VBoxContainer/settings" to="." method="_on_settings_pressed"]
 [connection signal="pressed" from="VBoxContainer/quit" to="." method="_on_quit_pressed"]

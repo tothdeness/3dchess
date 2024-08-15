@@ -9,11 +9,12 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using test.Pieces;
+using test.Pieces.Resources;
 
 
 namespace test.Controllers
 {
-	public static class TableController
+    public static class TableController
 	{
 	
 		public static Dictionary<string,Piece> table = new Dictionary<string, Piece>();
@@ -26,6 +27,8 @@ namespace test.Controllers
 			Vector3 result = new Vector3();
 
 			result.Z = coordinate[0] - 'A' + 1;
+
+			result.Y = -0.25f;
 
 			result.X = int.Parse(coordinate[1].ToString());
 
@@ -119,7 +122,7 @@ namespace test.Controllers
 				visualizers.Add(inst);
 				tableGraphics.AddChild(inst);
 
-				validMove a = (validMove)inst; a.target = p;
+				validMove a = (validMove) inst; a.target = p;
 				//if (p.attack) {validMove a = (validMove)inst; a.target = p;}
 
 			}

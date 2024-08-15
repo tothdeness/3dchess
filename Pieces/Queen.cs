@@ -13,7 +13,7 @@ using Chess;
 
 namespace test.Pieces
 {
-	public class Queen : Piece
+    public class Queen : Piece
 	{
 
 

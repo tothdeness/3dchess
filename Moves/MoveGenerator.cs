@@ -12,7 +12,7 @@ using static Godot.TextServer;
 
 namespace test.Moves
 {
-	public static class MoveGenerator
+    public static class MoveGenerator
 	{
 
 		private static List<Vector3> directions = new List<Vector3>
