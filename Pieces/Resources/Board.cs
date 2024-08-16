@@ -126,6 +126,9 @@ namespace test.Pieces.Resources
 			move.moving.pos_vector = move.oldPositon;
 			table.Remove(move.move.ToString());
 			table.Add(move.oldPositon.ToString(), move.moving);
+
+			if(move.castle) { takeBackMove(new AvailableMove(move.rook, move.rookNewPos, false, move.rookOldPos, true)); }
+
 		}
 
 

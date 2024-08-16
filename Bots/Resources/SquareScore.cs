@@ -42,9 +42,9 @@ namespace test.Bots.Resources
 
 			if(team == 1)
 			{
-				return pawns[(int)(8 - positon.X  ), (int)positon.Z -  1 ];
+				return pawns[(int) ( 8 - positon.X  ), (int) positon.Z -  1 ];
 			}
-			return pawns[ (int)(positon.X - 1), (int)positon.Z - 1 ];
+			return pawns[ (int) ( positon.X - 1 ), (int) positon.Z - 1 ];
 		}
 
 
@@ -70,6 +70,31 @@ namespace test.Bots.Resources
 	};
 
 
+
+		public static float ReadSquareScoreKing(Vector3 position)
+		{
+			return kingEarlyGame[(int)(position.X - 1), (int)position.Z - 1];
+		}
+
+		public static readonly float[,] kingEarlyGame = {
+
+			{-0.30f, -0.40f, -0.40f, -0.50f, -0.50f, -0.40f, -0.40f, -0.30f},
+
+			{-0.30f, -0.40f, -0.40f, -0.50f, -0.50f, -0.40f, -0.40f, -0.30f},
+
+			{-0.30f, -0.40f, -0.40f, -0.50f, -0.50f, -0.40f, -0.40f, -0.30f},
+
+			{-0.30f, -0.40f, -0.40f, -0.50f, -0.50f, -0.40f, -0.40f, -0.30f},
+
+			{-0.30f, -0.40f, -0.40f, -0.50f, -0.50f, -0.40f, -0.40f, -0.30f},
+
+			{-0.30f, -0.40f, -0.40f, -0.50f, -0.50f, -0.40f, -0.40f, -0.30f},
+
+			{-0.30f, -0.40f, -0.40f, -0.50f, -0.50f, -0.40f, -0.40f, -0.30f},
+
+			{-0.30f, -0.40f, -0.40f, -0.50f, -0.50f, -0.40f, -0.40f, -0.30f}
+
+		};
 
 
 

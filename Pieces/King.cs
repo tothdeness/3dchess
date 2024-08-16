@@ -66,22 +66,21 @@ namespace test.Pieces
 			if(board.current == 1)
 			{
 
-				if (!board.table.TryGetValue("(1, -0,25, 8)", out Piece whiteRook) || !whiteRook.firstMove) { return ans; }
+				if (!board.table.TryGetValue("(1, -0,25, 8)", out Piece rook) || !rook.firstMove) { return ans; }
 
 				List<string> white = new List<string> { "F1", "G1" };
 
-				if (CanCastle(board, white)) { GD.Print("White can king side castle!"); }
+				if (CanCastle(board, white)) { ans = new AvailableMove(this, new Vector3(pos_vector.X, -0.25f, pos_vector.Z + 2), true, rook, true, pos_vector, new Vector3(pos_vector.X, -0.25f, pos_vector.Z + 1), rook.pos_vector); }
 
 			}
 			else
 			{
-				if (!board.table.TryGetValue("(8, -0,25, 8)", out Piece blackRook) || !blackRook.firstMove) { return ans; }
+				if (!board.table.TryGetValue("(8, -0,25, 8)", out Piece rook) || !rook.firstMove) { return ans; }
 
 				List<string> black = new List<string> { "G8", "F8" };
 
-				if (CanCastle(board, black)) { GD.Print("Black can king side castle!"); }
+				if (CanCastle(board, black)) { ans = new AvailableMove(this, new Vector3(pos_vector.X, -0.25f, pos_vector.Z + 2), true, rook, true, pos_vector, new Vector3(pos_vector.X, -0.25f, pos_vector.Z + 1), rook.pos_vector); }
 			}
-
 
 			return ans;
 		}
@@ -90,6 +89,24 @@ namespace test.Pieces
 		{
 			AvailableMove ans = null;
 
+			if (board.current == 1)
+			{
+
+				if (!board.table.TryGetValue("(1, -0,25, 1)", out Piece rook) || !rook.firstMove) { return ans; }
+
+				List<string> white = new List<string> { "B1", "C1", "D1" };
+
+				if (CanCastle(board, white)) { ans = new AvailableMove(this, new Vector3(pos_vector.X, -0.25f, pos_vector.Z - 2), true, rook, true, pos_vector, new Vector3(pos_vector.X, -0.25f, pos_vector.Z - 1), rook.pos_vector); }
+
+			}
+			else
+			{
+				if (!board.table.TryGetValue("(8, -0,25, 1)", out Piece rook) || !rook.firstMove) { return ans; }
+
+				List<string> black = new List<string> { "B8", "C8", "D8" };
+
+				if (CanCastle(board, black)) { ans = new AvailableMove(this, new Vector3(pos_vector.X, -0.25f, pos_vector.Z - 2), true, rook, true, pos_vector, new Vector3(pos_vector.X, -0.25f, pos_vector.Z - 1), rook.pos_vector); }
+			}
 
 			return ans;
 		}
@@ -106,8 +123,6 @@ namespace test.Pieces
 
 			return true;
 		}
-
-
 
 
 		public override List<AvailableMove> CheckValidCoveredMovesOnVirtualBoard(Board board)

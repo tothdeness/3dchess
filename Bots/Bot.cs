@@ -18,30 +18,22 @@ namespace test.Bot
     public class Bot
 	{
 
-		private double copyTime;
-
-		private int numofEv;
-
 		private int depth;
 
 		private int team;
 
 		private int numOfEv;
 
-		private List<Piece> currentBoard;
+		private const float pawn = 1f;
 
-		private static float pawn = 1f;
+		private const float knight = 3f;
 
-		private static float knight = 3f;
+		private const float bishop = 3.3f;
 
-		private static float bishop = 3.3f;
+		private const float rook = 5f;
 
-		private static float rook = 5f;
-
-		private static float queen = 9f;
-
-		private NodeStatus currBestNode;
-
+		private const float queen = 9f;
+		
 		public Bot(int depth, int team) { this.depth = depth; this.team = team; }
 
 		public void executeNextMove(Board board)
@@ -63,7 +55,6 @@ namespace test.Bot
 			}
 
 		}
-
 
 
 
@@ -165,59 +156,50 @@ namespace test.Bot
 		{
 			NodeStatus ans = new NodeStatus(0f, null);
 
-			foreach (KeyValuePair<string,Piece> piece in board.table)
-			{		
+			var pieceBaseScores = new Dictionary<Type, float>
+			{
+				{ typeof(Pawn), pawn },
+				{ typeof(Horse), knight },
+				{ typeof(Bishop), bishop },
+				{ typeof(Rook), rook },
+				{ typeof(Queen), queen }
+			};
 
-				if (piece.Value is Pawn) {
+			foreach (var pieceEntry in board.table)
+			{
+				var piece = pieceEntry.Value;
+				var pieceType = piece.GetType();
 
-					float score = pawn + SquareScore.ReadSquareScorePawn(piece.Value.pos_vector,piece.Value.team);
-
-					if(piece.Value.team == 1)
-					{
-						ans.positionPoints += score;
-					}
-					else
-					{
-						ans.positionPoints -= score;
-					}
-
-					continue;
+				if (pieceBaseScores.TryGetValue(pieceType, out float baseScore))
+				{
+					float score = baseScore + ReadSquareScore(piece);
+					ans.positionPoints += piece.team == 1 ? score : -score;
 				}
+				else
+				{
+					var score = SquareScore.ReadSquareScoreKing(piece.pos_vector);
 
-
-				if (piece.Value is Horse) {
-
-					float score = knight + SquareScore.ReadSquareScoreKnight(piece.Value.pos_vector);
-
-					if(piece.Value.team == 1)
-					{
-						ans.positionPoints += score;
-					}
-					else
-					{
-						ans.positionPoints -= score;
-
-					}
-					continue;
+					ans.positionPoints += piece.team == 1 ? score : -score;
 
 				}
 
 
-				if (piece.Value is Bishop) { _ = piece.Value.team == 1 ? ans.positionPoints += bishop : ans.positionPoints -= bishop; continue; }
-				if (piece.Value is Rook) { _ = piece.Value.team == 1 ? ans.positionPoints += rook : ans.positionPoints -= rook; continue; }
-				if (piece.Value is Queen) { _ = piece.Value.team == 1 ? ans.positionPoints += queen : ans.positionPoints -= queen; continue; }
-
-			}	
-	
+			}
 
 			return ans;
 		}
 
+		private float ReadSquareScore(Piece piece)
+		{
+			return piece switch
+			{
+				Pawn => SquareScore.ReadSquareScorePawn(piece.pos_vector, piece.team),
+				Horse => SquareScore.ReadSquareScoreKnight(piece.pos_vector),
+				_ => 0f 
+			};
+		}
 
 
-
-
-		//fixed
 
 		private List<AvailableMove> calculateCurrTeamAllMove(Board board, int currteam)
 		{

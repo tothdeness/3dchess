@@ -109,16 +109,20 @@ namespace test.Pieces
 				pawn.promotePawn(gameController.board, move, true);
 			}
 
-			if (this is King && (move.kingSideCastling || move.queenSideCastling))
-
-			{ move.target.Move(TableController.calculatePosition(move.rookNewPos), new AvailableMove(move.target, move.rookNewPos, false, pos_vector)); }
-
 
 			if (firstMove) firstMove = false;
 
 			TableController.removeVisualizers();
 
 			this.node.CallDeferred("_bot_move2", vector);
+
+
+			if (this is King && move.castle)
+			{ 
+				move.rook.Move(TableController.calculatePosition(move.rookNewPos), new AvailableMove(move.rook, move.rookNewPos, false, move.rookOldPos, true));
+				return;
+			}
+
 
 			gameController.NextMove(team);
 
@@ -147,11 +151,12 @@ namespace test.Pieces
 				pawn.promotePawn(gameController.board, move, false);
 			}
 
-			if (this is King && (move.kingSideCastling || move.queenSideCastling))
-
-			{ move.target.VirtualMove(TableController.calculatePosition(move.rookNewPos), new AvailableMove(move.target, move.rookNewPos, false, pos_vector), board); }
-
 			if (firstMove) firstMove = false;
+
+			if (this is King && move.castle)
+			{
+				move.rook.VirtualMove(TableController.calculatePosition(move.rookNewPos), new AvailableMove(move.rook, move.rookNewPos, false, move.rookOldPos, true),board);
+			}
 
 		}
 
@@ -357,7 +362,7 @@ namespace test.Pieces
 	{
 	ans ans = new ans(null, false);
 
-	if (ij.Z < 1 || ij.Z > 8 || ij.X < 1 || ij.X > 8) 
+	if (Board.checkboundries(ij)) 
 	{
 		ans.stop = true;
 		return ans;

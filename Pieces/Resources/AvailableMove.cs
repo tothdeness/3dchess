@@ -18,7 +18,11 @@ namespace test.Pieces.Resources
 
         public Vector3 move;
 
+        public Piece rook;
+
         public Vector3 rookNewPos;
+
+        public Vector3 rookOldPos;
 
         public bool attack;
 
@@ -26,17 +30,9 @@ namespace test.Pieces.Resources
 
         public bool cover;
 
-        public bool enPassant = false;
-
         public Piece covered;
 
-        public Pawn canEnPassantRight;
-
-        public Pawn canEnPassantLeft;
-
-        public bool kingSideCastling;
-
-        public bool queenSideCastling;
+        public bool castle;
 
         public bool firstMove;
 
@@ -50,6 +46,19 @@ namespace test.Pieces.Resources
             this.oldPositon = oldPositon;
 
         }
+
+        public AvailableMove(Piece moving,Vector3 move,bool castle,Piece rook,bool firstMove,Vector3 oldPositon,Vector3 rookNewPos,Vector3 rookOldPos)
+        {
+            this.moving = moving;
+            this.move = move;
+            this.castle = castle;
+            this.rook = rook;
+            this.firstMove = firstMove;
+            this.oldPositon = oldPositon;
+            this.rookNewPos = rookNewPos;
+            this.rookOldPos = rookOldPos;
+        }
+
 
         public AvailableMove(Piece moving, Vector3 move, bool attack, Vector3 oldPositon, bool firstMove) : this(moving, move, attack, oldPositon)
         {
