@@ -48,6 +48,10 @@ namespace test.Bot
 			GD.Print("ELAPSED MILISEC: " + stop.ElapsedMilliseconds + " " + "KIERTEKELT: " + numOfEv);
 
 
+			if(s.move == null) { return; }
+
+			GD.Print(s.move.to_String());
+
 			try { s.move.moving.Move(TableController.calculatePosition(s.move.move), s.move); }
 			catch
 			{
@@ -76,6 +80,7 @@ namespace test.Bot
 
 			var best = new NodeStatus();
 
+			List<AvailableMove> allmoves = null;
 
 			if (depth == 0)
 			{
@@ -83,13 +88,28 @@ namespace test.Bot
 				numOfEv++;
 				return ans;
 			}
+			else
+			{
+				board.current = currPlayer;
+				MoveGenerator.checkValidMoves(board);
+
+				allmoves = board.checkAllMoves();
+				Board.gameState state = board.checkGameState(allmoves);
+
+				if (state.id == 1) {  return new NodeStatus(500 * state.winner * depth, null); }
+				else if (state.id == 2) { return new NodeStatus(0, null); }
+
+			}
+
+
+
 
 			if (currPlayer == 1) {
 
 
 				 best = new NodeStatus(-10000f, null);
 
-				foreach (AvailableMove move in calculateCurrTeamAllMove(board, 1))
+				foreach (AvailableMove move in calculateCurrTeamAllMove(board, 1, allmoves))
 				{
 					move.moving.VirtualMove(TableController.calculatePosition(move.move), move, board);
 
@@ -116,7 +136,7 @@ namespace test.Bot
 			{
 				best = new NodeStatus(10000f, null);
 
-				List<AvailableMove> moves = calculateCurrTeamAllMove(board, -1);
+				List<AvailableMove> moves = calculateCurrTeamAllMove(board, -1, allmoves);
 
 				foreach (AvailableMove move in moves)
 				{
@@ -201,32 +221,10 @@ namespace test.Bot
 
 
 
-		private List<AvailableMove> calculateCurrTeamAllMove(Board board, int currteam)
+		private List<AvailableMove> calculateCurrTeamAllMove(Board board, int currteam, List<AvailableMove> moves)
 		{
-
-			board.current = currteam;
-
-			MoveGenerator.checkValidMoves(board);
-
-			List<AvailableMove> ans = new List<AvailableMove>();
-
-			foreach (KeyValuePair<string,Piece> item in board.table)
-			{
-					if (item.Value.team == currteam)
-					{
-
-						List<AvailableMove> temp = item.Value.CheckValidMovesVirt(board);
-
-						ans.AddRange(temp);
-
-					}
-
-			}
-
-
-			ans.Sort((left, right) => sorting(left, right));
-
-			return ans;
+			moves.Sort((left, right) => sorting(left, right));
+			return moves;
 		}
 
 

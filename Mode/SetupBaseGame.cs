@@ -45,17 +45,17 @@ namespace test.Mode
 
 			// BLACK
 			pieces.Add(new Rook("A8", -1, game));
-			pieces.Add(new Rook("H8", -1, game));
+			//pieces.Add(new Rook("H8", -1, game));
 			//pieces.Add(new Horse("B8", -1, game));
-			//pieces.Add(new Horse("G8", -1, game));
-			//pieces.Add(new Bishop("F8", -1, game));
-			//pieces.Add(new Bishop("C8", -1, game));
+			pieces.Add(new Horse("G8", -1, game));
+			pieces.Add(new Bishop("F8", -1, game));
+			pieces.Add(new Bishop("C8", -1, game));
 
 
 			//pieces.Add(new Pawn("A7", -1, game));
 			//pieces.Add(new Pawn("B7", -1, game));
-			pieces.Add(new Pawn("C7", -1, game));
-			pieces.Add(new Pawn("D7", -1, game));
+			//pieces.Add(new Pawn("C7", -1, game));
+			//pieces.Add(new Pawn("D7", -1, game));
 			pieces.Add(new Pawn("E7", -1, game));
 			pieces.Add(new Pawn("F7", -1, game));
 			pieces.Add(new Pawn("G7", -1, game));
