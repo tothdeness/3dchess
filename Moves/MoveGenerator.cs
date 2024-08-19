@@ -31,30 +31,30 @@ namespace test.Moves
 
 
 
-		public static void checkValidMoves(Board board)
+		public static void CheckValidMoves(Board board)
 		{
-			reset(board);
+			ResetBoard(board);
 
-			board.attackedSquares =	hitMap(board);
+			HitMap(board);
 
 			if (!board.kingIsInDoubleCheck)
 			{
-				checkPins(board);
+				CheckPins(board);
 			}
 
 		}
 
-		private static King currentKingPosition(Board board)
+		private static King CurrentKingPosition(Board board)
 		{
 			King a = (board.current == 1) ? board.kingWhite : board.kingBlack;
 			return a;
 		}
 
-		private static void checkPins(Board board)
+		private static void CheckPins(Board board)
 		{
-			King king = currentKingPosition(board);
+			King king = CurrentKingPosition(board);
 
-			Vector3 safeKingPosition = king.pos_vector;
+			Vector3 safeKingPosition = king.posVector;
 
 			Piece last_piece = null;
 
@@ -68,9 +68,9 @@ namespace test.Moves
 				{
 					ij += direction;
 
-					if( Board.checkboundries(ij) ) { break; }
+					if( Board.CheckBoundaries(ij) ) { break; }
 
-					Piece piece = board.find_piece(ij); 
+					Piece piece = board.FindPiece(ij); 
 
 					if( piece == null ) { continue; }
 
@@ -89,10 +89,9 @@ namespace test.Moves
 						
 					}
 
-
 					if(piece.team != board.current && piece.directions.ContainsKey(direction.ToString()) && piece is not Pawn )
 					{
-						board.block = validPositionsToBlockCheck(direction,ij,safeKingPosition);
+						ValidPositionsToBlockCheck(direction,ij,safeKingPosition,board);
 						return;
 					} else if (piece.team != board.current)
 					{
@@ -107,11 +106,11 @@ namespace test.Moves
 
 		}
 
-		struct hitMapReturn
+		private struct HitMapReturn
 		{
 			public HashSet<string> attackMap;
 			public bool twoCheck;
-			public hitMapReturn(HashSet<string> attackMap, bool twoCheck)
+			public HitMapReturn(HashSet<string> attackMap, bool twoCheck)
 			{
 				this.attackMap = attackMap;
 				this.twoCheck = twoCheck;
@@ -119,67 +118,64 @@ namespace test.Moves
 		}
 
 
-		private static HashSet<string> hitMap(Board board)
+		private static void HitMap(Board board)
 		{
-
-			HashSet<string> map = new HashSet<string>();
 
 			int kingCheckCounter = 0;
 
-			foreach(KeyValuePair<string,Piece> hit in board.table)
+			foreach(KeyValuePair<string,Piece> piece in board.table)
 			{
-				if(hit.Value.team != board.current)
+				if(piece.Value.team != board.current)
 				{
-					foreach(AvailableMove move in hit.Value.CheckValidCoveredMovesOnVirtualBoard(board))
+					foreach(AvailableMove move in piece.Value.CheckValidCoveredMovesOnVirtualBoard(board))
 							{
-								map.Add(TableController.convertReverse(move.move));
+
+								string square = TableController.ConvertReverse(move.move);
+
+								board.attackedSquares.Add(square);
+								
 								
 								if(move.target is King && move.moving.team != move.target.team)
 									{
 										kingCheckCounter++;
 
-										board.block.Add(move.moving.pos_vector.ToString());
+										board.block.Add(move.moving.posVector.ToString());
 
 										board.kingIsInCheck = true;
 										
 										if(kingCheckCounter > 1) {
-	
-										
+									
 										board.kingIsInDoubleCheck = true;
 
-										}
 
 									}
-							}
-						{
 
-					}
+								}
+
+
+
+
+							}				
 				}
 			}
 
-			return map;
 		}
 
 
-		private static HashSet<string> validPositionsToBlockCheck(Vector3 direction,Vector3 attacker,Vector3 kingPosition)
-		{
-
-			HashSet<string> ans = new HashSet<string>();
-  		
+		private static void ValidPositionsToBlockCheck(Vector3 direction,Vector3 attacker,Vector3 kingPosition, Board board)
+		{		
 			while(kingPosition != attacker)
 			{
 				kingPosition += direction;
-				ans.Add(kingPosition.ToString());
+				board.block.Add(kingPosition.ToString());
 
 			}
-
-			return ans;
-
+	
 		}
 
 
 
-		private static void reset(Board board)
+		private static void ResetBoard(Board board)
 		{
 
 			foreach(KeyValuePair<string,Piece> pic in board.table)
@@ -189,6 +185,7 @@ namespace test.Moves
 
 			board.block.Clear();
 			board.attackedSquares.Clear();
+
 			board.kingIsInCheck = false;
 			board.kingIsInDoubleCheck = false;
 

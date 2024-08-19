@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "ayc0o4F5TirGdI6fxUC1lXoLFpGZBsvO31Lo0nmXHYdsVNeL4FouTwiWEaHk+W5BGNoRsu8nj5jgsgFYzSrUsw==",
+  "dgSpecHash": "i5acjELSGliS2pSWCCIiJ67DTr+9pm+nl5I3yFKF41lT/OUIJEzjjdjhmOlrVTn6LGFKyGH/jZd+EJlHOXHrtw==",
   "success": true,
-  "projectFilePath": "E:\\2023_24-Egyetem\\2.félév\\3dchess\\test.csproj",
+  "projectFilePath": "E:\\2023_24-Egyetem\\2.félév\\3dchess\\GodotChess.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\d\\.nuget\\packages\\ardalis.smartenum\\2.0.1\\ardalis.smartenum.2.0.1.nupkg.sha512",
     "C:\\Users\\d\\.nuget\\packages\\gera.chess\\1.1.0\\gera.chess.1.1.0.nupkg.sha512",

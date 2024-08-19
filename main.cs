@@ -55,7 +55,7 @@ public partial class main : Node3D
 	{
 	}
 
-	public void add_child(Dummy child)
+	public void AddChild(Dummy child)
 	{
 		AddChild(child);
 	}

@@ -14,31 +14,13 @@ namespace test.Pieces
 
 		public Rook(string position, int team, GameController game) : base(position, team, game)
 		{
-
-			pos_vector = new Vector3(pos_vector.X, -0.25f, pos_vector.Z);
-			setDirecitons();
+			mesh = "res://TSCN/rook.tscn";
+			posVector = new Vector3(posVector.X, -0.25f, posVector.Z);
+			SetDirecitons();
 		}
 
 
-		public override void addVisuals()
-		{
-
-			Mesh = "res://TSCN/rook.tscn";
-
-			PackedScene scene = GD.Load<PackedScene>(Mesh);
-			Node inst = scene.Instantiate();
-
-
-			inst.Set("position", TableController.calculatePosition(pos_vector));
-
-			TableController.tableGraphics.AddChild(inst);
-
-			node = inst;
-
-			setColor();
-		}
-
-		private void setDirecitons()
+		private void SetDirecitons()
 		{
 
 			directions = new Dictionary<string, Vector3>
@@ -62,14 +44,14 @@ namespace test.Pieces
 			if (this.validDirections.Count > 0)
 			{
 				if (!directions.ContainsKey(validDirections[0].ToString())) { return ans; }
-				ans.AddRange(slidingMoves(false, false, board, validDirections));
+				ans.AddRange(SlidingMoves(false, false, board, validDirections));
 			}
 			else
 			{
-				ans.AddRange(straightMoves(false, false, board));
+				ans.AddRange(StraightMoves(false, false, board));
 			}
 
-			if (board.kingIsInCheck) { removeMoves(ans, board); }
+			if (board.kingIsInCheck) { RemoveMoves(ans, board); }
 
 			return ans;
 
@@ -78,7 +60,7 @@ namespace test.Pieces
 		public override List<AvailableMove> CheckValidCoveredMovesOnVirtualBoard(Board board)
 		{
 			List<AvailableMove> ans = new List<AvailableMove>();
-			ans.AddRange(straightMoves(false, true, board));
+			ans.AddRange(StraightMoves(false, true, board));
 			return ans;
 		}
 

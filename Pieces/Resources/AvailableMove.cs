@@ -87,18 +87,18 @@ namespace test.Pieces.Resources
 
         public void toString()
         {
-            GD.Print("CSapat: " + moving.team + " Mozgo babu: " + moving + " Jelenlegi pozi:  " + moving.position + " Uj pozi:  " + TableController.convertReverse(move) + (attack ? " TAMAD " : ""));
+            GD.Print("CSapat: " + moving.team + " Mozgo babu: " + moving + " Jelenlegi pozi:  " + moving.position + " Uj pozi:  " + TableController.ConvertReverse(move) + (attack ? " TAMAD " : ""));
         }
 
 
         public string to_String()
         {
-            return "CSapat: " + moving.team + " Mozgo babu: " + moving + " Jelenlegi pozi:  " + moving.position + " Uj pozi:  " + TableController.convertReverse(move) + (attack ? " TAMAD " : "");
+            return "CSapat: " + moving.team + " Mozgo babu: " + moving + " Jelenlegi pozi:  " + moving.position + " Uj pozi:  " + TableController.ConvertReverse(move) + (attack ? " TAMAD " : "");
         }
 
         public string hit_String()
         {
-            return TableController.convertReverse(move);
+            return TableController.ConvertReverse(move);
         }
 
 

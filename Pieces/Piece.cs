@@ -22,7 +22,7 @@ namespace test.Pieces
 	{
 		//VERTICAL POS 3 (Y)
 
-		public string Mesh;
+		public string mesh;
 		public Node node { get; set; }
 	  
 		public string position;
@@ -37,7 +37,7 @@ namespace test.Pieces
 
 		public List<Vector3> validDirections = new List<Vector3>();
 
-		public Vector3 pos_vector { get; set; }
+		public Vector3 posVector { get; set; }
 	
 		//-1 black, 1 white
 		public int team { get; set; }
@@ -46,80 +46,97 @@ namespace test.Pieces
 
 		public virtual List<AvailableMove> CheckValidMovesVirt(Board board) { throw new NotImplementedException(); }
 
-		public virtual void addVisuals() { throw new NotImplementedException(); }
-
-		public void addToGame()
+		public void AddToGame()
 		{
-			gameController.board.table.Add(pos_vector.ToString(), this);
+			gameController.board.table.Add(posVector.ToString(), this);
 		}
 
 		public void ShowValidMoves(Board board)
 		{
-			TableController.showVisualizers(TableController.calculateVisualizers(CheckValidMovesVirt(board)), this);
+			TableController.ShowVisualizers(TableController.CalculateVisualizers(CheckValidMovesVirt(board)), this);
 		}
 
 		public void DeleteVisualizers() {
-			TableController.removeVisualizers();
+			TableController.RemoveVisualizers();
 		}
 
 
-		public void removeMoves(List<AvailableMove> moves,Board board)
+		public void RemoveMoves(List<AvailableMove> moves,Board board)
 		{
-			moves.RemoveAll(item => !board.block.Contains(item.move.ToString()));
+			moves.RemoveAll(item => !board.block.Contains(item.move.ToString()));	
 		}
 
-
-		public void SetMesh()
+		public void AddVisuals()
 		{
-
-			PackedScene scene = GD.Load<PackedScene>(Mesh);
+			PackedScene scene = GD.Load<PackedScene>(mesh);
 			Node inst = scene.Instantiate();
 
-			inst.Set("position", TableController.calculatePosition(pos_vector));
+			inst.Set("position", TableController.CalculatePosition(posVector));
 
 			TableController.tableGraphics.AddChild(inst);
 
 			node = inst;
 
-			setColor();
+			SetColor();
+
 		}
 
 
-		public void Move(Vector3 vector,AvailableMove move) {
 
-			vector.Y = pos_vector.Y;
 
-			this.pos_vector = TableController.reversePosition(vector);
 
-			this.position = TableController.convertReverse(pos_vector);
+
+		public void SetMesh()
+		{
+
+			PackedScene scene = GD.Load<PackedScene>(mesh);
+			Node inst = scene.Instantiate();
+
+			inst.Set("position", TableController.CalculatePosition(posVector));
+
+			TableController.tableGraphics.AddChild(inst);
+
+			node = inst;
+
+			SetColor();
+		}
+
+
+		public void MovePieceWithVisualUpdate(Vector3 vector,AvailableMove move) {
+
+			vector.Y = posVector.Y;
+
+			this.posVector = TableController.ReversePosition(vector);
+
+			this.position = TableController.ConvertReverse(posVector);
 
 			if (move.target != null && move.attack)
 			{
-				gameController.board.updateWithAttack(move);
+				gameController.board.UpdateWithAttack(move);
 				move.target.Delete(); 
 			}
 			else
 			{
-				gameController.board.updatekey(move);
+				gameController.board.Updatekey(move);
 			}
 
 			if (this is Pawn)
 			{
 				Pawn pawn = (Pawn)this;
-				pawn.promotePawn(gameController.board, move, true);
+				pawn.PromotePawn(gameController.board, move, true);
 			}
 
 
 			if (firstMove) firstMove = false;
 
-			TableController.removeVisualizers();
+			TableController.RemoveVisualizers();
 
 			this.node.CallDeferred("_bot_move2", vector);
 
 
 			if (this is King && move.castle)
 			{ 
-				move.rook.Move(TableController.calculatePosition(move.rookNewPos), new AvailableMove(move.rook, move.rookNewPos, false, move.rookOldPos, true));
+				move.rook.MovePieceWithVisualUpdate(TableController.CalculatePosition(move.rookNewPos), new AvailableMove(move.rook, move.rookNewPos, false, move.rookOldPos, true));
 				return;
 			}
 
@@ -132,30 +149,30 @@ namespace test.Pieces
 		public void VirtualMove(Vector3 vector, AvailableMove move, Board board)
 		{
 
-			this.pos_vector = TableController.reversePosition(vector);
+			this.posVector = TableController.ReversePosition(vector);
 
-			this.position = TableController.convertReverse(pos_vector);
+			this.position = TableController.ConvertReverse(posVector);
 
 			if (move.attack && move.target != null)
 			{
-				board.updateWithAttack(move);
+				board.UpdateWithAttack(move);
 			}
 			else
 			{
-				board.updatekey(move);
+				board.Updatekey(move);
 			}
 
 			if (this is Pawn)
 			{
 				Pawn pawn = (Pawn)this;
-				pawn.promotePawn(gameController.board, move, false);
+				pawn.PromotePawn(gameController.board, move, false);
 			}
 
 			if (firstMove) firstMove = false;
 
 			if (this is King && move.castle)
 			{
-				move.rook.VirtualMove(TableController.calculatePosition(move.rookNewPos), new AvailableMove(move.rook, move.rookNewPos, false, move.rookOldPos, true),board);
+				move.rook.VirtualMove(TableController.CalculatePosition(move.rookNewPos), new AvailableMove(move.rook, move.rookNewPos, false, move.rookOldPos, true),board);
 			}
 
 		}
@@ -178,23 +195,23 @@ namespace test.Pieces
 			this.gameController = game;
 
 
-			Vector3 p = TableController.convert(position);
+			Vector3 p = TableController.Convert(position);
 			p.Y = y;
-			pos_vector = p;
+			posVector = p;
 
 		}
 
-		protected void setColor()
+		protected void SetColor()
 		{
 
 			Dummy d = (Dummy) node;
 
 			if(team == 1) {
-				d.CallDeferred("setColorWhite");
+				d.CallDeferred("SetColorWhite");
 			}
 			else
 			{
-				d.CallDeferred("setColorBlack");
+				d.CallDeferred("SetColorBlack");
 			}
 			
 
@@ -202,12 +219,12 @@ namespace test.Pieces
 
 
 		
-		struct ans
+		struct Move
 		{
 			public AvailableMove move;
 			public bool stop;
 
-			public ans(AvailableMove move, bool stop)
+			public Move(AvailableMove move, bool stop)
 			{
 				this.move = move;
 				this.stop = stop;
@@ -222,28 +239,28 @@ namespace test.Pieces
 			List<AvailableMove> results = new List<AvailableMove>();
 
 
-			if (pos_vector.X == 1) { return results; };
+			if (posVector.X == 1) { return results; };
 
 
-			Vector3 vec = new Vector3(pos_vector.X + (1 * team), pos_vector.Y, pos_vector.Z);
+			Vector3 vec = new Vector3(posVector.X + (1 * team), posVector.Y, posVector.Z);
 
-			Board.target move = board.find(vec, this);
+			Board.Target move = board.Find(vec, this);
 
-			if (!Board.checkboundries(vec) && move.num == 0 && !cover)
+			if (!Board.CheckBoundaries(vec) && move.num == 0 && !cover)
 			{
-				AvailableMove m = new AvailableMove(this, vec, false,pos_vector,firstMove);
+				AvailableMove m = new AvailableMove(this, vec, false,posVector,firstMove);
 				results.Add(m);
 			}
 
 			if (firstMove && !cover)
 			{
-				Vector3 vec2 = new Vector3(pos_vector.X + (2 * team), pos_vector.Y, pos_vector.Z);
+				Vector3 vec2 = new Vector3(posVector.X + (2 * team), posVector.Y, posVector.Z);
 
-				Board.target move2 = board.find(vec2, this);
+				Board.Target move2 = board.Find(vec2, this);
 
 				if (move2.num == 0 && move.num == 0)
 				{
-					AvailableMove m = new AvailableMove(this, vec2, false, pos_vector, firstMove);
+					AvailableMove m = new AvailableMove(this, vec2, false, posVector, firstMove);
 					results.Add(m);
 
 				}
@@ -253,12 +270,12 @@ namespace test.Pieces
 				{	
 					if(entry.Value.Z != 0)
 						{
-							vec = new Vector3(pos_vector.X + entry.Value.X, pos_vector.Y, pos_vector.Z + entry.Value.Z);
-							move = board.find(vec,this);
+							vec = new Vector3(posVector.X + entry.Value.X, posVector.Y, posVector.Z + entry.Value.Z);
+							move = board.Find(vec,this);
 
 							if (move.num == 2 || cover)
 								{
-									AvailableMove m = new AvailableMove(this, vec, true, move.p,pos_vector,firstMove);
+									AvailableMove m = new AvailableMove(this, vec, true, move.p,posVector,firstMove);
 									results.Add(m);
 								}
 
@@ -272,7 +289,7 @@ namespace test.Pieces
 
 
 
-		protected List<AvailableMove> horseMoves(bool cover, bool kingProtect, Board board)
+		protected List<AvailableMove> HorseMoves(bool cover, bool kingProtect, Board board)
 		{
 			List<AvailableMove> results = new List<AvailableMove>();
 
@@ -285,9 +302,9 @@ namespace test.Pieces
 					if (Math.Abs(x) != Math.Abs(z)) // Ensure L-shaped moves
 					{
 
-						Vector3 newPosition = new Vector3(pos_vector.X + x, pos_vector.Y, pos_vector.Z + z);
+						Vector3 newPosition = new Vector3(posVector.X + x, posVector.Y, posVector.Z + z);
 
-						if (Board.checkboundries(newPosition)) { continue; }
+						if (Board.CheckBoundaries(newPosition)) { continue; }
 
 						AvailableMove a = IsValidPosition(newPosition, cover, kingProtect, board);
 
@@ -304,18 +321,18 @@ namespace test.Pieces
 		private AvailableMove IsValidPosition(Vector3 position, bool cover, bool kingProtect, Board board)
 		{
 	
-			Board.target move = board.find(position, this);
+			Board.Target move = board.Find(position, this);
 
 
 				if (move.num == 2 || cover)
 				{
-					return new AvailableMove(this, position, true, move.p, pos_vector);
+					return new AvailableMove(this, position, true, move.p, posVector);
 					
 				}
 				else if (move.num == 0 || cover)
 				{
 
-					return new AvailableMove(this, position, false, pos_vector);
+					return new AvailableMove(this, position, false, posVector);
 				}
 
 			return null;
@@ -323,46 +340,46 @@ namespace test.Pieces
 		}
 
 
-		private AvailableMove checkWithCover(Vector3 ij,Board board)
+		private AvailableMove CheckWithCover(Vector3 ij,Board board)
 		{
 
-			var t = board.find(ij, this);
+			var t = board.Find(ij, this);
 
 			if (t.num == 0)
 			{
-				return new AvailableMove(this, ij, false, pos_vector, firstMove);
+				return new AvailableMove(this, ij, false, posVector, firstMove);
 			}
 			else if (t.num == 2)
 			{
-				return new AvailableMove(this, ij, true, t.p, pos_vector, firstMove);
+				return new AvailableMove(this, ij, true, t.p, posVector, firstMove);
 			}
 
-			return new AvailableMove(this, ij, false, true, pos_vector, firstMove);
+			return new AvailableMove(this, ij, false, true, posVector, firstMove);
 		}
 
-		private AvailableMove check(Vector3 ij,Board board, bool kingProtect = false)
+		private AvailableMove Check(Vector3 ij,Board board, bool kingProtect = false)
 		{
 
-			var t = board.find(ij, this);
+			var t = board.Find(ij, this);
 
 				if (t.num == 0)
 				{
-					return new AvailableMove(this, ij, false, pos_vector, firstMove);
+					return new AvailableMove(this, ij, false, posVector, firstMove);
 				}
 				else if (t.num == 2)
 				{
-					return new AvailableMove(this, ij, true, t.p, pos_vector, firstMove);
+					return new AvailableMove(this, ij, true, t.p, posVector, firstMove);
 				}
 
 			return null;
 		}
 
 
-	private ans diagnolStraightmovesHelper(Vector3 ij, bool kingProtect, bool cover, bool one_square, Board board)
+	private Move DiagnolStraightmovesHelper(Vector3 ij, bool kingProtect, bool cover, bool one_square, Board board)
 	{
-	ans ans = new ans(null, false);
+	Move ans = new Move(null, false);
 
-	if (Board.checkboundries(ij)) 
+	if (Board.CheckBoundaries(ij)) 
 	{
 		ans.stop = true;
 		return ans;
@@ -372,11 +389,11 @@ namespace test.Pieces
 
 	if (cover) 
 	{ 
-		a = checkWithCover(ij, board);
+		a = CheckWithCover(ij, board);
 	}
 	else
 	{
-		a = check(ij, board, kingProtect);
+		a = Check(ij, board, kingProtect);
 	}
 
 
@@ -404,19 +421,19 @@ namespace test.Pieces
 	return ans;
 	}
 
-	private List<AvailableMove> generateMoves(List<Vector3> directions, bool one_square, bool cover, Board board, bool kingProtect = false)
+	private List<AvailableMove> GenerateSlidingMoves(List<Vector3> directions, bool one_square, bool cover, Board board, bool kingProtect = false)
 {
 	List<AvailableMove> results = new List<AvailableMove>();
 
 	foreach (Vector3 direction in directions)
 	{
-		Vector3 ij = pos_vector;
+		Vector3 ij = posVector;
 		while (true)
 		{
 			ij.X += direction.X;
 			ij.Z += direction.Z;
 
-			ans ans = diagnolStraightmovesHelper(ij, kingProtect, cover, one_square, board);
+			Move ans = DiagnolStraightmovesHelper(ij, kingProtect, cover, one_square, board);
 
 			if (ans.move != null) 
 			{ 
@@ -435,7 +452,7 @@ namespace test.Pieces
 
 
 
-	protected List<AvailableMove> diagnolMoves(bool one_square, bool cover, Board board, bool kingProtect = false)
+	protected List<AvailableMove> DiagnolMoves(bool one_square, bool cover, Board board, bool kingProtect = false)
 	{
 	
 	List<Vector3> diagonalDirections = new List<Vector3>
@@ -447,14 +464,14 @@ namespace test.Pieces
 	};
 
 
-	return generateMoves(diagonalDirections, one_square, cover, board, kingProtect);
+	return GenerateSlidingMoves(diagonalDirections, one_square, cover, board, kingProtect);
 
 	}
 
 
 
 
-	protected List<AvailableMove> straightMoves(bool one_square, bool cover, Board board, bool kingProtect = false)
+	protected List<AvailableMove> StraightMoves(bool one_square, bool cover, Board board, bool kingProtect = false)
 	{
 
 	List<Vector3> straightDirections = new List<Vector3>
@@ -465,29 +482,29 @@ namespace test.Pieces
 		new Vector3(0, 0, -1)
 	};
 
-	return generateMoves(straightDirections, one_square, cover, board, kingProtect);
+	return GenerateSlidingMoves(straightDirections, one_square, cover, board, kingProtect);
 	}
 
 
-	protected List<AvailableMove> slidingMoves(bool one_square, bool cover, Board board,List<Vector3> directions, bool kingProtect = false)
+	protected List<AvailableMove> SlidingMoves(bool one_square, bool cover, Board board,List<Vector3> directions, bool kingProtect = false)
 	{
-		return generateMoves(directions, one_square, cover, board, kingProtect);
+		return GenerateSlidingMoves(directions, one_square, cover, board, kingProtect);
 	}
 
 
 
-		protected List<AvailableMove> kingMoves(Board board)
+		protected List<AvailableMove> KingMoves(Board board)
 		{
 			List<AvailableMove> results = new List<AvailableMove>();
 
-			results.AddRange(straightMoves(true, false,board));
-			results.AddRange(diagnolMoves(true, false,board));
+			results.AddRange(StraightMoves(true, false,board));
+			results.AddRange(DiagnolMoves(true, false,board));
 
 			List<AvailableMove> ans = new List<AvailableMove>();
 
 			foreach (var move in results)
 			{
-				if (!board.attackedSquares.Contains(TableController.convertReverse(move.move)))
+				if (!board.attackedSquares.Contains(TableController.ConvertReverse(move.move)))
 				{
 					ans.Add(move);
 				}

@@ -15,23 +15,23 @@ namespace test.Controllers
     public class GameController
 	{
 
-		bool botGame;
+		private bool botGame;
 
-		int depth;
+		private int depth;
 
-		Node3D tableGraphics;
+		private Node3D tableGraphics;
 
-		int currPlayer;
+		private int currPlayer;
 
-		int player1;
+		private int player1;
 
 		public Dictionary<string,Piece> table;
 
-		int player2; //bot 
+		private int player2; //bot 
 
 		public Board board;
 
-		public GameController(bool botGame, int depth, Node3D tableGraphics,  int player1)
+		public GameController(bool botGame, int depth, Node3D tableGraphics, int player1)
 		{
 			this.botGame = botGame;
 			this.depth = depth;
@@ -41,7 +41,7 @@ namespace test.Controllers
 			this.player2 = player1 * -1;
 			TableController.tableGraphics = tableGraphics;
 			table = TableController.table;
-			board = new Board(table, null);
+			board = new Board(table);
 			SetupBaseGame.AddPiecesStandardGame(this, board);
 			if(player1 == -1) { NextMove(player1); }
 		}
@@ -52,23 +52,25 @@ namespace test.Controllers
 	
 			board.current = team * -1;
 
-			MoveGenerator.checkValidMoves(board);
+			MoveGenerator.CheckValidMoves(board);
 
-			List<AvailableMove> moves = board.checkAllMoves();
+			List<AvailableMove> moves = board.CheckAllMoves();
 
-			GD.Print(board.checkGameState(moves).name);
+			GD.Print(board.CheckGameState(moves).name);
 
 			if (team == player1 && botGame)
 			{
 				Bot.Bot bot = new Bot.Bot(depth,player2);
 
-				Thread bot_thread = new Thread(() => bot.executeNextMove(board)); 
+				Thread bot_thread = new Thread(() => bot.ExecuteNextMove(board)); 
 				
 				bot_thread.Start();
 				
 			}
 
 		}
+
+
 
 
 	}

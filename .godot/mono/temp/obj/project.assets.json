@@ -1202,9 +1202,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\2023_24-Egyetem\\2.félév\\3dchess\\test.csproj",
-      "projectName": "test",
-      "projectPath": "E:\\2023_24-Egyetem\\2.félév\\3dchess\\test.csproj",
+      "projectUniqueName": "E:\\2023_24-Egyetem\\2.félév\\3dchess\\GodotChess.csproj",
+      "projectName": "GodotChess",
+      "projectPath": "E:\\2023_24-Egyetem\\2.félév\\3dchess\\GodotChess.csproj",
       "packagesPath": "C:\\Users\\d\\.nuget\\packages\\",
       "outputPath": "E:\\2023_24-Egyetem\\2.félév\\3dchess\\.godot\\mono\\temp\\obj\\",
       "projectStyle": "PackageReference",

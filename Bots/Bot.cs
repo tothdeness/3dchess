@@ -36,26 +36,21 @@ namespace test.Bot
 		
 		public Bot(int depth, int team) { this.depth = depth; this.team = team; }
 
-		public void executeNextMove(Board board)
+		public void ExecuteNextMove(Board board)
 		{
 
 			numOfEv = 0;
 			Stopwatch stop = new Stopwatch();
 			stop.Start();
-			NodeStatus s = miniMax(depth, board, -1000000, 1000000, team);
+			NodeStatus s = MiniMax(depth, board, -1000000, 1000000, team);
 			stop.Stop();
 
 			GD.Print("ELAPSED MILISEC: " + stop.ElapsedMilliseconds + " " + "KIERTEKELT: " + numOfEv);
 
-
-			if(s.move == null) { return; }
-
-			GD.Print(s.move.to_String());
-
-			try { s.move.moving.Move(TableController.calculatePosition(s.move.move), s.move); }
+			try { s.move.moving.MovePieceWithVisualUpdate(TableController.CalculatePosition(s.move.move), s.move); }
 			catch
 			{
-				GD.Print("Off screen move!");
+				GD.Print("Error!");
 			}
 
 		}
@@ -75,7 +70,7 @@ namespace test.Bot
 		}
 
 
-		private NodeStatus miniMax(int depth, Board board, float alpha, float beta, int currPlayer = 0)
+		private NodeStatus MiniMax(int depth, Board board, float alpha, float beta, int currPlayer = 0)
 		{
 
 			var best = new NodeStatus();
@@ -84,17 +79,17 @@ namespace test.Bot
 
 			if (depth == 0)
 			{
-				var ans = evaluateBoard(board);
+				var ans = EvaluateBoard(board);
 				numOfEv++;
 				return ans;
 			}
 			else
 			{
 				board.current = currPlayer;
-				MoveGenerator.checkValidMoves(board);
+				MoveGenerator.CheckValidMoves(board);
 
-				allmoves = board.checkAllMoves();
-				Board.gameState state = board.checkGameState(allmoves);
+				allmoves = board.CheckAllMoves();
+				Board.GameState state = board.CheckGameState(allmoves);
 
 				if (state.id == 1) {  return new NodeStatus(500 * state.winner * depth, null); }
 				else if (state.id == 2) { return new NodeStatus(0, null); }
@@ -102,19 +97,17 @@ namespace test.Bot
 			}
 
 
-
-
 			if (currPlayer == 1) {
 
 
 				 best = new NodeStatus(-10000f, null);
 
-				foreach (AvailableMove move in calculateCurrTeamAllMove(board, 1, allmoves))
+				foreach (AvailableMove move in CalculateCurrTeamAllMove(board, 1, allmoves))
 				{
-					move.moving.VirtualMove(TableController.calculatePosition(move.move), move, board);
+					move.moving.VirtualMove(TableController.CalculatePosition(move.move), move, board);
 
 
-					var val = miniMax(depth - 1, board, alpha, beta,  -1);
+					var val = MiniMax(depth - 1, board, alpha, beta,  -1);
 
 					if (val.positionPoints > best.positionPoints)
 					{
@@ -122,7 +115,7 @@ namespace test.Bot
 						best.move = move;
 					}
 
-					board.takeBackMove(move);
+					board.TakeBackMove(move);
 
 					alpha = Math.Max(alpha, val.positionPoints);
 					if(beta <= alpha) { break; }
@@ -136,14 +129,14 @@ namespace test.Bot
 			{
 				best = new NodeStatus(10000f, null);
 
-				List<AvailableMove> moves = calculateCurrTeamAllMove(board, -1, allmoves);
+				List<AvailableMove> moves = CalculateCurrTeamAllMove(board, -1, allmoves);
 
 				foreach (AvailableMove move in moves)
 				{
 
-					move.moving.VirtualMove(TableController.calculatePosition(move.move), move, board);
+					move.moving.VirtualMove(TableController.CalculatePosition(move.move), move, board);
 
-					var val = miniMax(depth - 1, board, alpha, beta, 1);
+					var val = MiniMax(depth - 1, board, alpha, beta, 1);
 
 
 					if (val.positionPoints < best.positionPoints)
@@ -152,17 +145,14 @@ namespace test.Bot
 						best.move = move;
 					}
 
-					board.takeBackMove(move);
+					board.TakeBackMove(move);
 
 					beta = Math.Min(beta, val.positionPoints);
 					if (beta <= alpha) { break; }
 
 				}
 
-
-
 			}
-
 
 			return best;
 		}
@@ -172,7 +162,7 @@ namespace test.Bot
 
 
 
-		private NodeStatus evaluateBoard(Board board)
+		private NodeStatus EvaluateBoard(Board board)
 		{
 			NodeStatus ans = new NodeStatus(0f, null);
 
@@ -197,7 +187,7 @@ namespace test.Bot
 				}
 				else
 				{
-					var score = SquareScore.ReadSquareScoreKing(piece.pos_vector);
+					var score = SquareScore.ReadSquareScoreKing(piece.posVector);
 
 					ans.positionPoints += piece.team == 1 ? score : -score;
 
@@ -213,43 +203,40 @@ namespace test.Bot
 		{
 			return piece switch
 			{
-				Pawn => SquareScore.ReadSquareScorePawn(piece.pos_vector, piece.team),
-				Horse => SquareScore.ReadSquareScoreKnight(piece.pos_vector),
+				Pawn => SquareScore.ReadSquareScorePawn(piece.posVector, piece.team),
+				Horse => SquareScore.ReadSquareScoreKnight(piece.posVector),
 				_ => 0f 
 			};
 		}
 
 
 
-		private List<AvailableMove> calculateCurrTeamAllMove(Board board, int currteam, List<AvailableMove> moves)
+		private List<AvailableMove> CalculateCurrTeamAllMove(Board board, int currteam, List<AvailableMove> moves)
 		{
-			moves.Sort((left, right) => sorting(left, right));
+			moves.Sort((left, right) => Sorting(left, right, board));
 			return moves;
 		}
 
 
-		private int sorting(AvailableMove left, AvailableMove right)
+		private int Sorting(AvailableMove left, AvailableMove right, Board board)
 		{
-			int left_move_value = 0;
-			int right_move_value = 0;
-
-			if (left.attack) { 
-				left_move_value ++;
-
-			}
-
-			if (right.attack) { 
-				right_move_value ++;
-
-			}
-
+			int left_move_value = CalculatePoints(left,board);
+			int right_move_value = CalculatePoints(right,board);
 
 			if(left_move_value == right_move_value) { return 0; }		
-
 			if(left_move_value > right_move_value) { return -1; }
 
 			return 1;
 		}
+
+		private int CalculatePoints(AvailableMove move, Board board)
+		{
+			int ans = 0;
+			if (move.attack) ans++;
+			return ans;
+		}
+
+
 
 	}
 }

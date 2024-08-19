@@ -1,9 +1,5 @@
 ﻿using Godot;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using test.Controllers;
 using test.Pieces.Resources;
 
@@ -13,25 +9,9 @@ namespace test.Pieces
 	{
 		public Horse(string position, int team, GameController game) : base(position, team, game)
 		{
+			mesh = "res://TSCN/horse.tscn";
+			posVector = new Vector3(posVector.X, -0.25f, posVector.Z);
 
-			pos_vector = new Vector3(pos_vector.X, -0.25f, pos_vector.Z);
-
-		}
-
-		public override void addVisuals()
-		{
-			Mesh = "res://TSCN/horse.tscn";
-
-			PackedScene scene = GD.Load<PackedScene>(Mesh);
-			Node inst = scene.Instantiate();
-
-			inst.Set("position", TableController.calculatePosition(pos_vector));
-
-			TableController.tableGraphics.AddChild(inst);
-
-			node = inst;
-
-			setColor();
 		}
 
 
@@ -41,10 +21,10 @@ namespace test.Pieces
 
 			if (board.kingIsInDoubleCheck || this.validDirections.Count > 0) { return ans; }
 
-			ans.AddRange(horseMoves(false, false, board));
+			ans.AddRange(HorseMoves(false, false, board));
 
 
-			if (board.kingIsInCheck) { removeMoves(ans, board); }
+			if (board.kingIsInCheck) { RemoveMoves(ans, board); }
 
 			return ans;
 
@@ -54,7 +34,7 @@ namespace test.Pieces
 		public override List<AvailableMove> CheckValidCoveredMovesOnVirtualBoard(Board board)
 		{
 			List<AvailableMove> ans = new List<AvailableMove>();
-			ans.AddRange(horseMoves(true, false, board));
+			ans.AddRange(HorseMoves(true, false, board));
 			return ans;
 		}
 

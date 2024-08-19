@@ -1,11 +1,9 @@
-using Chess;
 using Godot;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
+using System.Collections.Concurrent;
+
 
 namespace test.Pieces.Resources
 {
@@ -27,20 +25,20 @@ namespace test.Pieces.Resources
 
 		public HashSet<string> block = new HashSet<string>();
 
-		public Board(Dictionary<string, Piece> table, List<Pawn> enPassant)
+		public Board(Dictionary<string, Piece> table)
 		{
 			this.table = table;
 		}
 
 
 
-		public struct target
+		public struct Target
 		{
 
 			public int num;
 			public Piece p;
 
-			public target(int num, Piece p)
+			public Target(int num, Piece p)
 			{
 				this.num = num;
 				this.p = p;
@@ -48,42 +46,42 @@ namespace test.Pieces.Resources
 
 		}
 
-		public target find(Vector3 vector, Piece curr)
+		public Target Find(Vector3 vector, Piece curr)
 		{
 
 			bool ans = table.TryGetValue(vector.ToString(), out Piece value);
 
-			if(!ans) { return new target(0, null); }
+			if(!ans) { return new Target(0, null); }
 
 			if(value.team == curr.team)
 			{
-				return new target(1, value);
+				return new Target(1, value);
 			}
 			else
 			{
-				return new target(2, value);
+				return new Target(2, value);
 			}
 
 	
 		}
 
 
-		public void updatekey(AvailableMove move)
+		public void Updatekey(AvailableMove move)
 		{
 			table.Remove(move.oldPositon.ToString());
-			table.Add(move.moving.pos_vector.ToString(), move.moving);
+			table.Add(move.moving.posVector.ToString(), move.moving);
 
 		}
 
-		public void updateWithAttack(AvailableMove move)
+		public void UpdateWithAttack(AvailableMove move)
 		{
 			table.Remove(move.oldPositon.ToString());
-			table[move.target.pos_vector.ToString()] = move.moving;
+			table[move.target.posVector.ToString()] = move.moving;
 
 		}
 
 
-		public Piece find_piece(Vector3 vector)
+		public Piece FindPiece(Vector3 vector)
 		{
 			return table.TryGetValue(vector.ToString(), out Piece value) ? value : null;
 		}
@@ -91,54 +89,65 @@ namespace test.Pieces.Resources
 
 
 		//return true if the target position is outside of the map
-		public static bool checkboundries(Vector3 ij)
+		public static bool CheckBoundaries(Vector3 ij)
 		{
 			return ij.Z < 1 || ij.Z > 8 || ij.X < 1 || ij.X > 8;
 		}
 
 
-		public List<AvailableMove> checkAllMoves()
+		public List<AvailableMove> CheckAllMoves()
 		{
-			List<AvailableMove> moves = new List<AvailableMove> ();
+			// Use ConcurrentBag for thread-safe collection.
+			ConcurrentBag<AvailableMove> moves = new ConcurrentBag<AvailableMove>();
 
-			foreach (KeyValuePair<string,Piece> piece in table)
+			// Use Parallel.ForEach to parallelize the loop.
+			Parallel.ForEach(table, piece =>
 			{
-				if(piece.Value.team != current) { continue; }
-				moves.AddRange(piece.Value.CheckValidMovesVirt(this));
-			}
-			return moves;
+				// Skip pieces that are not on the current team.
+				if (piece.Value.team != current) return;
+
+				// Get valid moves for the piece and add them to the moves collection.
+				var pieceMoves = piece.Value.CheckValidMovesVirt(this);
+				foreach (var move in pieceMoves)
+				{
+					moves.Add(move); // Adding to ConcurrentBag is thread-safe.
+				}
+			});
+
+			// Convert ConcurrentBag back to List and return.
+			return moves.ToList();
 		}
 
 
 
-		public void takeBackMove(AvailableMove move)
+		public void TakeBackMove(AvailableMove move)
 		{
 			if (move.firstMove) { move.moving.firstMove = true; }
 
 			if (move.attack)
 			{
-				table[move.moving.pos_vector.ToString()] = move.target;
+				table[move.moving.posVector.ToString()] = move.target;
 				table.Add(move.oldPositon.ToString(), move.moving);
-				move.moving.pos_vector = move.oldPositon;
+				move.moving.posVector = move.oldPositon;
 				return;
 			}
 
-			move.moving.pos_vector = move.oldPositon;
+			move.moving.posVector = move.oldPositon;
 			table.Remove(move.move.ToString());
 			table.Add(move.oldPositon.ToString(), move.moving);
 
-			if(move.castle) { takeBackMove(new AvailableMove(move.rook, move.rookNewPos, false, move.rookOldPos, true)); }
+			if(move.castle) { TakeBackMove(new AvailableMove(move.rook, move.rookNewPos, false, move.rookOldPos, true)); }
 
 		}
 
 
 
-		public struct gameState
+		public struct GameState
 		{
 			public string name;
 			public int id;
 			public int winner;
-			public gameState(string name, int id,int winner)
+			public GameState(string name, int id,int winner)
 			{
 				this.name = name;
 				this.id = id;
@@ -148,18 +157,18 @@ namespace test.Pieces.Resources
 
 
 		// 0 = game is not over 1 = game is over (current player won) 2 = stalemate
-		public gameState checkGameState(List<AvailableMove> moves)
+		public GameState CheckGameState(List<AvailableMove> moves)
 		{
 			if(kingIsInCheck && moves.Count == 0)
 			{
-				return new gameState("Game is over! Winner is " + (current == 1 ? "Black" : "White"),1,current * -1);
+				return new GameState("Game is over! Winner is " + (current == 1 ? "Black" : "White"),1,current * -1);
 
 			}else if(!kingIsInCheck && moves.Count == 0)
 			{
-				return new gameState("Game is ended in a stalemate!",2,0);
+				return new GameState("Game is ended in a stalemate!",2,0);
 			}
 
-			return new gameState("Game is not over.",0,0);
+			return new GameState("Game is not over.",0,0);
 		}
 
 

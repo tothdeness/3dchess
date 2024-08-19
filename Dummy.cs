@@ -62,24 +62,24 @@ public partial class Dummy : MeshInstance3D
 				if (c != null && IsInstanceValid(c) && !c.IsQueuedForDeletion())
 				{
 
-					TableController.current.Move(c.Position, target);
+					TableController.current.MovePieceWithVisualUpdate(c.Position, target);
 
 				}
 
 
 
 
-				Piece p = TableController.find(this);
+				Piece p = TableController.Find(this);
 
 				if (p == null) { return; }
 
 					if (p.team == 1)
 					{
-						setColorWhite();
+						SetColorWhite();
 					}
 					else
 					{
-						setColorBlack();
+						SetColorBlack();
 					}
 
 					p.DeleteVisualizers();
@@ -110,7 +110,7 @@ public partial class Dummy : MeshInstance3D
 				piece = GetNode<MeshInstance3D>("../"+Name);
 
 
-				Piece p_del = TableController.find(this);
+				Piece p_del = TableController.Find(this);
 
 				p_del.DeleteVisualizers();
 
@@ -119,7 +119,7 @@ public partial class Dummy : MeshInstance3D
 				piece.MaterialOverlay = standardMaterial;
 
 
-				Piece p = TableController.find(this);
+				Piece p = TableController.Find(this);
 
 				p.ShowValidMoves(p_del.gameController.board);
 
@@ -139,7 +139,7 @@ public partial class Dummy : MeshInstance3D
 	}
 
 
-	public void setColorWhite()
+	public void SetColorWhite()
 	{
 
 		var piece = GetNode<MeshInstance3D>("../" + Name);
@@ -152,7 +152,7 @@ public partial class Dummy : MeshInstance3D
 
 	}
 
-	public void setColorBlack()
+	public void SetColorBlack()
 	{
 
 		var piece = GetNode<MeshInstance3D>("../" + Name);

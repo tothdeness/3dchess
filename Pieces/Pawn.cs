@@ -20,11 +20,12 @@ namespace test.Pieces
 
 		public Pawn(string position, int team, GameController game) : base(position, team, game)
 		{
-				pos_vector = new Vector3(pos_vector.X, -0.25f , pos_vector.Z);
-				setDirections();
+				mesh = "res://TSCN/pawn.tscn";
+				posVector = new Vector3(posVector.X, -0.25f , posVector.Z);
+				SetDirections();
 		}
 
-		private void setDirections()
+		private void SetDirections()
 		{
 			if(team == 1)
 			{
@@ -46,38 +47,21 @@ namespace test.Pieces
 			}
 		}
 
-		public override void addVisuals()
+
+
+		public void PromotePawn(Board board,AvailableMove move, bool visual)
 		{
-
-			Mesh = "res://TSCN/pawn.tscn";
-
-			PackedScene scene = GD.Load<PackedScene>(Mesh);
-			Node inst = scene.Instantiate();
-
-			inst.Set("position", TableController.calculatePosition(pos_vector));
-
-			TableController.tableGraphics.AddChild(inst);
-
-			node = inst;
-
-			setColor();
-		}
-
-
-
-		public void promotePawn(Board board,AvailableMove move, bool visual)
-		{
-			if (pos_vector.X == 8 || pos_vector.X == 1)
+			if (posVector.X == 8 || posVector.X == 1)
 			{
 
 				var addQueen = new Queen(position, team, gameController);
 
-				board.table[pos_vector.ToString()] = addQueen;
+				board.table[posVector.ToString()] = addQueen;
 
 				if (visual)
 				{
 					Delete();
-					addQueen.addVisuals();
+					addQueen.AddVisuals();
 				}
 
 				move.promoted = true;
@@ -106,17 +90,17 @@ namespace test.Pieces
 			{
 				if (firstMove && (direc == "(1, 0, 0)" || direc == "(-1, 0, 0)") )
 				{
-					ans.RemoveAll(item => item.move.Z != pos_vector.Z);
+					ans.RemoveAll(item => item.move.Z != posVector.Z);
 
 				}
 				else
 				{
-					ans.RemoveAll(item => item.move != validDirections[0] + pos_vector);
+					ans.RemoveAll(item => item.move != validDirections[0] + posVector);
 				}
 
 			}
 
-			if (board.kingIsInCheck) { removeMoves(ans, board); }
+			if (board.kingIsInCheck) { RemoveMoves(ans, board); }
 
 			return ans;
 

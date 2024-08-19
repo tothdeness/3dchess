@@ -17,25 +17,9 @@ namespace test.Pieces
 
 		public King(string position, int team,GameController game) : base(position, team, game)
 		{
-			pos_vector = new Vector3(pos_vector.X, -0.25f, pos_vector.Z);
+			mesh = "res://TSCN/king.tscn";
+			posVector = new Vector3(posVector.X, -0.25f, posVector.Z);
 			castleAvailable = true;
-		}
-
-		public override void addVisuals()
-		{
-
-			Mesh = "res://TSCN/king.tscn";
-
-			PackedScene scene = GD.Load<PackedScene>(Mesh);
-			Node inst = scene.Instantiate();
-
-			inst.Set("position", TableController.calculatePosition(pos_vector));
-
-			TableController.tableGraphics.AddChild(inst);
-
-			node = inst;
-
-			setColor();
 		}
 
 
@@ -43,7 +27,7 @@ namespace test.Pieces
 		{
 			List<AvailableMove> ans = new List<AvailableMove>();
 
-			ans.AddRange(kingMoves( board));
+			ans.AddRange(KingMoves( board));
 
 
 			if(!board.kingIsInCheck && firstMove)
@@ -70,7 +54,7 @@ namespace test.Pieces
 
 				List<string> white = new List<string> { "F1", "G1" };
 
-				if (CanCastle(board, white)) { ans = new AvailableMove(this, new Vector3(pos_vector.X, -0.25f, pos_vector.Z + 2), true, rook, true, pos_vector, new Vector3(pos_vector.X, -0.25f, pos_vector.Z + 1), rook.pos_vector); }
+				if (CanCastle(board, white)) { ans = new AvailableMove(this, new Vector3(posVector.X, -0.25f, posVector.Z + 2), true, rook, true, posVector, new Vector3(posVector.X, -0.25f, posVector.Z + 1), rook.posVector); }
 
 			}
 			else
@@ -79,7 +63,7 @@ namespace test.Pieces
 
 				List<string> black = new List<string> { "G8", "F8" };
 
-				if (CanCastle(board, black)) { ans = new AvailableMove(this, new Vector3(pos_vector.X, -0.25f, pos_vector.Z + 2), true, rook, true, pos_vector, new Vector3(pos_vector.X, -0.25f, pos_vector.Z + 1), rook.pos_vector); }
+				if (CanCastle(board, black)) { ans = new AvailableMove(this, new Vector3(posVector.X, -0.25f, posVector.Z + 2), true, rook, true, posVector, new Vector3(posVector.X, -0.25f, posVector.Z + 1), rook.posVector); }
 			}
 
 			return ans;
@@ -96,7 +80,7 @@ namespace test.Pieces
 
 				List<string> white = new List<string> { "B1", "C1", "D1" };
 
-				if (CanCastle(board, white)) { ans = new AvailableMove(this, new Vector3(pos_vector.X, -0.25f, pos_vector.Z - 2), true, rook, true, pos_vector, new Vector3(pos_vector.X, -0.25f, pos_vector.Z - 1), rook.pos_vector); }
+				if (CanCastle(board, white)) { ans = new AvailableMove(this, new Vector3(posVector.X, -0.25f, posVector.Z - 2), true, rook, true, posVector, new Vector3(posVector.X, -0.25f, posVector.Z - 1), rook.posVector); }
 
 			}
 			else
@@ -105,7 +89,7 @@ namespace test.Pieces
 
 				List<string> black = new List<string> { "B8", "C8", "D8" };
 
-				if (CanCastle(board, black)) { ans = new AvailableMove(this, new Vector3(pos_vector.X, -0.25f, pos_vector.Z - 2), true, rook, true, pos_vector, new Vector3(pos_vector.X, -0.25f, pos_vector.Z - 1), rook.pos_vector); }
+				if (CanCastle(board, black)) { ans = new AvailableMove(this, new Vector3(posVector.X, -0.25f, posVector.Z - 2), true, rook, true, posVector, new Vector3(posVector.X, -0.25f, posVector.Z - 1), rook.posVector); }
 			}
 
 			return ans;
@@ -115,7 +99,7 @@ namespace test.Pieces
 		{
 			foreach(string move in moves)
 			{
-				if(board.table.ContainsKey(TableController.convert(move).ToString()) || board.attackedSquares.Contains(move))
+				if(board.table.ContainsKey(TableController.Convert(move).ToString()) || board.attackedSquares.Contains(move))
 				{
 					return false;
 				}
@@ -128,8 +112,8 @@ namespace test.Pieces
 		public override List<AvailableMove> CheckValidCoveredMovesOnVirtualBoard(Board board)
 		{
 			List<AvailableMove> ans = new List<AvailableMove>();
-			ans.AddRange(straightMoves(true, true, board));
-			ans.AddRange(diagnolMoves(true, true, board));
+			ans.AddRange(StraightMoves(true, true, board));
+			ans.AddRange(DiagnolMoves(true, true, board));
 			return ans;
 		}
 

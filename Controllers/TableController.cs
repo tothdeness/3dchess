@@ -22,7 +22,7 @@ namespace test.Controllers
 		public static Piece current;
 		private static List<Node> visualizers = new List<Node>();
 
-		public static Vector3 convert(string coordinate)
+		public static Vector3 Convert(string coordinate)
 		{
 			Vector3 result = new Vector3();
 
@@ -35,7 +35,7 @@ namespace test.Controllers
 			return result;
 		}
 
-		public static string convertReverse(Vector3 vector)
+		public static string ConvertReverse(Vector3 vector)
 		{
 			int x = (int)vector.Z + 64;
 			int z = (int)vector.X + 48;
@@ -47,12 +47,12 @@ namespace test.Controllers
 		}
 
 
-		public struct target{
+		public struct Target{
 
 			public int num;
 			public Piece p;
 
-			public target(int num, Piece p)
+			public Target(int num, Piece p)
 			{
 				this.num = num;
 				this.p = p;
@@ -61,7 +61,7 @@ namespace test.Controllers
 		}
 
 
-		public static Piece find(Node node)
+		public static Piece Find(Node node)
 		{
 
 			foreach(KeyValuePair<string,Piece> piece in table)
@@ -79,7 +79,7 @@ namespace test.Controllers
 
 
 
-		public static List<AvailableMove> calculateVisualizers(List<AvailableMove> list)
+		public static List<AvailableMove> CalculateVisualizers(List<AvailableMove> list)
 		{
 
 			foreach (AvailableMove p in list) {
@@ -92,20 +92,20 @@ namespace test.Controllers
 		}
 
 
-		public static Vector3 calculatePosition(Vector3 v)
+		public static Vector3 CalculatePosition(Vector3 v)
 		{
 				return new Vector3(v.X * 4 - 18, v.Y, v.Z * 4 - 18);
 		}
 
 
-		public static Vector3 reversePosition(Vector3 vec)
+		public static Vector3 ReversePosition(Vector3 vec)
 		{
 			return new Vector3((vec.X + 18) / 4, vec.Y, (vec.Z + 18) / 4);
 		}
 
 
 
-		public static void showVisualizers(List<AvailableMove> list, Piece piece)
+		public static void ShowVisualizers(List<AvailableMove> list, Piece piece)
 		{
 
 			string at = "attackMove.tscn";
@@ -132,7 +132,7 @@ namespace test.Controllers
 
 		}
 
-		public static void removeVisualizers()
+		public static void RemoveVisualizers()
 		{
 
 			foreach (Node p in visualizers) {
@@ -140,7 +140,7 @@ namespace test.Controllers
 
 			}
 
-		
+	
 			 visualizers.Clear();
 
 

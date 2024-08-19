@@ -14,9 +14,6 @@ namespace test.Mode
 	public class SetupBaseGame
 	{
 
-
-
-
 		public static void AddPiecesStandardGame(GameController game, Board board)
 		{
 			// Create a list to store all pieces
@@ -45,23 +42,23 @@ namespace test.Mode
 
 			// BLACK
 			pieces.Add(new Rook("A8", -1, game));
-			//pieces.Add(new Rook("H8", -1, game));
-			//pieces.Add(new Horse("B8", -1, game));
+			pieces.Add(new Rook("H8", -1, game));
+			pieces.Add(new Horse("B8", -1, game));
 			pieces.Add(new Horse("G8", -1, game));
 			pieces.Add(new Bishop("F8", -1, game));
 			pieces.Add(new Bishop("C8", -1, game));
 
 
-			//pieces.Add(new Pawn("A7", -1, game));
-			//pieces.Add(new Pawn("B7", -1, game));
-			//pieces.Add(new Pawn("C7", -1, game));
-			//pieces.Add(new Pawn("D7", -1, game));
+			pieces.Add(new Pawn("A7", -1, game));
+			pieces.Add(new Pawn("B7", -1, game));
+			pieces.Add(new Pawn("C7", -1, game));
+			pieces.Add(new Pawn("D7", -1, game));
 			pieces.Add(new Pawn("E7", -1, game));
 			pieces.Add(new Pawn("F7", -1, game));
 			pieces.Add(new Pawn("G7", -1, game));
 			pieces.Add(new Pawn("H7", -1, game));
 
-			//pieces.Add(new Queen("D8", -1, game));
+			pieces.Add(new Queen("D8", -1, game));
 
 			pieces.Add(new King("E8", -1, game));
 
@@ -75,8 +72,8 @@ namespace test.Mode
 			// Call addToGame on each piece
 			foreach (Piece piece in pieces)
 			{
-				piece.addToGame();
-				piece.addVisuals();
+				piece.AddToGame();
+				piece.AddVisuals();
 
 			}
 		}

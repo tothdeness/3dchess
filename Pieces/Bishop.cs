@@ -15,12 +15,12 @@ namespace test.Pieces
 
 		public Bishop(string position, int team, GameController gameController) : base(position, team, gameController)
 		{
-
-			pos_vector = new Vector3(pos_vector.X, -0.25f, pos_vector.Z);
-			setDirections();
+			mesh = "res://TSCN/bishop.tscn";
+			posVector = new Vector3(posVector.X, -0.25f, posVector.Z);
+			SetDirections();
 		}
 		
-		private void setDirections()
+		private void SetDirections()
 		{
 			directions = new Dictionary<string, Vector3>
 			{
@@ -32,22 +32,6 @@ namespace test.Pieces
 
 		}
 
-		public override void addVisuals()
-		{
-			Mesh = "res://TSCN/bishop.tscn";
-
-			PackedScene scene = GD.Load<PackedScene>(Mesh);
-			Node inst = scene.Instantiate();
-
-			inst.Set("position", TableController.calculatePosition(pos_vector));
-
-			TableController.tableGraphics.AddChild(inst);
-
-			node = inst;
-
-			setColor();
-
-		}
 
 
 		public override List<AvailableMove> CheckValidMovesVirt(Board board)
@@ -60,14 +44,14 @@ namespace test.Pieces
 			{
 				if (!directions.ContainsKey(validDirections[0].ToString())) { return ans; }
 
-				ans.AddRange(slidingMoves(false,false,board,validDirections));
+				ans.AddRange(SlidingMoves(false,false,board,validDirections));
 			}
 			else
 			{
-				ans.AddRange(diagnolMoves(false, false, board));
+				ans.AddRange(DiagnolMoves(false, false, board));
 			}
 
-			if (board.kingIsInCheck) { removeMoves(ans, board); }
+			if (board.kingIsInCheck) { RemoveMoves(ans, board); }
 
 			return ans;
 
@@ -77,7 +61,7 @@ namespace test.Pieces
 		public override List<AvailableMove> CheckValidCoveredMovesOnVirtualBoard(Board board)
 		{
 			List<AvailableMove> ans = new List<AvailableMove>();
-			ans.AddRange(diagnolMoves(false, true, board));
+			ans.AddRange(DiagnolMoves(false, true, board));
 
 
 			return ans;
