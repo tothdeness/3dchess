@@ -130,11 +130,8 @@ namespace test.Moves
 					foreach(AvailableMove move in piece.Value.CheckValidCoveredMovesOnVirtualBoard(board))
 							{
 
-								string square = TableController.ConvertReverse(move.move);
-
-								board.attackedSquares.Add(square);
-								
-								
+								board.attackedSquares.Add(TableController.ConvertReverse(move.move));
+										
 								if(move.target is King && move.moving.team != move.target.team)
 									{
 										kingCheckCounter++;
@@ -151,11 +148,7 @@ namespace test.Moves
 									}
 
 								}
-
-
-
-
-							}				
+					}				
 				}
 			}
 

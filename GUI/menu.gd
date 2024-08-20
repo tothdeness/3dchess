@@ -28,5 +28,3 @@ func _input(event):
 		switcher.curr.SetMesh()
 		switcher.switch_scene_withoutparam()
 		
-
-

@@ -70,34 +70,9 @@ namespace test.Pieces
 		{
 			PackedScene scene = GD.Load<PackedScene>(mesh);
 			Node inst = scene.Instantiate();
-
 			inst.Set("position", TableController.CalculatePosition(posVector));
-
-			TableController.tableGraphics.AddChild(inst);
-
+			TableController.tableGraphics.CallDeferred("add_child", inst);	
 			node = inst;
-
-			SetColor();
-
-		}
-
-
-
-
-
-
-		public void SetMesh()
-		{
-
-			PackedScene scene = GD.Load<PackedScene>(mesh);
-			Node inst = scene.Instantiate();
-
-			inst.Set("position", TableController.CalculatePosition(posVector));
-
-			TableController.tableGraphics.AddChild(inst);
-
-			node = inst;
-
 			SetColor();
 		}
 
@@ -109,6 +84,8 @@ namespace test.Pieces
 			this.posVector = TableController.ReversePosition(vector);
 
 			this.position = TableController.ConvertReverse(posVector);
+
+			this.node.CallDeferred("_bot_move2", vector);
 
 			if (move.target != null && move.attack)
 			{
@@ -130,9 +107,7 @@ namespace test.Pieces
 			if (firstMove) firstMove = false;
 
 			TableController.RemoveVisualizers();
-
-			this.node.CallDeferred("_bot_move2", vector);
-
+			
 
 			if (this is King && move.castle)
 			{ 
@@ -149,7 +124,7 @@ namespace test.Pieces
 		public void VirtualMove(Vector3 vector, AvailableMove move, Board board)
 		{
 
-			this.posVector = TableController.ReversePosition(vector);
+			this.posVector = vector;
 
 			this.position = TableController.ConvertReverse(posVector);
 
@@ -172,7 +147,7 @@ namespace test.Pieces
 
 			if (this is King && move.castle)
 			{
-				move.rook.VirtualMove(TableController.CalculatePosition(move.rookNewPos), new AvailableMove(move.rook, move.rookNewPos, false, move.rookOldPos, true),board);
+				move.rook.VirtualMove(move.rookNewPos, new AvailableMove(move.rook, move.rookNewPos, false, move.rookOldPos, true),board);
 			}
 
 		}

@@ -1,4 +1,3 @@
-using Chess;
 using Godot;
 using System;
 using System.Collections.Generic;
@@ -35,8 +34,11 @@ namespace test.Pieces
 				AvailableMove k = KingSideCastle(board);
 				AvailableMove q = QueenSideCastle(board);
 
-				if(k != null) { ans.Add(k); }
-				if(q != null) { ans.Add(q); }
+
+
+				if(k != null) {  ans.Add(k);  }
+				if(q != null) {  ans.Add(q);  }
+
 			}
 
 
@@ -46,22 +48,27 @@ namespace test.Pieces
 		private AvailableMove KingSideCastle(Board board)
 		{
 			AvailableMove ans = null;
-		
-			if(board.current == 1)
+
+
+
+
+			if (board.current == 1)
 			{
 
-				if (!board.table.TryGetValue("(1, -0,25, 8)", out Piece rook) || !rook.firstMove) { return ans; }
+				if (!board.table.TryGetValue("(1, -0.25, 8)", out Piece rook) || !rook.firstMove) { return ans; }
 
 				List<string> white = new List<string> { "F1", "G1" };
+
 
 				if (CanCastle(board, white)) { ans = new AvailableMove(this, new Vector3(posVector.X, -0.25f, posVector.Z + 2), true, rook, true, posVector, new Vector3(posVector.X, -0.25f, posVector.Z + 1), rook.posVector); }
 
 			}
 			else
 			{
-				if (!board.table.TryGetValue("(8, -0,25, 8)", out Piece rook) || !rook.firstMove) { return ans; }
+				if (!board.table.TryGetValue("(8, -0.25, 8)", out Piece rook) || !rook.firstMove) { return ans; }
 
 				List<string> black = new List<string> { "G8", "F8" };
+
 
 				if (CanCastle(board, black)) { ans = new AvailableMove(this, new Vector3(posVector.X, -0.25f, posVector.Z + 2), true, rook, true, posVector, new Vector3(posVector.X, -0.25f, posVector.Z + 1), rook.posVector); }
 			}
@@ -76,7 +83,7 @@ namespace test.Pieces
 			if (board.current == 1)
 			{
 
-				if (!board.table.TryGetValue("(1, -0,25, 1)", out Piece rook) || !rook.firstMove) { return ans; }
+				if (!board.table.TryGetValue("(1, -0.25, 1)", out Piece rook) || !rook.firstMove) { return ans; }
 
 				List<string> white = new List<string> { "B1", "C1", "D1" };
 
@@ -85,7 +92,7 @@ namespace test.Pieces
 			}
 			else
 			{
-				if (!board.table.TryGetValue("(8, -0,25, 1)", out Piece rook) || !rook.firstMove) { return ans; }
+				if (!board.table.TryGetValue("(8, -0.25, 1)", out Piece rook) || !rook.firstMove) { return ans; }
 
 				List<string> black = new List<string> { "B8", "C8", "D8" };
 

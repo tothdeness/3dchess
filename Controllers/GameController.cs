@@ -19,7 +19,7 @@ namespace test.Controllers
 
 		private int depth;
 
-		private Node3D tableGraphics;
+		public Node3D tableGraphics;
 
 		private int currPlayer;
 

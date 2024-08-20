@@ -43,7 +43,7 @@ public partial class main : Node3D
 
 		foreach(KeyValuePair<string,Piece> item in TableController.table)
 		{
-			item.Value.SetMesh();
+			item.Value.AddVisuals();
 		}
 
 	}
@@ -55,7 +55,7 @@ public partial class main : Node3D
 	{
 	}
 
-	public void AddChild(Dummy child)
+	public void add_child(Dummy child)
 	{
 		AddChild(child);
 	}

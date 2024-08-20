@@ -31,7 +31,6 @@ namespace test.Pieces.Resources
 		}
 
 
-
 		public struct Target
 		{
 

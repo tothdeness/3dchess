@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using test.Controllers;
 using static Godot.HttpRequest;
 using test.Pieces.Resources;
-using Chess;
 
 namespace test.Pieces
 {

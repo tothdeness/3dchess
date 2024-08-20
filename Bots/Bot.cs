@@ -47,11 +47,16 @@ namespace test.Bot
 
 			GD.Print("ELAPSED MILISEC: " + stop.ElapsedMilliseconds + " " + "KIERTEKELT: " + numOfEv);
 
-			try { s.move.moving.MovePieceWithVisualUpdate(TableController.CalculatePosition(s.move.move), s.move); }
-			catch
+			try
 			{
-				GD.Print("Error!");
+
+				s.move.moving.MovePieceWithVisualUpdate(TableController.CalculatePosition(s.move.move), s.move);
+			}catch (Exception e)
+			{
+
+				GD.Print("Bot move error");
 			}
+
 
 		}
 
@@ -104,7 +109,7 @@ namespace test.Bot
 
 				foreach (AvailableMove move in CalculateCurrTeamAllMove(board, 1, allmoves))
 				{
-					move.moving.VirtualMove(TableController.CalculatePosition(move.move), move, board);
+					move.moving.VirtualMove(move.move, move, board);
 
 
 					var val = MiniMax(depth - 1, board, alpha, beta,  -1);
@@ -134,7 +139,7 @@ namespace test.Bot
 				foreach (AvailableMove move in moves)
 				{
 
-					move.moving.VirtualMove(TableController.CalculatePosition(move.move), move, board);
+					move.moving.VirtualMove(move.move, move, board);
 
 					var val = MiniMax(depth - 1, board, alpha, beta, 1);
 
@@ -232,7 +237,9 @@ namespace test.Bot
 		private int CalculatePoints(AvailableMove move, Board board)
 		{
 			int ans = 0;
+
 			if (move.attack) ans++;
+
 			return ans;
 		}
 
