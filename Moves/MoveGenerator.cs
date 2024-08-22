@@ -78,7 +78,7 @@ namespace test.Moves
 
 					if(last_piece != null)
 					{
-							bool contains = piece.directions.ContainsKey(direction.ToString());
+						bool contains = piece.directions.Contains(direction);
 
 						if (last_piece.team == piece.team || !contains) { 
 							break; 
@@ -89,7 +89,7 @@ namespace test.Moves
 						
 					}
 
-					if(piece.team != board.current && piece.directions.ContainsKey(direction.ToString()) && piece is not Pawn )
+					if(piece.team != board.current && piece.directions.Contains(direction) && piece is not Pawn )
 					{
 						ValidPositionsToBlockCheck(direction,ij,safeKingPosition,board);
 						return;
@@ -106,37 +106,28 @@ namespace test.Moves
 
 		}
 
-		private struct HitMapReturn
-		{
-			public HashSet<string> attackMap;
-			public bool twoCheck;
-			public HitMapReturn(HashSet<string> attackMap, bool twoCheck)
-			{
-				this.attackMap = attackMap;
-				this.twoCheck = twoCheck;
-			}
-		}
 
+		//concurr
 
 		private static void HitMap(Board board)
 		{
 
 			int kingCheckCounter = 0;
 
-			foreach(KeyValuePair<string,Piece> piece in board.table)
+			foreach(var piece in board.table)
 			{
 				if(piece.Value.team != board.current)
 				{
 					foreach(AvailableMove move in piece.Value.CheckValidCoveredMovesOnVirtualBoard(board))
 							{
 
-								board.attackedSquares.Add(TableController.ConvertReverse(move.move));
+								board.attackedSquares.Add(move.move);
 										
 								if(move.target is King && move.moving.team != move.target.team)
 									{
 										kingCheckCounter++;
 
-										board.block.Add(move.moving.posVector.ToString());
+										board.block.Add(move.moving.posVector);
 
 										board.kingIsInCheck = true;
 										
@@ -160,7 +151,7 @@ namespace test.Moves
 			while(kingPosition != attacker)
 			{
 				kingPosition += direction;
-				board.block.Add(kingPosition.ToString());
+				board.block.Add(kingPosition);
 
 			}
 	
@@ -171,7 +162,7 @@ namespace test.Moves
 		private static void ResetBoard(Board board)
 		{
 
-			foreach(KeyValuePair<string,Piece> pic in board.table)
+			foreach(var pic in board.table)
 			{
 				pic.Value.validDirections.Clear();
 			}

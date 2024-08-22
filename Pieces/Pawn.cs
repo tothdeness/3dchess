@@ -7,6 +7,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 using test.Controllers;
+using test.Moves;
 using test.Pieces.Resources;
 
 
@@ -29,20 +30,20 @@ namespace test.Pieces
 		{
 			if(team == 1)
 			{
-				directions = new Dictionary<string, Vector3>
+				directions = new HashSet<Vector3>(new Vector3Comparer())
 				{
-					{ "(1, 0, 1)", new Vector3(1, 0, 1) },
-					{ "(1, 0, -1)", new Vector3(1, 0, -1) },
-					{ "(1, 0, 0)", new Vector3(1, 0, 0) },
+					{ new Vector3(1, 0, 1) },
+					{ new Vector3(1, 0, -1) },
+					{ new Vector3(1, 0, 0) },
 				};
 			}
 			else
 			{
-				directions = new Dictionary<string, Vector3>
+				directions = new HashSet<Vector3>(new Vector3Comparer())
 				{
-					{ "(-1, 0, -1)", new Vector3(-1, 0, -1) },
-					{ "(-1, 0, 1)", new Vector3(-1, 0, 1) },
-					{ "(-1, 0, 0)", new Vector3(1, 0, 0) },
+					{ new Vector3(-1, 0, -1) },
+					{ new Vector3(-1, 0, 1) },
+					{ new Vector3(-1, 0, 0) },
 				};
 			}
 		}
@@ -53,10 +54,9 @@ namespace test.Pieces
 		{
 			if (posVector.X == 8 || posVector.X == 1)
 			{
+				var addQueen = new Queen(TableController.ConvertReverse(posVector), team, gameController);
 
-				var addQueen = new Queen(position, team, gameController);
-
-				board.table[posVector.ToString()] = addQueen;
+				board.table[posVector] = addQueen;
 
 				if (visual)
 				{
@@ -78,17 +78,19 @@ namespace test.Pieces
 
 			bool locked = validDirections.Count > 0;
 
-			string direc = "";
+			Vector3 direc = new Vector3(0,0,0);
 
-			if (locked) { direc = validDirections[0].ToString(); }
+			if (locked) { direc = validDirections[0]; }
 
-			if (locked && !directions.ContainsKey(direc)) { return ans; }
+			if (locked && !directions.Contains(direc)) { return ans; }
 
 			ans.AddRange(pawnMoves(false, false, board));
 
 			if (locked)
 			{
-				if (firstMove && (direc == "(1, 0, 0)" || direc == "(-1, 0, 0)") )
+				Vector3Comparer v = new Vector3Comparer();
+
+				if (firstMove && ( v.Equals(direc,new Vector3(1,0,0)) || v.Equals(direc, new Vector3(-1, 0, 0))) )
 				{
 					ans.RemoveAll(item => item.move.Z != posVector.Z);
 

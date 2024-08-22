@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using test.Controllers;
+using test.Moves;
 using test.Pieces.Resources;
 
 namespace test.Pieces
@@ -23,12 +24,12 @@ namespace test.Pieces
 		private void SetDirecitons()
 		{
 
-			directions = new Dictionary<string, Vector3>
+			directions = new HashSet<Vector3>(new Vector3Comparer())
 			{
-				{ "(1, 0, 0)", new Vector3(1, 0, 0) },
-				{ "(-1, 0, 0)", new Vector3(-1, 0, 0) },
-				{ "(0, 0, 1)", new Vector3(0, 0, 1) },
-				{ "(0, 0, -1)", new Vector3(0, 0, -1) }
+				{ new Vector3(1, 0, 0) },
+				{ new Vector3(-1, 0, 0) },
+				{ new Vector3(0, 0, 1) },
+				{ new Vector3(0, 0, -1) }
 			};
 
 
@@ -43,7 +44,7 @@ namespace test.Pieces
 
 			if (this.validDirections.Count > 0)
 			{
-				if (!directions.ContainsKey(validDirections[0].ToString())) { return ans; }
+				if (!directions.Contains(validDirections[0])) { return ans; }
 				ans.AddRange(SlidingMoves(false, false, board, validDirections));
 			}
 			else

@@ -25,7 +25,7 @@ namespace test.Controllers
 
 		private int player1;
 
-		public Dictionary<string,Piece> table;
+		public Dictionary<Vector3,Piece> table;
 
 		private int player2; //bot 
 

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using test.Controllers;
 using static Godot.HttpRequest;
 using test.Pieces.Resources;
+using test.Moves;
 
 namespace test.Pieces
 {
@@ -27,16 +28,16 @@ namespace test.Pieces
 		
 		private void SetDirections()
 		{
-			directions = new Dictionary<string, Vector3>
+			directions = new HashSet<Vector3>(new Vector3Comparer())
 			{
-				{ "(1, 0, 0)", new Vector3(1, 0, 0) },
-				{ "(-1, 0, 0)", new Vector3(-1, 0, 0) },
-				{ "(0, 0, 1)", new Vector3(0, 0, 1) },
-				{ "(0, 0, -1)", new Vector3(0, 0, -1) },
-				{ "(1, 0, 1)", new Vector3(1, 0, 1) },
-				{ "(-1, 0, -1)", new Vector3(-1, 0, -1) },
-				{ "(1, 0, -1)", new Vector3(1, 0, -1) },
-				{ "(-1, 0, 1)", new Vector3(-1, 0, 1) }
+				{ new Vector3(1, 0, 0) },
+				{ new Vector3(-1, 0, 0) },
+				{ new Vector3(0, 0, 1) },
+				{ new Vector3(0, 0, -1) },
+				{ new Vector3(1, 0, 1) },
+				{ new Vector3(-1, 0, -1) },
+				{ new Vector3(1, 0, -1) },
+				{ new Vector3(-1, 0, 1) }
 			};
 		}
 

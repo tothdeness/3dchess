@@ -14,6 +14,35 @@ namespace test.Pieces
 	{
 		public bool castleAvailable;
 
+
+		private List<Vector3> whiteKingSide = new List<Vector3>
+			{
+				new Vector3(1, 0, 6),
+				new Vector3(1, 0, 7)
+			};
+
+		private List<Vector3>  blackKingSide = new List<Vector3>
+			{
+				new Vector3(8, 0, 6), 
+				new Vector3(8, 0, 7)  
+			};
+
+		private List<Vector3> whiteQueenSide = new List<Vector3>
+			{
+				new Vector3(1, 0, 2), 
+				new Vector3(1, 0, 3), 
+				new Vector3(1, 0, 4)  
+			};
+
+		private List<Vector3> blackQueenSide = new List<Vector3>
+			{
+				new Vector3(8, 0, 2),
+				new Vector3(8, 0, 3),
+				new Vector3(8, 0, 4)
+			};
+
+
+
 		public King(string position, int team,GameController game) : base(position, team, game)
 		{
 			mesh = "res://TSCN/king.tscn";
@@ -34,8 +63,6 @@ namespace test.Pieces
 				AvailableMove k = KingSideCastle(board);
 				AvailableMove q = QueenSideCastle(board);
 
-
-
 				if(k != null) {  ans.Add(k);  }
 				if(q != null) {  ans.Add(q);  }
 
@@ -49,28 +76,22 @@ namespace test.Pieces
 		{
 			AvailableMove ans = null;
 
-
-
-
 			if (board.current == 1)
 			{
 
-				if (!board.table.TryGetValue("(1, -0.25, 8)", out Piece rook) || !rook.firstMove) { return ans; }
-
-				List<string> white = new List<string> { "F1", "G1" };
+				if (!board.table.TryGetValue(new Vector3(1,0,8), out Piece rook) || !rook.firstMove) { return ans; }
 
 
-				if (CanCastle(board, white)) { ans = new AvailableMove(this, new Vector3(posVector.X, -0.25f, posVector.Z + 2), true, rook, true, posVector, new Vector3(posVector.X, -0.25f, posVector.Z + 1), rook.posVector); }
+
+				if (CanCastle(board, whiteKingSide)) { ans = new AvailableMove(this, new Vector3(posVector.X, -0.25f, posVector.Z + 2), true, rook, true, posVector, new Vector3(posVector.X, -0.25f, posVector.Z + 1), rook.posVector); }
 
 			}
 			else
 			{
-				if (!board.table.TryGetValue("(8, -0.25, 8)", out Piece rook) || !rook.firstMove) { return ans; }
-
-				List<string> black = new List<string> { "G8", "F8" };
+				if (!board.table.TryGetValue(new Vector3(8,0,8), out Piece rook) || !rook.firstMove) { return ans; }
 
 
-				if (CanCastle(board, black)) { ans = new AvailableMove(this, new Vector3(posVector.X, -0.25f, posVector.Z + 2), true, rook, true, posVector, new Vector3(posVector.X, -0.25f, posVector.Z + 1), rook.posVector); }
+				if (CanCastle(board, blackKingSide)) { ans = new AvailableMove(this, new Vector3(posVector.X, -0.25f, posVector.Z + 2), true, rook, true, posVector, new Vector3(posVector.X, -0.25f, posVector.Z + 1), rook.posVector); }
 			}
 
 			return ans;
@@ -83,30 +104,28 @@ namespace test.Pieces
 			if (board.current == 1)
 			{
 
-				if (!board.table.TryGetValue("(1, -0.25, 1)", out Piece rook) || !rook.firstMove) { return ans; }
+				if (!board.table.TryGetValue(new Vector3(1,0,1), out Piece rook) || !rook.firstMove) { return ans; }
 
-				List<string> white = new List<string> { "B1", "C1", "D1" };
 
-				if (CanCastle(board, white)) { ans = new AvailableMove(this, new Vector3(posVector.X, -0.25f, posVector.Z - 2), true, rook, true, posVector, new Vector3(posVector.X, -0.25f, posVector.Z - 1), rook.posVector); }
+				if (CanCastle(board, whiteQueenSide)) { ans = new AvailableMove(this, new Vector3(posVector.X, -0.25f, posVector.Z - 2), true, rook, true, posVector, new Vector3(posVector.X, -0.25f, posVector.Z - 1), rook.posVector); }
 
 			}
 			else
 			{
-				if (!board.table.TryGetValue("(8, -0.25, 1)", out Piece rook) || !rook.firstMove) { return ans; }
+				if (!board.table.TryGetValue(new Vector3(8,0,1), out Piece rook) || !rook.firstMove) { return ans; }
 
-				List<string> black = new List<string> { "B8", "C8", "D8" };
 
-				if (CanCastle(board, black)) { ans = new AvailableMove(this, new Vector3(posVector.X, -0.25f, posVector.Z - 2), true, rook, true, posVector, new Vector3(posVector.X, -0.25f, posVector.Z - 1), rook.posVector); }
+				if (CanCastle(board, blackQueenSide)) { ans = new AvailableMove(this, new Vector3(posVector.X, -0.25f, posVector.Z - 2), true, rook, true, posVector, new Vector3(posVector.X, -0.25f, posVector.Z - 1), rook.posVector); }
 			}
 
 			return ans;
 		}
 
-		private bool CanCastle(Board board,List<string> moves)
+		private bool CanCastle(Board board,List<Vector3> moves)
 		{
-			foreach(string move in moves)
+			foreach(var move in moves)
 			{
-				if(board.table.ContainsKey(TableController.Convert(move).ToString()) || board.attackedSquares.Contains(move))
+				if(board.table.ContainsKey(move) || board.attackedSquares.Contains(move))
 				{
 					return false;
 				}

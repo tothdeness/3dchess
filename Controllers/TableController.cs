@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using test.Moves;
 using test.Pieces;
 using test.Pieces.Resources;
 
@@ -16,8 +17,8 @@ namespace test.Controllers
 {
     public static class TableController
 	{
-	
-		public static Dictionary<string,Piece> table = new Dictionary<string, Piece>();
+
+		public static Dictionary<Vector3, Piece> table = new Dictionary<Vector3, Piece>(new Vector3Comparer());
 		public static Node3D tableGraphics;
 		public static Piece current;
 		private static List<Node> visualizers = new List<Node>();
@@ -64,7 +65,7 @@ namespace test.Controllers
 		public static Piece Find(Node node)
 		{
 
-			foreach(KeyValuePair<string,Piece> piece in table)
+			foreach(var piece in table)
 			{
 				if (piece.Value.node.Equals(node))
 				{

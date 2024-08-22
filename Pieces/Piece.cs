@@ -12,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using test.Controllers;
+using test.Moves;
 using test.Pieces.Resources;
 using static Godot.HttpRequest;
 using static test.Controllers.TableController;
@@ -33,7 +34,7 @@ namespace test.Pieces
 
 		public GameController gameController;
 
-		public Dictionary<string,Vector3> directions = new Dictionary<string, Vector3>();
+		public  HashSet<Vector3> directions = new HashSet<Vector3>(new Vector3Comparer());
 
 		public List<Vector3> validDirections = new List<Vector3>();
 
@@ -48,7 +49,7 @@ namespace test.Pieces
 
 		public void AddToGame()
 		{
-			gameController.board.table.Add(posVector.ToString(), this);
+			gameController.board.table.Add(posVector, this);
 		}
 
 		public void ShowValidMoves(Board board)
@@ -63,7 +64,7 @@ namespace test.Pieces
 
 		public void RemoveMoves(List<AvailableMove> moves,Board board)
 		{
-			moves.RemoveAll(item => !board.block.Contains(item.move.ToString()));	
+			moves.RemoveAll(item => !board.block.Contains(item.move));	
 		}
 
 		public void AddVisuals()
@@ -77,15 +78,11 @@ namespace test.Pieces
 		}
 
 
-		public void MovePieceWithVisualUpdate(Vector3 vector,AvailableMove move) {
+		public void MovePieceWithVisualUpdate(Vector3 pos,AvailableMove move) {
 
-			vector.Y = posVector.Y;
+			this.posVector = move.move;
 
-			this.posVector = TableController.ReversePosition(vector);
-
-			this.position = TableController.ConvertReverse(posVector);
-
-			this.node.CallDeferred("_bot_move2", vector);
+			this.node.CallDeferred("_bot_move2", pos);
 
 			if (move.target != null && move.attack)
 			{
@@ -125,8 +122,6 @@ namespace test.Pieces
 		{
 
 			this.posVector = vector;
-
-			this.position = TableController.ConvertReverse(posVector);
 
 			if (move.attack && move.target != null)
 			{
@@ -241,11 +236,11 @@ namespace test.Pieces
 				}
 			}
 
-			foreach(KeyValuePair<string, Vector3> entry in directions)
+			foreach(var entry in directions)
 				{	
-					if(entry.Value.Z != 0)
+					if(entry.Z != 0)
 						{
-							vec = new Vector3(posVector.X + entry.Value.X, posVector.Y, posVector.Z + entry.Value.Z);
+							vec = new Vector3(posVector.X + entry.X, posVector.Y, posVector.Z + entry.Z);
 							move = board.Find(vec,this);
 
 							if (move.num == 2 || cover)
@@ -479,7 +474,7 @@ namespace test.Pieces
 
 			foreach (var move in results)
 			{
-				if (!board.attackedSquares.Contains(TableController.ConvertReverse(move.move)))
+				if (!board.attackedSquares.Contains(move.move))
 				{
 					ans.Add(move);
 				}

@@ -41,7 +41,7 @@ public partial class main : Node3D
 
 		TableController.tableGraphics = this;
 
-		foreach(KeyValuePair<string,Piece> item in TableController.table)
+		foreach(var item in TableController.table)
 		{
 			item.Value.AddVisuals();
 		}

@@ -220,7 +220,6 @@ E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\bin\ExportRelease\win-x64\
 E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\bin\ExportRelease\win-x64\hostfxr.dll
 E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\bin\ExportRelease\win-x64\hostpolicy.dll
 E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\bin\ExportRelease\win-x64\mscordaccore.dll
-E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\bin\ExportRelease\win-x64\mscordaccore_amd64_amd64_6.0.2523.51912.dll
 E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\bin\ExportRelease\win-x64\mscordbi.dll
 E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\bin\ExportRelease\win-x64\mscorrc.dll
 E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\bin\ExportRelease\win-x64\msquic.dll
@@ -231,9 +230,10 @@ E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\obj\ExportRelease\win-x64\
 E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\obj\ExportRelease\win-x64\test.AssemblyInfo.cs
 E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\obj\ExportRelease\win-x64\test.csproj.CoreCompileInputs.cache
 E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\obj\ExportRelease\win-x64\test.sourcelink.json
-E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\obj\ExportRelease\win-x64\test.csproj.CopyComplete
 E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\obj\ExportRelease\win-x64\test.dll
 E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\obj\ExportRelease\win-x64\refint\test.dll
 E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\obj\ExportRelease\win-x64\test.pdb
 E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\obj\ExportRelease\win-x64\test.genruntimeconfig.cache
 E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\obj\ExportRelease\win-x64\ref\test.dll
+E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\bin\ExportRelease\win-x64\mscordaccore_amd64_amd64_6.0.3324.36610.dll
+E:\2023_24-Egyetem\2.félév\3dchess\.godot\mono\temp\obj\ExportRelease\win-x64\test.csproj.Up2Date

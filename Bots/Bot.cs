@@ -50,7 +50,8 @@ namespace test.Bot
 			try
 			{
 
-				s.move.moving.MovePieceWithVisualUpdate(TableController.CalculatePosition(s.move.move), s.move);
+			s.move.moving.MovePieceWithVisualUpdate(TableController.CalculatePosition(s.move.move), s.move);
+
 			}catch (Exception e)
 			{
 

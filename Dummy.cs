@@ -62,7 +62,11 @@ public partial class Dummy : MeshInstance3D
 				if (c != null && IsInstanceValid(c) && !c.IsQueuedForDeletion())
 				{
 
-					TableController.current.MovePieceWithVisualUpdate(c.Position, target);
+					var pos = target.move;
+
+					target.move = TableController.ReversePosition(target.move);
+
+					TableController.current.MovePieceWithVisualUpdate(pos,target);
 
 				}
 

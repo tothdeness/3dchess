@@ -10,14 +10,23 @@ namespace test.Moves
 {
     public class Vector3Comparer : IEqualityComparer<Vector3>
     {
-        public bool Equals(Vector3 x, Vector3 y)
-        {
-            return x.X == y.X && x.Z == y.Z;
-        }
+		//private const float Tolerance = 0.001f;
 
-        public int GetHashCode(Vector3 obj)
-        {
-            return obj.X.GetHashCode() * obj.Z.GetHashCode();
-        }
-    }
+		public bool Equals(Vector3 x, Vector3 y)
+		{
+			return x.X == y.X && x.Z == y.Z;
+		}
+
+		public int GetHashCode(Vector3 obj)
+		{
+			unchecked
+			{
+				int hash = 17;
+				hash = hash * 23 + obj.X.GetHashCode();
+				hash = hash * 23 + obj.Z.GetHashCode();
+				return hash;
+			}
+
+		}
+	}
 }

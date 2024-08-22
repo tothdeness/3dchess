@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
+using test.Moves;
 
 
 namespace test.Pieces.Resources
 {
     public class Board
 	{
-		public Dictionary<string,Piece> table = new Dictionary<string, Piece>();
+		public Dictionary<Vector3, Piece> table;
 
 		public King kingWhite;
 
@@ -21,11 +22,11 @@ namespace test.Pieces.Resources
 
 		public bool kingIsInDoubleCheck = false;
 
-		public HashSet<string> attackedSquares = new HashSet<string>();
+		public HashSet<Vector3> attackedSquares = new HashSet<Vector3>(new Vector3Comparer());
 
-		public HashSet<string> block = new HashSet<string>();
+		public HashSet<Vector3> block = new HashSet<Vector3>(new Vector3Comparer());
 
-		public Board(Dictionary<string, Piece> table)
+		public Board(Dictionary<Vector3, Piece> table)
 		{
 			this.table = table;
 		}
@@ -48,7 +49,7 @@ namespace test.Pieces.Resources
 		public Target Find(Vector3 vector, Piece curr)
 		{
 
-			bool ans = table.TryGetValue(vector.ToString(), out Piece value);
+			bool ans = table.TryGetValue(vector, out Piece value);
 
 			if(!ans) { return new Target(0, null); }
 
@@ -67,22 +68,22 @@ namespace test.Pieces.Resources
 
 		public void Updatekey(AvailableMove move)
 		{
-			table.Remove(move.oldPositon.ToString());
-			table.Add(move.moving.posVector.ToString(), move.moving);
-
+			table.Remove(move.oldPositon);
+			table.Add(move.moving.posVector, move.moving);
 		}
+
 
 		public void UpdateWithAttack(AvailableMove move)
 		{
-			table.Remove(move.oldPositon.ToString());
-			table[move.target.posVector.ToString()] = move.moving;
+			table.Remove(move.oldPositon);
+			table[move.target.posVector] = move.moving;
 
 		}
 
 
 		public Piece FindPiece(Vector3 vector)
 		{
-			return table.TryGetValue(vector.ToString(), out Piece value) ? value : null;
+			return table.TryGetValue(vector, out Piece value) ? value : null;
 		}
 
 
@@ -125,15 +126,15 @@ namespace test.Pieces.Resources
 
 			if (move.attack)
 			{
-				table[move.moving.posVector.ToString()] = move.target;
-				table.Add(move.oldPositon.ToString(), move.moving);
+				table[move.moving.posVector] = move.target;
+				table.Add(move.oldPositon, move.moving);
 				move.moving.posVector = move.oldPositon;
 				return;
 			}
 
 			move.moving.posVector = move.oldPositon;
-			table.Remove(move.move.ToString());
-			table.Add(move.oldPositon.ToString(), move.moving);
+			table.Remove(move.move);
+			table.Add(move.oldPositon, move.moving);
 
 			if(move.castle) { TakeBackMove(new AvailableMove(move.rook, move.rookNewPos, false, move.rookOldPos, true)); }
 
