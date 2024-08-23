@@ -1,11 +1,11 @@
 res://TSCN/attackMove.tscn::b37e08743ad5dc8b99375dd520455352::1718125908::res://.godot/exported/133200997/export-818816c37ffb2d83e63462697d77f2b1-attackMove.scn
-res://TSCN/bishop.tscn::ad0b1cf7b0a460e76cedce576441fa6d::1724192917::res://.godot/exported/133200997/export-4a3fd1d0841071abb5bb9ba546bd8350-bishop.scn
-res://TSCN/horse.tscn::d02505c347663ebbb1c7bea357370fb6::1724192917::res://.godot/exported/133200997/export-75836ae778357bc6fa58ff70f08607af-horse.scn
-res://TSCN/king.tscn::fcc5fc58cfbb91f81235c2ab53f0892f::1724192917::res://.godot/exported/133200997/export-8c0736ca2f88cfe28ab6cdaaed0cb0b6-king.scn
-res://TSCN/main.tscn::9dd041e8c617b409656457569a5c3766::1724192917::res://.godot/exported/133200997/export-ca9f2bc0dd6c4323e8cfca0546ce9f57-main.scn
+res://TSCN/bishop.tscn::ad0b1cf7b0a460e76cedce576441fa6d::1724279271::res://.godot/exported/133200997/export-4a3fd1d0841071abb5bb9ba546bd8350-bishop.scn
+res://TSCN/horse.tscn::d02505c347663ebbb1c7bea357370fb6::1724279271::res://.godot/exported/133200997/export-75836ae778357bc6fa58ff70f08607af-horse.scn
+res://TSCN/king.tscn::fcc5fc58cfbb91f81235c2ab53f0892f::1724279271::res://.godot/exported/133200997/export-8c0736ca2f88cfe28ab6cdaaed0cb0b6-king.scn
+res://TSCN/main.tscn::9dd041e8c617b409656457569a5c3766::1724279272::res://.godot/exported/133200997/export-ca9f2bc0dd6c4323e8cfca0546ce9f57-main.scn
 res://TSCN/menu.tscn::2bae648612e0a4ca581318b2ce596562::1723837808::res://.godot/exported/133200997/export-eaaf7aed2cf2aa16741b78106c35b35c-menu.scn
-res://TSCN/mesh.tscn::b8d78ec9ddf9608014c3771bb189c266::1724192917::res://.godot/exported/133200997/export-8675d97d2f8bd01798632e2c5a9fa004-mesh.scn
+res://TSCN/mesh.tscn::b8d78ec9ddf9608014c3771bb189c266::1724279271::res://.godot/exported/133200997/export-8675d97d2f8bd01798632e2c5a9fa004-mesh.scn
 res://TSCN/new_bot_game.tscn::17d9e9ec03e7557e4d8894f1669a4791::1718125908::res://.godot/exported/133200997/export-65d38ad10febe981b144e22fe67f65fb-new_bot_game.scn
-res://TSCN/pawn.tscn::558a1322d31cecc611d9232b8538a19a::1724192917::res://.godot/exported/133200997/export-aa05479982f45fee27d5225e6fa6815e-pawn.scn
+res://TSCN/pawn.tscn::558a1322d31cecc611d9232b8538a19a::1724279271::res://.godot/exported/133200997/export-aa05479982f45fee27d5225e6fa6815e-pawn.scn
 res://TSCN/rook.tscn::13cf5ba771b851427963c9c74572e41b::1718137862::res://.godot/exported/133200997/export-78b40440c6f091e0950cba62d9ef8a4f-rook.scn
 res://TSCN/validMove.tscn::0eff023705683d16139a09389df5ae97::1713992265::res://.godot/exported/133200997/export-7f253bdc2413c2331761f2b734e097d5-validMove.scn
