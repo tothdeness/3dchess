@@ -6,6 +6,7 @@ Future updates will include:
 - Enhanced graphics and animations
 - Updated menu interface
 - Take back move feature
+- etc.
 
 1.1 version test video: https://www.youtube.com/watch?v=mEFIPQwcOlc
 
