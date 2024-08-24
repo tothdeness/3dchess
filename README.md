@@ -10,6 +10,6 @@ Future updates will include:
 - etc.
 
 
-1.1 version test video: https://www.youtube.com/watch?v=mEFIPQwcOlc
+1.1 version gameplay video: https://www.youtube.com/watch?v=mEFIPQwcOlc
 
 testing (old) : https://www.youtube.com/watch?v=wzqHrJ068lc&feature=youtu.be
