@@ -1,7 +1,20 @@
-[gd_scene load_steps=3 format=3 uid="uid://d3wxoyfty6vkg"]
+[gd_scene load_steps=7 format=3 uid="uid://d3wxoyfty6vkg"]
 
 [ext_resource type="Script" path="res://main.cs" id="1_l830m"]
 [ext_resource type="PackedScene" uid="uid://dca5fa1avq5p" path="res://Blender/chess_table.blend" id="2_2d2u7"]
+[ext_resource type="Texture2D" uid="uid://den22jaft6xx0" path="res://textures/panorama_image.png" id="3_nyiro"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_vbpt2"]
+resource_local_to_scene = true
+panorama = ExtResource("3_nyiro")
+filter = false
+
+[sub_resource type="Sky" id="Sky_y4daw"]
+sky_material = SubResource("PanoramaSkyMaterial_vbpt2")
+
+[sub_resource type="Environment" id="Environment_2ikxa"]
+background_mode = 2
+sky = SubResource("Sky_y4daw")
 
 [node name="Main" type="Node3D"]
 transform = Transform3D(0.983026, 0, 0, 0, 0.983026, 0, 0, 0, 0.983026, 0, 0, 0)
@@ -18,3 +31,6 @@ transform = Transform3D(-8.74228e-08, 0, -2, 0, 2, 0, 2, 0, -8.74228e-08, 0, -2.
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1.01727, 0, 0, 0, 0.444328, 0.915098, 0, -0.915098, 0.444328, 0, 20.9154, 15.5423)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_2ikxa")
