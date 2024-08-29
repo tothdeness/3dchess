@@ -7,3 +7,6 @@ res://TSCN/main.tscn
 res://Dummy.cs
 res://validMove.cs
 res://main.cs
+res://TSCN/menu.tscn
+res://TSCN/attackMove.tscn
+res://TSCN/new_bot_game.tscn

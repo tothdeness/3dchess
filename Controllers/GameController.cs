@@ -31,6 +31,8 @@ namespace test.Controllers
 
 		public Board board;
 
+		private Bot.Bot bot;
+
 		public GameController(bool botGame, int depth, Node3D tableGraphics, int player1)
 		{
 			this.botGame = botGame;
@@ -42,6 +44,7 @@ namespace test.Controllers
 			TableController.tableGraphics = tableGraphics;
 			table = TableController.table;
 			board = new Board(table);
+			bot = new Bot.Bot(depth, player2);
 			SetupBaseGame.AddPiecesStandardGame(this, board);
 			if(player1 == -1) { NextMove(player1); }
 		}
@@ -60,8 +63,6 @@ namespace test.Controllers
 
 			if (team == player1 && botGame)
 			{
-				Bot.Bot bot = new Bot.Bot(depth,player2);
-
 				Thread bot_thread = new Thread(() => bot.ExecuteNextMove(board)); 
 				
 				bot_thread.Start();

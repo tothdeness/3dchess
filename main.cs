@@ -76,11 +76,13 @@ public partial class main : Node3D
 		}
 		else if (_event is InputEventMouseMotion && rightMouseButtonIsPressed)
 		{
-			InputEventMouseMotion mouse = (InputEventMouseMotion)_event;
+			InputEventMouseMotion mouse = (InputEventMouseMotion) _event;
 
 			cameraHelper = GetNode<Node3D>("camera");
 
-			// GD.Print("Eger mozgatas! " + mouse.Position);
+
+			float rotatingSpeed = 0.022f;
+
 
 			currentPos = mouse.Position;
 
@@ -88,17 +90,17 @@ public partial class main : Node3D
 
 			if (Math.Abs(distance.X) > 2)
 			{
-				cameraHelper.RotateY(0.02f * (distance.X > 0 ? 1 : -1));
-				// cameraHelper.RotateObjectLocal(new Vector3(0, 1, 0), 0.02f * (distance.X > 0 ? 1 : -1));
+				cameraHelper.RotateY(rotatingSpeed * (distance.X > 0 ? 1 : -1));
 				draggingPosition = currentPos;
 			}
 
 			if (Math.Abs(distance.Y) > 2)
 			{
-				cameraHelper.RotateObjectLocal(new Vector3(0, 0, 1), 0.02f * (distance.Y > 0 ? 1 : -1));
-				// cameraHelper.RotateX(0.02f * (distance.Y > 0 ? 1 : -1));
+				cameraHelper.RotateObjectLocal(new Vector3(0, 0, 1), rotatingSpeed * (distance.Y > 0 ? 1 : -1));
 				draggingPosition = currentPos;
 			}
+
+
 		}
 		if (_event is InputEventKey keyEvent && keyEvent.Pressed && keyEvent.Keycode == Key.Escape)
 		{
