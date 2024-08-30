@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://dca5fa1avq5p"
-path="res://.godot/imported/chess_table.blend-92679e42185dbcac5d3863b11936f4dd.scn"
+path="res://.godot/imported/chess_table.blend-33433bed4ce140cee31c285c8b1e6598.scn"
 
 [deps]
 
-source_file="res://Blender/chess_table.blend"
-dest_files=["res://.godot/imported/chess_table.blend-92679e42185dbcac5d3863b11936f4dd.scn"]
+source_file="res://blender/chess_table.blend"
+dest_files=["res://.godot/imported/chess_table.blend-33433bed4ce140cee31c285c8b1e6598.scn"]
 
 [params]
 

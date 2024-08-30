@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://oyjuji7bndhr"
-path="res://.godot/imported/bishop.blend-4490b566eb0c82d39c80c6d436990b54.scn"
+path="res://.godot/imported/bishop.blend-8ccbae4acd90baeea2a0c34c91868e9b.scn"
 
 [deps]
 
-source_file="res://Blender/bishop.blend"
-dest_files=["res://.godot/imported/bishop.blend-4490b566eb0c82d39c80c6d436990b54.scn"]
+source_file="res://blender/bishop.blend"
+dest_files=["res://.godot/imported/bishop.blend-8ccbae4acd90baeea2a0c34c91868e9b.scn"]
 
 [params]
 

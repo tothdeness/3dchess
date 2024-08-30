@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using test.Controllers;
-using test.Mode;
-using test.Pieces;
+using test.core.Controllers;
+using test.core.Mode;
+using test.core.Pieces;
 
 public partial class main : Node3D
 {

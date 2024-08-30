@@ -1,0 +1,22 @@
+[gd_scene load_steps=5 format=3 uid="uid://dw30qahxwr46h"]
+
+[ext_resource type="PackedScene" uid="uid://bw2qi6yrmfija" path="res://meshes/glasswall.glb" id="1_ln0eo"]
+[ext_resource type="Shader" path="res://shaders/glass.gdshader" id="2_auk44"]
+[ext_resource type="PackedScene" uid="uid://cogmcv1abcbmh" path="res://TSCN/frame.tscn" id="3_f375h"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_po7vb"]
+render_priority = 0
+shader = ExtResource("2_auk44")
+shader_parameter/albedo = Color(0.454902, 0.603922, 0.27451, 0)
+shader_parameter/roughness = 0.0
+shader_parameter/normal_strength = 1.0
+shader_parameter/edge_color = Color(0, 0, 0, 1)
+
+[node name="glasswall" instance=ExtResource("1_ln0eo")]
+
+[node name="Plane_001" parent="." index="0"]
+transform = Transform3D(0, 8.85771e-08, 3.16523, -1.07075, 8.85771e-08, -1.12452e-14, -6.38219e-08, -1.48608, 1.88663e-07, 0, 0.0600977, 0)
+material_override = SubResource("ShaderMaterial_po7vb")
+
+[node name="frame" parent="." index="1" instance=ExtResource("3_f375h")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.15163, 4.21794, 0)

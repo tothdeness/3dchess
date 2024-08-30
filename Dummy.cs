@@ -1,8 +1,8 @@
 using Godot;
 using System;
-using test.Controllers;
-using test.Pieces;
-using test.Pieces.Resources;
+using test.core.Controllers;
+using test.core.Pieces;
+using test.core.Pieces.Resources;
 
 public partial class Dummy : MeshInstance3D
 {

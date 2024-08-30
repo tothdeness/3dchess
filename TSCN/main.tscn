@@ -1,23 +1,29 @@
-[gd_scene load_steps=7 format=3 uid="uid://d3wxoyfty6vkg"]
+[gd_scene load_steps=11 format=3 uid="uid://d3wxoyfty6vkg"]
 
 [ext_resource type="Script" path="res://main.cs" id="1_l830m"]
-[ext_resource type="PackedScene" uid="uid://dca5fa1avq5p" path="res://Blender/chess_table.blend" id="2_2d2u7"]
-[ext_resource type="Texture2D" uid="uid://den22jaft6xx0" path="res://textures/panorama_image.png" id="3_nyiro"]
+[ext_resource type="PackedScene" uid="uid://dca5fa1avq5p" path="res://blender/chess_table.blend" id="2_2d2u7"]
+[ext_resource type="PackedScene" uid="uid://vlf7pmfqpthm" path="res://meshes/table.glb" id="3_v64fg"]
+[ext_resource type="PackedScene" uid="uid://dy0kwe137bl6r" path="res://meshes/floor.glb" id="4_p0d23"]
+[ext_resource type="PackedScene" uid="uid://dw30qahxwr46h" path="res://TSCN/glasswall.tscn" id="5_g3qwc"]
+[ext_resource type="PackedScene" uid="uid://dr7l2simb2pt" path="res://meshes/wall.glb" id="6_gvr6e"]
+[ext_resource type="Texture2D" uid="uid://d1k4bha7wj7qu" path="res://shaders/panorama_image.png" id="7_5lpuj"]
 
-[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_vbpt2"]
-resource_local_to_scene = true
-panorama = ExtResource("3_nyiro")
-filter = false
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_cefrj"]
+panorama = ExtResource("7_5lpuj")
 
-[sub_resource type="Sky" id="Sky_y4daw"]
-sky_material = SubResource("PanoramaSkyMaterial_vbpt2")
+[sub_resource type="Sky" id="Sky_fq38m"]
+sky_material = SubResource("PanoramaSkyMaterial_cefrj")
 
-[sub_resource type="Environment" id="Environment_2ikxa"]
+[sub_resource type="Environment" id="Environment_khxfc"]
 background_mode = 2
-sky = SubResource("Sky_y4daw")
+sky = SubResource("Sky_fq38m")
+adjustment_enabled = true
+adjustment_brightness = 1.08
+adjustment_contrast = 1.08
+adjustment_saturation = 1.08
 
 [node name="Main" type="Node3D"]
-transform = Transform3D(0.983026, 0, 0, 0, 0.983026, 0, 0, 0, 0.983026, 0, 0, 0)
+transform = Transform3D(0.983026, 0, 0, 0, 0.983026, 0, 0, 0, 0.983026, 0, -4.31742, 0)
 script = ExtResource("1_l830m")
 
 [node name="camera" type="Node3D" parent="."]
@@ -27,10 +33,38 @@ transform = Transform3D(0.812137, -0.214081, 0, 0.177936, 0.977113, 0, 0, 0, 1.0
 transform = Transform3D(-4.44462e-08, 0.456178, -1.13534, 0, 0.943649, 0.379157, 1.01681, 1.37708e-08, -3.42729e-08, -39.1406, 19.6219, 0)
 
 [node name="chess_table" parent="." instance=ExtResource("2_2d2u7")]
-transform = Transform3D(-8.74228e-08, 0, -2, 0, 2, 0, 2, 0, -8.74228e-08, 0, -2.7, 0)
+transform = Transform3D(-8.74227e-08, 0, -2, 0, 2, 0, 2, 0, -8.74227e-08, 0, -2.55, 0)
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(1.01727, 0, 0, 0, 0.444328, 0.915098, 0, -0.915098, 0.444328, 0, 20.9154, 15.5423)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+
+[node name="table" parent="." instance=ExtResource("3_v64fg")]
+transform = Transform3D(49.9999, 0, 0, 0, 49.9999, 0, 0, 0, 49.9999, -53.3037, -3.24078, -69.1004)
+
+[node name="floor" parent="." instance=ExtResource("4_p0d23")]
+transform = Transform3D(50, 0, 0, 0, 50, 0, 0, 0, 50, -54.9976, -6.83469, -64.1133)
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1.01727, 0, 0, 0, 1.01727, 0, 0, 0, 1.01727, -51.1686, 83.7091, -115.375)
+light_color = Color(0.717647, 1, 1, 1)
+light_energy = 16.0
+light_indirect_energy = 0.0
+light_volumetric_fog_energy = 0.0
+light_size = 1.0
+light_specular = 1.333
+omni_range = 550.082
+omni_attenuation = 0.643
+
+[node name="glasswall" parent="." instance=ExtResource("5_g3qwc")]
+transform = Transform3D(50, 0, 0, 0, 50, 0, 0, 0, 50, -204.384, 45, 260.251)
+
+[node name="glasswall2" parent="." instance=ExtResource("5_g3qwc")]
+transform = Transform3D(49.9988, 0, -0.34819, 0, 50, 0, 0.34819, 0, 49.9988, -212.009, 45, -382.096)
+
+[node name="glasswall3" parent="." instance=ExtResource("5_g3qwc")]
+transform = Transform3D(-2.18557e-06, 0, 50, 0, 50, 0, -50, 0, -2.18557e-06, 252.829, 45, 90.7708)
+
+[node name="wall" parent="." instance=ExtResource("6_gvr6e")]
+transform = Transform3D(-2.18557e-06, 0, 50, 0, 50, 0, -50, 0, -2.18557e-06, -37.289, -10, -60.349)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_2ikxa")
+environment = SubResource("Environment_khxfc")

@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://bh0swfpsm0rpa"
-path="res://.godot/imported/rook.blend-a2da16b6f4dbc298b4e8f204389cc11f.scn"
+path="res://.godot/imported/rook.blend-41ffff9728990b0bd339f2240c606b60.scn"
 
 [deps]
 
-source_file="res://Blender/rook.blend"
-dest_files=["res://.godot/imported/rook.blend-a2da16b6f4dbc298b4e8f204389cc11f.scn"]
+source_file="res://blender/rook.blend"
+dest_files=["res://.godot/imported/rook.blend-41ffff9728990b0bd339f2240c606b60.scn"]
 
 [params]
 

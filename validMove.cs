@@ -1,6 +1,6 @@
 using Godot;
 using System;
-using test.Pieces.Resources;
+using test.core.Pieces.Resources;
 
 public partial class validMove : MeshInstance3D
 {
