@@ -1,7 +1,5 @@
 res://TSCN/main.tscn
 res://shaders/glass.gdshader
-res://TSCN/glasswall.tscn
-res://TSCN/frame.tscn
-res://TSCN/bishop.tscn
-res://TSCN/pawn.tscn
-res://TSCN/rook.tscn
+res://Dummy.cs
+res://validMove.cs
+res://main.cs

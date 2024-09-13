@@ -14,8 +14,6 @@ public partial class validMove : MeshInstance3D
 	public AvailableMove target;
 
 
-
-
 	// Called  when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{

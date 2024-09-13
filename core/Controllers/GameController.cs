@@ -18,8 +18,6 @@ namespace test.core.Controllers
 
         private bool botGame;
 
-        private int depth;
-
         public Node3D tableGraphics;
 
         private int currPlayer;
@@ -37,7 +35,6 @@ namespace test.core.Controllers
         public GameController(bool botGame, int depth, Node3D tableGraphics, int player1)
         {
             this.botGame = botGame;
-            this.depth = depth;
             this.tableGraphics = tableGraphics;
             currPlayer = 1;
             this.player1 = player1;

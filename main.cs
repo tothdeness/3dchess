@@ -80,9 +80,7 @@ public partial class main : Node3D
 
 			cameraHelper = GetNode<Node3D>("camera");
 
-
 			float rotatingSpeed = 0.022f;
-
 
 			currentPos = mouse.Position;
 

@@ -11,7 +11,7 @@ public partial class Dummy : MeshInstance3D
 	private bool figureLocked = false;
 	private MeshInstance3D piece;
 	private StandardMaterial3D standardMaterial = new StandardMaterial3D();
-
+	public GameController controller {  get;  set; }
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -29,10 +29,6 @@ public partial class Dummy : MeshInstance3D
 		//GD.Print("You have entered the ccube!!!");
 	}
 
-
-
-
-
 	public void _bot_move2(Vector3 move)
 	{
 		this.Set("position", move);
@@ -45,9 +41,6 @@ public partial class Dummy : MeshInstance3D
 		if(_event is InputEventMouseButton && figureLocked)
 		{
 			InputEventMouseButton mouse = (InputEventMouseButton)_event;
-
-
-
 
 			if (mouse.ButtonIndex == MouseButton.Left)
 			{
@@ -69,8 +62,6 @@ public partial class Dummy : MeshInstance3D
 					TableController.current.MovePieceWithVisualUpdate(pos,target);
 
 				}
-
-
 
 
 				Piece p = TableController.Find(this);
@@ -127,11 +118,7 @@ public partial class Dummy : MeshInstance3D
 
 				p.ShowValidMoves(p_del.gameController.board);
 
-
-
 				figureLocked = true;
-
-
 			}
 			
 

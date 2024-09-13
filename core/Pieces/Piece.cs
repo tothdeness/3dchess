@@ -72,7 +72,8 @@ namespace test.core.Pieces
         public void AddVisuals()
         {
             PackedScene scene = GD.Load<PackedScene>(mesh);
-            Node inst = scene.Instantiate();
+            Dummy inst =  scene.Instantiate<Dummy>();
+            inst.controller = gameController;
             inst.Set("position", CalculatePosition(posVector));
             tableGraphics.CallDeferred("add_child", inst);
             node = inst;

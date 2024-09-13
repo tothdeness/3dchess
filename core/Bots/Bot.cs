@@ -23,7 +23,7 @@ namespace test.core.Bots
 
         private int numOfEv;
 
-        private const float pawn = 1f;
+        private const float pawn = 1.33f;
 
         private const float knight = 3f;
 
@@ -199,8 +199,6 @@ namespace test.core.Bots
                     ans.positionPoints += piece.team == 1 ? score : -score;
 
                 }
-
-
             }
 
             return ans;
@@ -212,6 +210,8 @@ namespace test.core.Bots
             {
                 Pawn => SquareScore.ReadSquareScorePawn(piece.posVector, piece.team),
                 Horse => SquareScore.ReadSquareScoreKnight(piece.posVector),
+                Bishop => SquareScore.ReadSquareScoreBishop(piece.posVector, piece.team),
+                Rook => SquareScore.ReadSquareScoreRooks(piece.posVector,piece.team),
                 _ => 0f
             };
         }
