@@ -27,19 +27,19 @@ public partial class main : Node3D
 	public void StartNewBotGame(int depth,int team)
 	{
 		TableController.table.Clear();
-		GameController new_game = new GameController(true, depth, this, team, null);
+		GameController new_game = new GameController(true, depth, this, team, null, 1);
 	}
 
 	public void StartNewPvpGame()
 	{
 		TableController.table.Clear();
-		GameController new_game = new GameController(false,0,this,1, null);
+		GameController new_game = new GameController(false,0,this,1, null, 0);
 	}
 
 	private void OnConnectionEstablished(TcpConnect client)
 	{
 		GD.Print("Creating new game after connection...");
-		GameController newGame = new GameController(false, 0, this, 1, client);
+		GameController newGame = new GameController(false, 0, this, 1, client, 2);
 	}
 
 	public async void CreateNewLanGame(string port)
@@ -56,7 +56,7 @@ public partial class main : Node3D
 	{
 		TableController.table.Clear();
 		TcpConnect server = new TcpConnect(ip, int.Parse(port));
-		GameController new_game = new GameController(false, 0, this, 0, server);
+		GameController new_game = new GameController(false, 0, this, -1, server, 2);
 		server.ConnectToPeer();
 	}
 

@@ -1,7 +1,5 @@
 ﻿using Godot;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -16,8 +14,10 @@ namespace test.core.Network
 		private int port;
 		private TcpClient client;
 		private TcpListener listener;
+		private Thread receiveThread; // Keep the thread alive
 
 		public event Action<TcpConnect> OnConnectionEstablished;
+		public event Action<string> ReceivedMove;
 
 		public TcpConnect(string ip, int port)
 		{
@@ -34,59 +34,83 @@ namespace test.core.Network
 			GD.Print("Connection done!");
 			OnConnectionEstablished?.Invoke(this);
 
-			GetMoves();
+			StartReceiving(); // Use a method to start receiving
 		}
 
-
-		public async void  ConnectToPeer()
+		public void ConnectToPeer()
 		{
 			client = new TcpClient();
 			client.Connect(ip, port);
 			Console.WriteLine("Connected to peer!");
 
-			GetMoves();
+			StartReceiving(); // Use a method to start receiving
 		}
 
-		private void GetMoves()
+		private void StartReceiving()
 		{
-			Thread receiveThread = new Thread(() => ReceiveMoves());
+			receiveThread = new Thread(() => ReceiveMoves());
+			receiveThread.IsBackground = true; // Important: Allow the application to exit even if the thread is running
 			receiveThread.Start();
 		}
 
-
 		public void SendMove(string move)
 		{
-			NetworkStream stream = client.GetStream();
-			byte[] moveBytes = Encoding.UTF8.GetBytes(move);
-			stream.Write(moveBytes, 0, moveBytes.Length);
+			if (client != null && client.Connected) // Check if connected before sending
+			{
+				try
+				{
+					NetworkStream stream = client.GetStream();
+					byte[] moveBytes = Encoding.UTF8.GetBytes(move);
+					stream.Write(moveBytes, 0, moveBytes.Length);
+				}
+				catch (Exception ex)
+				{
+					GD.Print($"Error sending move: {ex.Message}");
+					// Handle disconnection appropriately, e.g., raise an event.
+				}
+			}
+			else
+			{
+				GD.Print("Client is not connected. Cannot send move.");
+			}
 		}
+
 
 		public void ReceiveMoves()
 		{
-			NetworkStream stream = client.GetStream();
-			byte[] buffer = new byte[1024];
-
 			try
 			{
-				while (true)
+				while (client != null && client.Connected) // Loop to continuously receive
 				{
+					NetworkStream stream = client.GetStream();
+					byte[] buffer = new byte[1024];
+
 					int bytesRead = stream.Read(buffer, 0, buffer.Length);
+
 					if (bytesRead == 0)
-						break; // Connection closed
+					{
+						GD.Print("Client disconnected.");
+						// Handle disconnection (e.g., raise an event, close the socket)
+						break; // Exit the loop
+					}
 
 					string move = Encoding.UTF8.GetString(buffer, 0, bytesRead);
 					GD.Print($"Received move: {move}");
+					ReceivedMove?.Invoke(move);
 				}
 			}
 			catch (Exception ex)
 			{
 				GD.Print($"Connection error: {ex.Message}");
+				// Handle disconnection appropriately
 			}
-
+			finally
+			{
+				// Clean up resources when the loop exits (due to disconnection or error)
+				client?.Close();
+				client = null; // Important: Set client to null to prevent further use
+							   // Optionally, raise a disconnect event here
+			}
 		}
-
-
-
-
 	}
 }

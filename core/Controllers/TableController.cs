@@ -65,15 +65,26 @@ namespace test.core.Controllers
 
         public static Piece Find(Node node)
         {
-
             foreach (var piece in table)
             {
+
                 if (piece.Value.node.Equals(node))
                 {
                     return piece.Value;
 
                 }
 
+            }
+            return null;
+        }
+
+        public static Piece FindWithVector(Vector3 vector)
+        {
+
+            foreach(var piece in table)
+            {
+         
+                if(vector.X == piece.Key.X && vector.Z == piece.Key.Z) { return piece.Value; }
             }
 
             return null;

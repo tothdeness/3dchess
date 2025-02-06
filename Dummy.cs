@@ -110,8 +110,6 @@ public partial class Dummy : MeshInstance3D
 				GD.Print(p_del.gameController.board.current);
 				GD.Print(p_del.team);
 
-				if(p_del.team != p_del.gameController.board.current) { return; }
-
 
 				p_del.DeleteVisualizers();
 

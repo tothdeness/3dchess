@@ -6,39 +6,38 @@ using System.Text;
 using System.Threading.Tasks;
 using test.core.Pieces;
 using test.core.Controllers;
+using System.Text.Json.Serialization;
+using static test.core.Network.Serializer;
 
 namespace test.core.Pieces.Resources
 {
     public class AvailableMove
     {
+		public Piece moving { get; set; }
 
-        public Piece moving;
+		[JsonConverter(typeof(GodotVector3JsonConverter))]
+		public Vector3 oldPositon { get; set; }
 
-        public Vector3 oldPositon;
+		[JsonConverter(typeof(GodotVector3JsonConverter))]
+		public Vector3 move { get; set; }
 
-        public Vector3 move;
+		public Piece rook { get; set; }
 
-        public Piece rook;
+		[JsonConverter(typeof(GodotVector3JsonConverter))]
+		public Vector3 rookNewPos { get; set; }
 
-        public Vector3 rookNewPos;
+		[JsonConverter(typeof(GodotVector3JsonConverter))]
+		public Vector3 rookOldPos { get; set; }
+		public bool attack { get; set; }
+		public Piece target { get; set; }
+		public bool cover { get; set; }
+		public bool castle { get; set; }
+		public bool firstMove { get; set; }
+		public bool promoted { get; set; }
 
-        public Vector3 rookOldPos;
+        public AvailableMove() { }
 
-        public bool attack;
-
-        public Piece target;
-
-        public bool cover;
-
-        public Piece covered;
-
-        public bool castle;
-
-        public bool firstMove;
-
-        public bool promoted;
-
-        public AvailableMove(Piece moving, Vector3 move, bool attack, Vector3 oldPositon)
+		public AvailableMove(Piece moving, Vector3 move, bool attack, Vector3 oldPositon)
         {
             this.moving = moving;
             this.move = move;

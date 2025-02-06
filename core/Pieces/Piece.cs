@@ -17,32 +17,42 @@ using test.core.Pieces;
 using static Godot.HttpRequest;
 using static test.core.Controllers.TableController;
 using test.core.Moves;
+using System.Text.Json.Serialization;
+using static test.core.Network.Serializer;
 
 namespace test.core.Pieces
 {
     public class Piece
     {
-        //VERTICAL POS 3 (Y)
+		//VERTICAL POS 3 (Y)
 
-        public string mesh;
+		[JsonIgnore]
+		public string mesh;
+
+		[JsonIgnore]
         public Node node { get; set; }
 
-        public string position;
+        public string position { get; set; }
 
-        protected float y = -0.25f;
+		[JsonIgnore]
+		protected float y = -0.25f;
 
-        public bool firstMove = true;
+		public bool firstMove { get; set; } = true;
 
-        public GameController gameController;
+		[JsonIgnore]
+		public GameController gameController;
 
-        public HashSet<Vector3> directions = new HashSet<Vector3>(new Vector3Comparer());
+		[JsonIgnore]
+		public HashSet<Vector3> directions = new HashSet<Vector3>(new Vector3Comparer());
 
-        public List<Vector3> validDirections = new List<Vector3>();
+		[JsonIgnore]
+		public List<Vector3> validDirections = new List<Vector3>();
 
-        public string path = "res://TSCN/GAME/";
+		[JsonIgnore]
+		public string path = "res://TSCN/GAME/";
 
-		public event Action<Piece> MoveMade;
 
+		[JsonConverter(typeof(GodotVector3JsonConverter))]
 		public Vector3 posVector { get; set; }
 
         //-1 black, 1 white
@@ -59,6 +69,9 @@ namespace test.core.Pieces
 
         public void ShowValidMoves(Board board)
         {
+
+            if( gameController.player1 != team && gameController.gameMode != 0 ) { return; }
+
             ShowVisualizers(CalculateVisualizers(CheckValidMovesVirt(board)), this);
         }
 
@@ -84,9 +97,12 @@ namespace test.core.Pieces
             SetColor();
         }
 
+        public Piece() { }
 
         public void MovePieceWithVisualUpdate(Vector3 pos, AvailableMove move)
         {
+
+            if(move.moving.team != gameController.current) { return; }
 
             posVector = move.move;
 
@@ -114,20 +130,37 @@ namespace test.core.Pieces
             RemoveVisualizers();
 
 
-            if (this is King && move.castle)
+			gameController.NextMove(team, move);
+
+			if (this is King && move.castle)
             {
-                move.rook.MovePieceWithVisualUpdate(CalculatePosition(move.rookNewPos), new AvailableMove(move.rook, move.rookNewPos, false, move.rookOldPos, true));
-                return;
+                move.rook.MovePieceWithVisualUpdateRook(CalculatePosition(move.rookNewPos), new AvailableMove(move.rook, move.rookNewPos, false, move.rookOldPos, true));
+				return;
             }
-
-
-
-			gameController.NextMove(team,move);
 
         }
 
 
-        public void VirtualMove(Vector3 vector, AvailableMove move, Board board)
+		public void MovePieceWithVisualUpdateRook(Vector3 pos, AvailableMove move)
+		{
+			posVector = move.move;
+
+			node.CallDeferred("_bot_move2", pos);
+
+			gameController.board.Updatekey(move);
+
+			if (firstMove) firstMove = false;
+
+			RemoveVisualizers();
+
+		}
+
+
+
+
+
+
+		public void VirtualMove(Vector3 vector, AvailableMove move, Board board)
         {
 
             posVector = vector;
