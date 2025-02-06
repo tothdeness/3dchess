@@ -120,7 +120,7 @@ namespace test.core.Controllers
             foreach (AvailableMove p in list)
             {
 
-                PackedScene scene = GD.Load<PackedScene>("res://TSCN/" + (p.attack ? at : mo));
+                PackedScene scene = GD.Load<PackedScene>("res://TSCN/GAME/" + (p.attack ? at : mo));
                 Node inst = scene.Instantiate();
                 inst.Set("position", p.move);
                 visualizers.Add(inst);

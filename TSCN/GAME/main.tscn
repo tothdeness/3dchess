@@ -1,12 +1,13 @@
 [gd_scene load_steps=11 format=3 uid="uid://d3wxoyfty6vkg"]
 
 [ext_resource type="Script" path="res://main.cs" id="1_l830m"]
-[ext_resource type="PackedScene" uid="uid://dca5fa1avq5p" path="res://blender/chess_table.blend" id="2_2d2u7"]
+[ext_resource type="PackedScene" uid="uid://dca5fa1avq5p" path="res://Blender/chess_table.blend" id="2_2d2u7"]
 [ext_resource type="PackedScene" uid="uid://vlf7pmfqpthm" path="res://meshes/table.glb" id="3_v64fg"]
 [ext_resource type="PackedScene" uid="uid://dy0kwe137bl6r" path="res://meshes/floor.glb" id="4_p0d23"]
-[ext_resource type="PackedScene" uid="uid://dw30qahxwr46h" path="res://TSCN/glasswall.tscn" id="5_g3qwc"]
+[ext_resource type="PackedScene" uid="uid://dw30qahxwr46h" path="res://TSCN/GAME/glasswall.tscn" id="5_g3qwc"]
 [ext_resource type="PackedScene" uid="uid://dr7l2simb2pt" path="res://meshes/wall.glb" id="6_gvr6e"]
 [ext_resource type="Texture2D" uid="uid://d1k4bha7wj7qu" path="res://shaders/panorama_image.png" id="7_5lpuj"]
+
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_cefrj"]
 panorama = ExtResource("7_5lpuj")

@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://bw2qi6yrmfija" path="res://meshes/glasswall.glb" id="1_ln0eo"]
 [ext_resource type="Shader" path="res://shaders/glass.gdshader" id="2_auk44"]
-[ext_resource type="PackedScene" uid="uid://cogmcv1abcbmh" path="res://TSCN/frame.tscn" id="3_f375h"]
+[ext_resource type="PackedScene" uid="uid://cogmcv1abcbmh" path="res://TSCN/GAME/frame.tscn" id="3_f375h"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_po7vb"]
 render_priority = 0

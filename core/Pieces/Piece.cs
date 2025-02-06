@@ -39,7 +39,11 @@ namespace test.core.Pieces
 
         public List<Vector3> validDirections = new List<Vector3>();
 
-        public Vector3 posVector { get; set; }
+        public string path = "res://TSCN/GAME/";
+
+		public event Action<Piece> MoveMade;
+
+		public Vector3 posVector { get; set; }
 
         //-1 black, 1 white
         public int team { get; set; }
@@ -117,7 +121,8 @@ namespace test.core.Pieces
             }
 
 
-            gameController.NextMove(team);
+
+			gameController.NextMove(team,move);
 
         }
 

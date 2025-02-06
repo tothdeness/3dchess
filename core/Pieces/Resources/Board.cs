@@ -30,6 +30,7 @@ namespace test.core.Pieces.Resources
         public Board(Dictionary<Vector3, Piece> table)
         {
             this.table = table;
+            current = 1;
         }
 
 

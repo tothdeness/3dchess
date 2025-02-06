@@ -20,7 +20,7 @@ namespace test.core.Pieces
 
         public Queen(string position, int team, GameController game) : base(position, team, game)
         {
-            mesh = "res://TSCN/mesh.tscn";
+            mesh = path + "mesh.tscn";
             posVector = new Vector3(posVector.X, -0.25f, posVector.Z);
             SetDirections();
         }

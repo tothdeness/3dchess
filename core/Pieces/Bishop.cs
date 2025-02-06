@@ -16,7 +16,7 @@ namespace test.core.Pieces
 
         public Bishop(string position, int team, GameController gameController) : base(position, team, gameController)
         {
-            mesh = "res://TSCN/bishop.tscn";
+            mesh = path + "bishop.tscn";
             posVector = new Vector3(posVector.X, -0.25f, posVector.Z);
             SetDirections();
         }

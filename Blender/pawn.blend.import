@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://xx87fac0ikxq"
-path="res://.godot/imported/pawn.blend-1120711834574de6aff6c9e467dbc37a.scn"
+path="res://.godot/imported/pawn.blend-649e5d50f25affe0bfaa2e6f37ad2f18.scn"
 
 [deps]
 
-source_file="res://blender/pawn.blend"
-dest_files=["res://.godot/imported/pawn.blend-1120711834574de6aff6c9e467dbc37a.scn"]
+source_file="res://Blender/pawn.blend"
+dest_files=["res://.godot/imported/pawn.blend-649e5d50f25affe0bfaa2e6f37ad2f18.scn"]
 
 [params]
 
@@ -17,7 +17,6 @@ nodes/root_type=""
 nodes/root_name=""
 nodes/apply_root_scale=true
 nodes/root_scale=1.0
-nodes/import_as_skeleton_bones=false
 meshes/ensure_tangents=true
 meshes/generate_lods=true
 meshes/create_shadow_meshes=true
@@ -29,11 +28,11 @@ animation/import=true
 animation/fps=30
 animation/trimming=false
 animation/remove_immutable_tracks=true
-animation/import_rest_as_RESET=false
 import_script/path=""
 _subresources={}
+gltf/naming_version=0
+gltf/embedded_image_handling=1
 blender/nodes/visible=0
-blender/nodes/active_collection_only=false
 blender/nodes/punctual_lights=true
 blender/nodes/cameras=true
 blender/nodes/custom_properties=true

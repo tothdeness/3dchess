@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://4rtq8xgnif4y"]
 
-[ext_resource type="ArrayMesh" uid="uid://d5h8ulsmdenf" path="res://TSCN/horse.obj" id="1_6ol02"]
+[ext_resource type="ArrayMesh" uid="uid://d5h8ulsmdenf" path="res://TSCN/GAME/horse.obj" id="1_6ol02"]
 [ext_resource type="Script" path="res://Dummy.cs" id="1_abnli"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_c17i4"]

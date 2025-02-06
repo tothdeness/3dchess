@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://ckp3t8vj2svr3"]
 
-[ext_resource type="ArrayMesh" uid="uid://dwffhs6yht2di" path="res://TSCN/bishop.obj" id="1_ta143"]
+[ext_resource type="ArrayMesh" uid="uid://dwffhs6yht2di" path="res://TSCN/GAME/bishop.obj" id="1_ta143"]
 [ext_resource type="Script" path="res://Dummy.cs" id="1_vr071"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_h0ls8"]

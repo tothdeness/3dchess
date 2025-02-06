@@ -2,10 +2,12 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using test.core.Controllers;
 using test.core.Mode;
+using test.core.Network;
 using test.core.Pieces;
 
 public partial class main : Node3D
@@ -25,13 +27,37 @@ public partial class main : Node3D
 	public void StartNewBotGame(int depth,int team)
 	{
 		TableController.table.Clear();
-		GameController new_game = new GameController(true, depth, this, team);
+		GameController new_game = new GameController(true, depth, this, team, null);
 	}
 
 	public void StartNewPvpGame()
 	{
 		TableController.table.Clear();
-		GameController new_game = new GameController(false,0,this,1);
+		GameController new_game = new GameController(false,0,this,1, null);
+	}
+
+	private void OnConnectionEstablished(TcpConnect client)
+	{
+		GD.Print("Creating new game after connection...");
+		GameController newGame = new GameController(false, 0, this, 1, client);
+	}
+
+	public async void CreateNewLanGame(string port)
+	{
+		GD.Print(port);
+		TableController.table.Clear();
+		TcpConnect server = new TcpConnect("0",int.Parse(port));
+		server.OnConnectionEstablished += OnConnectionEstablished;
+		await server.CreateTcpListener();
+	}
+
+
+	public void ConnectLanGame(string ip,string port)
+	{
+		TableController.table.Clear();
+		TcpConnect server = new TcpConnect(ip, int.Parse(port));
+		GameController new_game = new GameController(false, 0, this, 0, server);
+		server.ConnectToPeer();
 	}
 
 
@@ -108,7 +134,7 @@ public partial class main : Node3D
 		if(pressed && _event is InputEventKey key && key.IsReleased())
 		{
 			pressed = false;
-			LoadNewScene("res://TSCN/menu.tscn");
+			LoadNewScene("res://TSCN/GUI/menu.tscn");
 		}
 
 	}

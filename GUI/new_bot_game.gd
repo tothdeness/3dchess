@@ -23,11 +23,11 @@ func _process(delta):
 	pass
 
 func _on_back_pressed():
-	SceneSwitcher.switch_scene("res://TSCN/menu.tscn")
+	SceneSwitcher.switch_scene("res://TSCN/GUI/menu.tscn")
 
 func _on_start_pressed():
 	var switcher = SceneSwitcher
-	switcher.create_scene("res://TSCN/main.tscn")
+	switcher.create_scene("res://TSCN/GAME/main.tscn")
 	switcher.curr.StartNewBotGame(depth,team)
 	switcher.switch_scene_withoutparam()
 

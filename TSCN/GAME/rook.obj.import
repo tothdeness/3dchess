@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://dn0vxiapmrlws"
+path="res://.godot/imported/rook.obj-95eeedcbc84c046f52da48baf34918c5.mesh"
+
+[deps]
+
+files=["res://.godot/imported/rook.obj-95eeedcbc84c046f52da48baf34918c5.mesh"]
+
+source_file="res://TSCN/GAME/rook.obj"
+dest_files=["res://.godot/imported/rook.obj-95eeedcbc84c046f52da48baf34918c5.mesh", "res://.godot/imported/rook.obj-95eeedcbc84c046f52da48baf34918c5.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false

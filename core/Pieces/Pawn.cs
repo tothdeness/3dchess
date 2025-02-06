@@ -20,7 +20,7 @@ namespace test.core.Pieces
 
         public Pawn(string position, int team, GameController game) : base(position, team, game)
         {
-            mesh = "res://TSCN/pawn.tscn";
+            mesh = path + "pawn.tscn";
             posVector = new Vector3(posVector.X, -0.25f, posVector.Z);
             SetDirections();
         }

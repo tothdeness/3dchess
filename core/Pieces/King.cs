@@ -45,7 +45,7 @@ namespace test.core.Pieces
 
         public King(string position, int team, GameController game) : base(position, team, game)
         {
-            mesh = "res://TSCN/king.tscn";
+            mesh = path + "king.tscn";
             posVector = new Vector3(posVector.X, -0.25f, posVector.Z);
             castleAvailable = true;
         }

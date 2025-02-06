@@ -15,7 +15,7 @@ namespace test.core.Pieces
 
         public Rook(string position, int team, GameController game) : base(position, team, game)
         {
-            mesh = "res://TSCN/rook.tscn";
+            mesh = path + "rook.tscn";
             posVector = new Vector3(posVector.X, -0.25f, posVector.Z);
             SetDirecitons();
         }

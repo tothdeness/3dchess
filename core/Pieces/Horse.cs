@@ -9,7 +9,7 @@ namespace test.core.Pieces
     {
         public Horse(string position, int team, GameController game) : base(position, team, game)
         {
-            mesh = "res://TSCN/horse.tscn";
+            mesh = path + "horse.tscn";
             posVector = new Vector3(posVector.X, -0.25f, posVector.Z);
 
         }

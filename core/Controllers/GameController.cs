@@ -2,12 +2,14 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using test.core.Bots;
 using test.core.Mode;
 using test.core.Moves;
+using test.core.Network;
 using test.core.Pieces;
 using test.core.Pieces.Resources;
 
@@ -20,8 +22,6 @@ namespace test.core.Controllers
 
         public Node3D tableGraphics;
 
-        private int currPlayer;
-
         private int player1;
 
         public Dictionary<Vector3, Piece> table;
@@ -32,11 +32,12 @@ namespace test.core.Controllers
 
         private Bot bot;
 
-        public GameController(bool botGame, int depth, Node3D tableGraphics, int player1)
+        private TcpConnect server;
+
+		public GameController(bool botGame, int depth, Node3D tableGraphics, int player1,TcpConnect server)
         {
             this.botGame = botGame;
             this.tableGraphics = tableGraphics;
-            currPlayer = 1;
             this.player1 = player1;
             player2 = player1 * -1;
             TableController.tableGraphics = tableGraphics;
@@ -44,11 +45,15 @@ namespace test.core.Controllers
             board = new Board(table);
             bot = new Bot(depth, player2);
             SetupBaseGame.AddPiecesStandardGame(this, board);
-            if (player1 == -1) { NextMove(player1); }
+            this.server = server;
+            if (player1 == -1) { NextMove(player1,null); }
         }
 
 
-        public void NextMove(int team)
+
+
+
+		public void NextMove(int team,AvailableMove move)
         {
 
             board.current = team * -1;
@@ -65,6 +70,10 @@ namespace test.core.Controllers
 
                 bot_thread.Start();
 
+            }else if(server != null)
+            {
+                GD.Print(move.move);
+                server.SendMove(move.move.ToString());
             }
 
         }
