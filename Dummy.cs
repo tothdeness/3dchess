@@ -13,11 +13,17 @@ public partial class Dummy : MeshInstance3D
 	private StandardMaterial3D standardMaterial = new StandardMaterial3D();
 	public GameController controller {  get;  set; }
 
+	[Signal]
+	public delegate void AnimationCompletedEventHandler();
+
+
+
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
 		GD.Print("LOADED" + Name);
 	}
+
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
@@ -34,6 +40,23 @@ public partial class Dummy : MeshInstance3D
 		this.Set("position", move);
 	}
 
+
+
+	async public void animate(Vector3 move) {
+
+		Tween tween = GetTree().CreateTween();
+		tween.TweenProperty(this, "position", move, 0.9f);
+
+		await ToSignal(GetTree().CreateTimer(0.8f), "timeout");
+
+		EmitAnimationSignal();
+
+	}
+
+	private void EmitAnimationSignal()
+	{
+		EmitSignal(SignalName.AnimationCompleted);
+	}
 
 
 	public override void _Input(InputEvent _event)
@@ -144,6 +167,9 @@ public partial class Dummy : MeshInstance3D
 		material.AlbedoColor = new Color(236/255f, 241/255f, 230/255f, 0.8f);
 		piece.MaterialOverlay = material;
 
+		Node destroyNode = piece.GetNode<Node>("Destruction");
+		destroyNode.CallDeferred("change_fragmented", "res://Blender/white_destroyed.glb");
+
 
 	}
 
@@ -159,6 +185,9 @@ public partial class Dummy : MeshInstance3D
 		material.MetallicSpecular = 1.0f;
 
 		piece.MaterialOverlay = material;
+
+		Node destroyNode = piece.GetNode<Node>("Destruction");
+		destroyNode.CallDeferred("change_fragmented", "res://Blender/black_destroyed.glb");
 
 
 	}

@@ -1,7 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://yr2yvuk60i5m"]
+[gd_scene load_steps=6 format=3 uid="uid://yr2yvuk60i5m"]
 
 [ext_resource type="Script" path="res://Dummy.cs" id="1_i30yd"]
 [ext_resource type="ArrayMesh" uid="uid://c6u7djo1i8qox" path="res://TSCN/GAME/pawn.obj" id="1_qas0b"]
+[ext_resource type="Script" path="res://addons/addons/destruction/destruction.gd" id="3_43wva"]
+[ext_resource type="PackedScene" uid="uid://dsar11gsxv1ut" path="res://TSCN/GAME/pawn_broken.glb" id="4_0fqlg"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_xqkad"]
 
@@ -15,5 +17,10 @@ script = ExtResource("1_i30yd")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
 transform = Transform3D(3.62398, 0, 0, 0, 2.66767, 0, 0, 0, 3.63932, 0, 1.85716, 0)
 shape = SubResource("CapsuleShape3D_xqkad")
+
+[node name="Destruction" type="Node" parent="." node_paths=PackedStringArray("shard_container")]
+script = ExtResource("3_43wva")
+fragmented = ExtResource("4_0fqlg")
+shard_container = NodePath("")
 
 [connection signal="input_event" from="StaticBody3D" to="." method="_on_static_body_3d_input_event"]

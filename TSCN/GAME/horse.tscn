@@ -1,7 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://4rtq8xgnif4y"]
+[gd_scene load_steps=6 format=3 uid="uid://4rtq8xgnif4y"]
 
 [ext_resource type="ArrayMesh" uid="uid://d5h8ulsmdenf" path="res://TSCN/GAME/horse.obj" id="1_6ol02"]
 [ext_resource type="Script" path="res://Dummy.cs" id="1_abnli"]
+[ext_resource type="Script" path="res://addons/addons/destruction/destruction.gd" id="3_3qv87"]
+[ext_resource type="PackedScene" uid="uid://celvn43a7xgcb" path="res://addons/cube/cube_fragments.glb" id="4_0v2w5"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_c17i4"]
 
@@ -15,5 +17,9 @@ script = ExtResource("1_abnli")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
 transform = Transform3D(2.98154, 1.44792e-08, -2.79397e-09, -4.66207e-09, 6.27535, -7.45058e-09, 1.58325e-08, -2.6077e-08, 3.90249, 2.54659e-10, 3.092, -9.31323e-10)
 shape = SubResource("BoxShape3D_c17i4")
+
+[node name="Destruction" type="Node" parent="."]
+script = ExtResource("3_3qv87")
+fragmented = ExtResource("4_0v2w5")
 
 [connection signal="input_event" from="StaticBody3D" to="." method="_on_static_body_3d_input_event"]

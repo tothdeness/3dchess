@@ -1,7 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://ckp3t8vj2svr3"]
+[gd_scene load_steps=6 format=3 uid="uid://ckp3t8vj2svr3"]
 
 [ext_resource type="ArrayMesh" uid="uid://dwffhs6yht2di" path="res://TSCN/GAME/bishop.obj" id="1_ta143"]
 [ext_resource type="Script" path="res://Dummy.cs" id="1_vr071"]
+[ext_resource type="Script" path="res://addons/addons/destruction/destruction.gd" id="3_uok42"]
+[ext_resource type="PackedScene" uid="uid://celvn43a7xgcb" path="res://addons/cube/cube_fragments.glb" id="4_xj088"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_h0ls8"]
 size = Vector3(2, 7.94703, 2)
@@ -16,5 +18,9 @@ script = ExtResource("1_vr071")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.672, 0)
 shape = SubResource("BoxShape3D_h0ls8")
+
+[node name="Destruction" type="Node" parent="."]
+script = ExtResource("3_uok42")
+fragmented = ExtResource("4_xj088")
 
 [connection signal="input_event" from="StaticBody3D" to="." method="_on_static_body_3d_input_event"]

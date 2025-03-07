@@ -99,30 +99,13 @@ namespace test.core.Pieces
 
         public Piece() { }
 
-        public void MovePieceWithVisualUpdate(Vector3 pos, AvailableMove move)
+       async public void MovePieceWithVisualUpdate(Vector3 pos, AvailableMove move)
         {
 
             if(move.moving.team != gameController.current) { return; }
 
             posVector = move.move;
 
-            node.CallDeferred("_bot_move2", pos);
-
-            if (move.target != null && move.attack)
-            {
-                gameController.board.UpdateWithAttack(move);
-                move.target.Delete();
-            }
-            else
-            {
-                gameController.board.Updatekey(move);
-            }
-
-            if (this is Pawn)
-            {
-                Pawn pawn = (Pawn)this;
-                pawn.PromotePawn(gameController.board, move, true);
-            }
 
 
             if (firstMove) firstMove = false;
@@ -130,22 +113,50 @@ namespace test.core.Pieces
             RemoveVisualizers();
 
 
-			gameController.NextMove(team, move);
+
+			node.CallDeferred("animate", pos);
+			await node.ToSignal(node.GetTree(), "process_frame");
+			await node.ToSignal(node, "AnimationCompleted");
+
+			if (move.target != null && move.attack)
+			{
+				gameController.board.UpdateWithAttack(move);
+				Node destroyNode = move.target.node.GetNode<Node>("Destruction");
+				destroyNode.CallDeferred("destroy");
+				move.target.Delete();
+			}
+			else
+			{
+				gameController.board.Updatekey(move);
+			}
+
+			if (this is Pawn)
+			{
+				Pawn pawn = (Pawn)this;
+				pawn.PromotePawn(gameController.board, move, true);
+			}
+
+
 
 			if (this is King && move.castle)
             {
                 move.rook.MovePieceWithVisualUpdateRook(CalculatePosition(move.rookNewPos), new AvailableMove(move.rook, move.rookNewPos, false, move.rookOldPos, true));
+				gameController.NextMove(team, move);
 				return;
             }
 
-        }
+
+			gameController.NextMove(team, move);
+
+		}
+
 
 
 		public void MovePieceWithVisualUpdateRook(Vector3 pos, AvailableMove move)
 		{
 			posVector = move.move;
 
-			node.CallDeferred("_bot_move2", pos);
+			node.CallDeferred("animate", pos);
 
 			gameController.board.Updatekey(move);
 
