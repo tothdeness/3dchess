@@ -23,7 +23,7 @@ shape = SubResource("ConcavePolygonShape3D_s6r8n")
 [node name="Destruction" type="Node" parent="." node_paths=PackedStringArray("shard_container")]
 script = ExtResource("3_1yoj2")
 fragmented = ExtResource("4_c2xvu")
-shard_container = NodePath("../..")
+shard_container = NodePath("")
 
 [connection signal="input_event" from="StaticBody3D" to="." method="_on_static_body_3d_input_event"]
 [connection signal="mouse_entered" from="StaticBody3D" to="." method="_on_static_body_3d_mouse_entered"]
