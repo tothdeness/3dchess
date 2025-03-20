@@ -19,6 +19,7 @@ using static test.core.Controllers.TableController;
 using test.core.Moves;
 using System.Text.Json.Serialization;
 using static test.core.Network.Serializer;
+using test.core.Logging;
 
 namespace test.core.Pieces
 {
@@ -92,9 +93,10 @@ namespace test.core.Pieces
             Dummy inst =  scene.Instantiate<Dummy>();
             inst.controller = gameController;
             inst.Set("position", CalculatePosition(posVector));
-            tableGraphics.CallDeferred("add_child", inst);
+            tableGraphics.AddChild(inst);
             node = inst;
             SetColor();
+    
         }
 
         public Piece() { }
@@ -114,9 +116,18 @@ namespace test.core.Pieces
 
 
 
+
 			node.CallDeferred("animate", pos);
-			await node.ToSignal(node.GetTree(), "process_frame");
-			await node.ToSignal(node, "AnimationCompleted");
+
+			if (node != null && node.GetTree() != null)
+			{
+				await node.ToSignal(node.GetTree(), "process_frame");
+				await node.ToSignal(node, "AnimationCompleted");
+			}
+
+
+
+
 
 			if (move.target != null && move.attack)
 			{
@@ -142,10 +153,12 @@ namespace test.core.Pieces
             {
                 move.rook.MovePieceWithVisualUpdateRook(CalculatePosition(move.rookNewPos), new AvailableMove(move.rook, move.rookNewPos, false, move.rookOldPos, true));
 				gameController.NextMove(team, move);
+                MoveLogger.LogMove(gameController.gameID, move.oldPositon, move.move);
 				return;
             }
 
 
+			MoveLogger.LogMove(gameController.gameID, move.oldPositon, move.move);
 			gameController.NextMove(team, move);
 
 		}

@@ -72,7 +72,7 @@ transform = Transform3D(-2.18557e-06, 0, 50, 0, 50, 0, -50, 0, -2.18557e-06, -37
 environment = SubResource("Environment_khxfc")
 
 [node name="desk" parent="." instance=ExtResource("8_c3erx")]
-transform = Transform3D(50, 0, 0, 0, 50, 0, 0, 0, 50, -21.672, -13.2168, 218.171)
+transform = Transform3D(49.9999, 0, 0, 0, 49.9999, 0, 0, 0, 49.9999, -21.672, -6.09595, 218.171)
 
 [node name="pipe" parent="." instance=ExtResource("9_jil7k")]
-transform = Transform3D(-1.96701e-06, 0, -44.9999, 0, 44.9999, 0, 44.9999, 0, -1.96701e-06, 485.528, 1.20914, -92.6361)
+transform = Transform3D(-44.9999, 0, -9.7014e-07, 0, 44.9999, 0, 9.7014e-07, 0, -44.9999, -32.2607, -2.85993, -103.826)

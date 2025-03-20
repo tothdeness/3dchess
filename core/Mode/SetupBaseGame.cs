@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using test.core.Controllers;
 using test.core.Pieces;
 using test.core.Pieces.Resources;
-using test.core.Pieces;
 
 namespace test.core.Mode
 {
@@ -70,14 +69,43 @@ namespace test.core.Mode
             board.kingBlack = pieces.OfType<King>().FirstOrDefault(p => p.team == -1);
             board.kingWhite = pieces.OfType<King>().FirstOrDefault(p => p.team == 1);
 
-            // Call addToGame on each piece
-            foreach (Piece piece in pieces)
-            {
-                piece.AddToGame();
-                piece.AddVisuals();
+			// Call addToGame on each piece
+			foreach (Piece piece in pieces)
+			{
+				piece.AddToGame();
 
-            }
-        }
+			}
+		}
+
+        public static void AddVisuals(GameController game)
+        {
+
+			foreach (Piece piece in game.table.Values.ToList())
+			{
+				piece.AddVisuals();
+			}
+
+		}
+
+        public static void UpdateVisuals(GameController game)
+        {
+			foreach (Piece piece in game.board.table.Values.ToList())
+			{
+
+                try
+                {
+					piece.Delete();
+				}
+                catch (Exception ex) { }
+					
+
+				piece.AddVisuals();
+				
+                
+				
+			}
+		}
+
 
 
     }

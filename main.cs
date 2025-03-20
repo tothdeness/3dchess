@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using test.core.Controllers;
+using test.core.Logging;
 using test.core.Mode;
 using test.core.Network;
 using test.core.Pieces;
@@ -24,22 +25,42 @@ public partial class main : Node3D
 		GD.Print("Udvozlet a 3D sakk jatekban!");
 	}
 
-	public void StartNewBotGame(int depth,int team)
+
+	public void StartNewBotGame(int depth, int team)
 	{
 		TableController.table.Clear();
-		GameController new_game = new GameController(true, depth, this, team, null, 1);
+		string playerTeam = team == -1 ? "Black" : "White"; // Map team to string
+		var gameID = CreateGameFile.CreateNewGameFile("Bot", playerTeam, depth);
+		game = GameController.CreateAndStartGame(true, depth, this, team, null, 1,gameID);
+				
 	}
+
+	public void LoadGame(string gameID)
+	{
+		TableController.table.Clear();
+		var data = GameFileReader.GetGameMetadata(gameID);
+
+		GD.Print(data["GameType"]);
+
+		game = GameController.LoadAndStartGame(data["GameType"] == "Bot", int.Parse(data["BotDepth"]), this, data["PlayerTeam"] == "White" ? 1 : -1, null, data["GameType"] == "Bot" ? 1 : 0, gameID);
+
+
+	}
+
 
 	public void StartNewPvpGame()
 	{
 		TableController.table.Clear();
-		GameController new_game = new GameController(false,0,this,1, null, 0);
+		var gameID = CreateGameFile.CreateNewGameFile("PvP");
+		game = GameController.CreateAndStartGame(false, 0, this, 1, null, 0, gameID);
+		
 	}
 
 	private void OnConnectionEstablished(TcpConnect client)
 	{
 		GD.Print("Creating new game after connection...");
-		GameController newGame = new GameController(false, 0, this, 1, client, 2);
+		var gameID = CreateGameFile.CreateNewGameFile("LAN");
+		game = GameController.CreateAndStartGame(false, 0, this, 1, client, 2, gameID);
 	}
 
 	public async void CreateNewLanGame(string port)
@@ -56,7 +77,8 @@ public partial class main : Node3D
 	{
 		TableController.table.Clear();
 		TcpConnect server = new TcpConnect(ip, int.Parse(port));
-		GameController new_game = new GameController(false, 0, this, -1, server, 2);
+		var gameID = CreateGameFile.CreateNewGameFile("LAN");
+		game = GameController.CreateAndStartGame(false, 0, this, -1, server, 2, gameID);
 		server.ConnectToPeer();
 	}
 
@@ -126,6 +148,7 @@ public partial class main : Node3D
 
 
 		}
+
 		if (_event is InputEventKey keyEvent && keyEvent.Pressed && keyEvent.Keycode == Key.Escape)
 		{
 			pressed = true;
@@ -135,6 +158,11 @@ public partial class main : Node3D
 		{
 			pressed = false;
 			LoadNewScene("res://TSCN/GUI/menu.tscn");
+		}
+
+		if (_event is InputEventKey keyEvent2 && keyEvent2.Pressed && keyEvent2.Keycode == Key.B)
+		{
+			game.MoveBack();
 		}
 
 	}

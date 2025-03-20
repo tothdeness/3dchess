@@ -11,7 +11,7 @@ public partial class Dummy : MeshInstance3D
 	private bool figureLocked = false;
 	private MeshInstance3D piece;
 	private StandardMaterial3D standardMaterial = new StandardMaterial3D();
-	public GameController controller {  get;  set; }
+	public GameController controller { get; set; }
 
 	[Signal]
 	public delegate void AnimationCompletedEventHandler();
@@ -42,7 +42,8 @@ public partial class Dummy : MeshInstance3D
 
 
 
-	async public void animate(Vector3 move) {
+	async public void animate(Vector3 move)
+	{
 
 		Tween tween = GetTree().CreateTween();
 		tween.TweenProperty(this, "position", move, 0.9f);
@@ -61,7 +62,7 @@ public partial class Dummy : MeshInstance3D
 
 	public override void _Input(InputEvent _event)
 	{
-		if(_event is InputEventMouseButton && figureLocked)
+		if (_event is InputEventMouseButton && figureLocked)
 		{
 			InputEventMouseButton mouse = (InputEventMouseButton)_event;
 
@@ -82,7 +83,7 @@ public partial class Dummy : MeshInstance3D
 
 					target.move = TableController.ReversePosition(target.move);
 
-					TableController.current.MovePieceWithVisualUpdate(pos,target);
+					TableController.current.MovePieceWithVisualUpdate(pos, target);
 
 				}
 
@@ -91,18 +92,18 @@ public partial class Dummy : MeshInstance3D
 
 				if (p == null) { return; }
 
-					if (p.team == 1)
-					{
-						SetColorWhite();
-					}
-					else
-					{
-						SetColorBlack();
-					}
+				if (p.team == 1)
+				{
+					SetColorWhite();
+				}
+				else
+				{
+					SetColorBlack();
+				}
 
-					p.DeleteVisualizers();
+				p.DeleteVisualizers();
 
-	
+
 
 			}
 
@@ -115,17 +116,17 @@ public partial class Dummy : MeshInstance3D
 
 	private void _on_static_body_3d_input_event(Node camera, InputEvent _event, Vector3 position, Vector3 normal, long shape_idx)
 	{
-		
 
-		if(_event is InputEventMouseButton)
+
+		if (_event is InputEventMouseButton)
 		{
 
 			InputEventMouseButton mouse = (InputEventMouseButton)_event;
 
 
-			if ( mouse.ButtonIndex == MouseButton.Left && !mouse.IsReleased() )
+			if (mouse.ButtonIndex == MouseButton.Left && !mouse.IsReleased())
 			{
-				piece = GetNode<MeshInstance3D>("../"+Name);
+				piece = GetNode<MeshInstance3D>("../" + Name);
 
 
 				Piece p_del = TableController.Find(this);
@@ -147,7 +148,7 @@ public partial class Dummy : MeshInstance3D
 
 				figureLocked = true;
 			}
-			
+
 
 		}
 
@@ -164,7 +165,7 @@ public partial class Dummy : MeshInstance3D
 
 		StandardMaterial3D material = new StandardMaterial3D();
 
-		material.AlbedoColor = new Color(236/255f, 241/255f, 230/255f, 0.8f);
+		material.AlbedoColor = new Color(236 / 255f, 241 / 255f, 230 / 255f, 0.8f);
 		piece.MaterialOverlay = material;
 
 		Node destroyNode = piece.GetNode<Node>("Destruction");
@@ -180,7 +181,7 @@ public partial class Dummy : MeshInstance3D
 
 		StandardMaterial3D material = new StandardMaterial3D();
 
-		material.AlbedoColor = new Color(86/255f, 80/255f, 81/255f,0.45f);
+		material.AlbedoColor = new Color(86 / 255f, 80 / 255f, 81 / 255f, 0.45f);
 		material.Metallic = 0.1f;
 		material.MetallicSpecular = 1.0f;
 
@@ -199,9 +200,3 @@ public partial class Dummy : MeshInstance3D
 
 
 }
-
-
-
-
-
-

@@ -45,6 +45,11 @@ text = "Új játék - Bot
 layout_mode = 2
 text = "Beállítások"
 
+[node name="load_game" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Játék betöltése
+"
+
 [node name="quit" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 text = "Bezár
@@ -67,4 +72,5 @@ text = "Főmenü"
 [connection signal="pressed" from="VBoxContainer/new_game_bot" to="." method="_on_new_game_pressed"]
 [connection signal="pressed" from="VBoxContainer/new_game_bot" to="." method="_on_new_game_bot_pressed"]
 [connection signal="pressed" from="VBoxContainer/settings" to="." method="_on_settings_pressed"]
+[connection signal="pressed" from="VBoxContainer/load_game" to="." method="_on_load_game_pressed"]
 [connection signal="pressed" from="VBoxContainer/quit" to="." method="_on_quit_pressed"]

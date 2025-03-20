@@ -25,3 +25,7 @@ func _input(event):
 		switcher.curr.SetMesh()
 		switcher.switch_scene_withoutparam()
 		
+
+
+func _on_load_game_pressed():
+	SceneSwitcher.switch_scene("res://TSCN/GUI/load_game.tscn")

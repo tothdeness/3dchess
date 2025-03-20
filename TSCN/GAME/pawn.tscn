@@ -21,6 +21,6 @@ shape = SubResource("CapsuleShape3D_xqkad")
 [node name="Destruction" type="Node" parent="." node_paths=PackedStringArray("shard_container")]
 script = ExtResource("3_43wva")
 fragmented = ExtResource("4_0fqlg")
-shard_container = NodePath("")
+shard_container = NodePath("../..")
 
 [connection signal="input_event" from="StaticBody3D" to="." method="_on_static_body_3d_input_event"]
