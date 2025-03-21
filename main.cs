@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -10,6 +11,7 @@ using test.core.Logging;
 using test.core.Mode;
 using test.core.Network;
 using test.core.Pieces;
+using static Godot.Control;
 
 public partial class main : Node3D
 {
@@ -18,12 +20,82 @@ public partial class main : Node3D
 	private bool rightMouseButtonIsPressed = false;
 	private Node3D cameraHelper;
 	private GameController game;
+
+	private Button elfogad;
+	private Button elutasit;
+
+	private VBoxContainer container;
+
+	private Label response;
+
 	private bool pressed;
 
 	public override void _Ready()
 	{
+
 		GD.Print("Udvozlet a 3D sakk jatekban!");
+
+
+		elfogad = GetNode<Button>("UI/VBoxContainer/Elfogad");
+		elutasit = GetNode<Button>("UI/VBoxContainer/Elutasit");
+		container = GetNode<VBoxContainer>("UI/VBoxContainer");
+		response = GetNode<Label>("UI/response");
+
+
+
+		elfogad.Pressed += accepted;
+		elutasit.Pressed += declined;
+
+		container.Hide();
+
+		//takeBackPopup.Hide();
 	}
+
+	public void ShowTakeBackPopup()
+	{
+		container.Show();
+	}
+
+	public async void ResponseAccept()
+	{
+		response.Text = "Elfogadva!";
+		response.Visible = true;
+		await ToSignal(GetTree().CreateTimer(3f), "timeout");  // Wait 3 seconds
+		response.Visible = false;
+
+	}
+
+	public async void ResponseDeclined()
+	{
+		response.Text = "Elutasitva!";
+		response.Visible = true;
+		await ToSignal(GetTree().CreateTimer(3f), "timeout");  // Wait 3 seconds
+		response.Visible = false;
+
+	}
+
+
+
+	private void accepted() { OnPopupItemSelected(0); }
+
+	private void declined() { OnPopupItemSelected(1); }
+
+	// Handle popup selection
+	private void OnPopupItemSelected(long id)
+	{
+		container.Hide(); // Hide the popup after selection
+		if (id == 0) // Accept
+		{
+			GD.Print("Elfogadva");
+			game.AcceptTakeBack();
+		}
+		else if (id == 1) // Decline
+		{
+			GD.Print("Elutasitva");
+			game.DeclineTakeBack();
+		}
+	}
+
 
 
 	public void StartNewBotGame(int depth, int team)
@@ -59,7 +131,7 @@ public partial class main : Node3D
 	private void OnConnectionEstablished(TcpConnect client)
 	{
 		GD.Print("Creating new game after connection...");
-		var gameID = CreateGameFile.CreateNewGameFile("LAN");
+		var gameID = CreateGameFile.CreateNewGameFile("PvP");
 		game = GameController.CreateAndStartGame(false, 0, this, 1, client, 2, gameID);
 	}
 
@@ -72,12 +144,11 @@ public partial class main : Node3D
 		await server.CreateTcpListener();
 	}
 
-
 	public void ConnectLanGame(string ip,string port)
 	{
 		TableController.table.Clear();
 		TcpConnect server = new TcpConnect(ip, int.Parse(port));
-		var gameID = CreateGameFile.CreateNewGameFile("LAN");
+		var gameID = CreateGameFile.CreateNewGameFile("PvP");
 		game = GameController.CreateAndStartGame(false, 0, this, -1, server, 2, gameID);
 		server.ConnectToPeer();
 	}
@@ -162,7 +233,27 @@ public partial class main : Node3D
 
 		if (_event is InputEventKey keyEvent2 && keyEvent2.Pressed && keyEvent2.Keycode == Key.B)
 		{
-			game.MoveBack();
+			if(game.gameMode == 2 )
+
+			{
+
+				if (!game.takeBackPending)
+				{
+					game.RequestTakeBack();
+				}
+				
+			
+			
+			}
+			
+			
+			else
+			{
+
+
+
+				game.MoveBack();
+			}
 		}
 
 	}

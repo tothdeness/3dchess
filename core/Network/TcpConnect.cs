@@ -14,10 +14,13 @@ namespace test.core.Network
 		private int port;
 		private TcpClient client;
 		private TcpListener listener;
-		private Thread receiveThread; // Keep the thread alive
+		private Thread receiveThread;
 
 		public event Action<TcpConnect> OnConnectionEstablished;
 		public event Action<string> ReceivedMove;
+		public event Action OnTakeBackRequested;
+		public event Action OnTakeBackAccepted;
+		public event Action OnTakeBackDeclined; // New event for decline
 
 		public TcpConnect(string ip, int port)
 		{
@@ -33,29 +36,27 @@ namespace test.core.Network
 			client = await listener.AcceptTcpClientAsync();
 			GD.Print("Connection done!");
 			OnConnectionEstablished?.Invoke(this);
-
-			StartReceiving(); // Use a method to start receiving
+			StartReceiving();
 		}
 
 		public void ConnectToPeer()
 		{
 			client = new TcpClient();
 			client.Connect(ip, port);
-			Console.WriteLine("Connected to peer!");
-
-			StartReceiving(); // Use a method to start receiving
+			GD.Print("Connected to peer!");
+			StartReceiving();
 		}
 
 		private void StartReceiving()
 		{
 			receiveThread = new Thread(() => ReceiveMoves());
-			receiveThread.IsBackground = true; // Important: Allow the application to exit even if the thread is running
+			receiveThread.IsBackground = true;
 			receiveThread.Start();
 		}
 
 		public void SendMove(string move)
 		{
-			if (client != null && client.Connected) // Check if connected before sending
+			if (client != null && client.Connected)
 			{
 				try
 				{
@@ -66,7 +67,6 @@ namespace test.core.Network
 				catch (Exception ex)
 				{
 					GD.Print($"Error sending move: {ex.Message}");
-					// Handle disconnection appropriately, e.g., raise an event.
 				}
 			}
 			else
@@ -75,41 +75,124 @@ namespace test.core.Network
 			}
 		}
 
+		public void SendTakeBackMove()
+		{
+			if (client != null && client.Connected)
+			{
+				try
+				{
+					NetworkStream stream = client.GetStream();
+					string takeBackMessage = "TAKE_BACK";
+					byte[] takeBackBytes = Encoding.UTF8.GetBytes(takeBackMessage);
+					stream.Write(takeBackBytes, 0, takeBackBytes.Length);
+					GD.Print("Sent take back request.");
+				}
+				catch (Exception ex)
+				{
+					GD.Print($"Error sending take back request: {ex.Message}");
+				}
+			}
+			else
+			{
+				GD.Print("Client is not connected. Cannot send take back request.");
+			}
+		}
+
+		public void SendAcceptTakeBack()
+		{
+			if (client != null && client.Connected)
+			{
+				try
+				{
+					NetworkStream stream = client.GetStream();
+					string acceptMessage = "ACCEPT_TAKE_BACK";
+					byte[] acceptBytes = Encoding.UTF8.GetBytes(acceptMessage);
+					stream.Write(acceptBytes, 0, acceptBytes.Length);
+					GD.Print("Sent accept take back response.");
+				}
+				catch (Exception ex)
+				{
+					GD.Print($"Error sending accept take back: {ex.Message}");
+				}
+			}
+			else
+			{
+				GD.Print("Client is not connected. Cannot send accept take back.");
+			}
+		}
+
+		// New method to send decline of take back
+		public void SendDeclineTakeBack()
+		{
+			if (client != null && client.Connected)
+			{
+				try
+				{
+					NetworkStream stream = client.GetStream();
+					string declineMessage = "DECLINE_TAKE_BACK";
+					byte[] declineBytes = Encoding.UTF8.GetBytes(declineMessage);
+					stream.Write(declineBytes, 0, declineBytes.Length);
+					GD.Print("Sent decline take back response.");
+				}
+				catch (Exception ex)
+				{
+					GD.Print($"Error sending decline take back: {ex.Message}");
+				}
+			}
+			else
+			{
+				GD.Print("Client is not connected. Cannot send decline take back.");
+			}
+		}
 
 		public void ReceiveMoves()
 		{
 			try
 			{
-				while (client != null && client.Connected) // Loop to continuously receive
+				while (client != null && client.Connected)
 				{
 					NetworkStream stream = client.GetStream();
 					byte[] buffer = new byte[1024];
-
 					int bytesRead = stream.Read(buffer, 0, buffer.Length);
 
 					if (bytesRead == 0)
 					{
 						GD.Print("Client disconnected.");
-						// Handle disconnection (e.g., raise an event, close the socket)
-						break; // Exit the loop
+						break;
 					}
 
-					string move = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-					GD.Print($"Received move: {move}");
-					ReceivedMove?.Invoke(move);
+					string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+					GD.Print($"Received message: {message}");
+
+					switch (message)
+					{
+						case "TAKE_BACK":
+							GD.Print("Take back request received.");
+							OnTakeBackRequested?.Invoke();
+							break;
+						case "ACCEPT_TAKE_BACK":
+							GD.Print("Take back accepted by opponent.");
+							OnTakeBackAccepted?.Invoke();
+							break;
+						case "DECLINE_TAKE_BACK":
+							GD.Print("Take back declined by opponent.");
+							OnTakeBackDeclined?.Invoke();
+							break;
+						default:
+							GD.Print("Assuming message is a move.");
+							ReceivedMove?.Invoke(message);
+							break;
+					}
 				}
 			}
 			catch (Exception ex)
 			{
 				GD.Print($"Connection error: {ex.Message}");
-				// Handle disconnection appropriately
 			}
 			finally
 			{
-				// Clean up resources when the loop exits (due to disconnection or error)
 				client?.Close();
-				client = null; // Important: Set client to null to prevent further use
-							   // Optionally, raise a disconnect event here
+				client = null;
 			}
 		}
 	}

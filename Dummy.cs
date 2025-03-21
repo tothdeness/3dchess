@@ -83,6 +83,8 @@ public partial class Dummy : MeshInstance3D
 
 					target.move = TableController.ReversePosition(target.move);
 
+
+					lock (controller._moveLock) { controller.isProcessingMove = true; }
 					TableController.current.MovePieceWithVisualUpdate(pos, target);
 
 				}

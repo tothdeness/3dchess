@@ -33,7 +33,9 @@ namespace test.core.Bots
 
         private const float queen = 9f;
 
-        public Bot(int depth, int team) { this.depth = depth; this.team = team; }
+        private GameController gameController;
+
+        public Bot(int depth, int team, GameController controller) { this.depth = depth; this.team = team; this.gameController = controller; }
 
         public void ExecuteNextMove(Board board)
         {
@@ -48,8 +50,8 @@ namespace test.core.Bots
 
             try
             {
-
-                s.move.moving.MovePieceWithVisualUpdate(TableController.CalculatePosition(s.move.move), s.move);
+				lock (gameController._moveLock) { gameController.isProcessingMove = true; }
+				s.move.moving.MovePieceWithVisualUpdate(TableController.CalculatePosition(s.move.move), s.move);
 
             }
             catch (Exception e)

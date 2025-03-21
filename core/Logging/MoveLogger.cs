@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Godot;
 
 namespace test.core.Logging
@@ -9,7 +10,6 @@ namespace test.core.Logging
 	{
 		private const string DirectoryPath = "Games"; // Matches CreateGameFile default
 
-		// Logs a move with gameId, start, and end coordinates as Vector3, determining the next move number
 		public static void LogMove(string gameId, Vector3 startCoord, Vector3 endCoord)
 		{
 			if (string.IsNullOrWhiteSpace(gameId))
@@ -21,7 +21,7 @@ namespace test.core.Logging
 			string filePath = Path.Combine(DirectoryPath, $"Game_Bot_{gameId}.txt");
 			if (!File.Exists(filePath))
 			{
-				filePath = Path.Combine(DirectoryPath, $"Game_PvP_{gameId}.txt"); // Try PvP if Bot not found
+				filePath = Path.Combine(DirectoryPath, $"Game_PvP_{gameId}.txt");
 				if (!File.Exists(filePath))
 				{
 					throw new FileNotFoundException($"Game file for ID {gameId} not found in {DirectoryPath}");
@@ -30,15 +30,15 @@ namespace test.core.Logging
 
 			try
 			{
-				// Read existing moves to determine next move number
-				int nextMoveNumber = 1;
-				if (new FileInfo(filePath).Length > 0) // Check if file has content
+				// Read existing lines to count move lines
+				int moveCount = 0;
+				if (new FileInfo(filePath).Length > 0)
 				{
 					var lines = File.ReadAllLines(filePath);
-					// Find lines that look like moves (e.g., "1. (x, y, z) (x, y, z)")
-					var moveLines = lines.Where(line => line.Trim().StartsWith($"{nextMoveNumber}.")).ToList();
-					nextMoveNumber = moveLines.Count + 1; // Next number after last move
+					// Count lines that start with a number followed by a period (e.g., "1.", "2.", etc.)
+					moveCount = lines.Count(line => Regex.IsMatch(line.Trim(), @"^\d+\."));
 				}
+				int nextMoveNumber = moveCount + 1;
 
 				// Format coordinates with invariant culture (dots for decimals)
 				System.Globalization.CultureInfo ci = System.Globalization.CultureInfo.InvariantCulture;
@@ -57,6 +57,73 @@ namespace test.core.Logging
 			{
 				throw new IOException($"Failed to log move to file {filePath}: {ex.Message}");
 			}
+		
 		}
+
+
+		public static void DeleteLastMove(string gameId)
+		{
+			if (string.IsNullOrWhiteSpace(gameId))
+			{
+				throw new ArgumentException("Game ID cannot be null or empty", nameof(gameId));
+			}
+
+			string filePath = GetFilePath(gameId);
+			if (!File.Exists(filePath))
+			{
+				throw new FileNotFoundException($"Game file for ID {gameId} not found in {DirectoryPath}");
+			}
+
+			try
+			{
+				// Read all lines into a list
+				var lines = File.ReadAllLines(filePath).ToList();
+				// Find the last move line
+				int lastMoveIndex = -1;
+				for (int i = lines.Count - 1; i >= 0; i--)
+				{
+					if (Regex.IsMatch(lines[i].Trim(), @"^\d+\."))
+					{
+						lastMoveIndex = i;
+						break;
+					}
+				}
+
+				if (lastMoveIndex != -1)
+				{
+					// Remove the last move and update the file
+					lines.RemoveAt(lastMoveIndex);
+					File.WriteAllLines(filePath, lines);
+				}
+				else
+				{
+					GD.Print("No moves found to delete.");
+				}
+			}
+			catch (IOException ex)
+			{
+				throw new IOException($"Failed to delete last move from file {filePath}: {ex.Message}");
+			}
+		}
+
+
+		private static string GetFilePath(string gameId)
+		{
+			string filePath = Path.Combine(DirectoryPath, $"Game_Bot_{gameId}.txt");
+			if (!File.Exists(filePath))
+			{
+				filePath = Path.Combine(DirectoryPath, $"Game_PvP_{gameId}.txt");
+				if (!File.Exists(filePath))
+				{
+					throw new FileNotFoundException($"Game file for ID {gameId} not found in {DirectoryPath}");
+				}
+			}
+			return filePath;
+		}
+
+
+
+
 	}
+
 }

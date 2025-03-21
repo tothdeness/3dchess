@@ -93,7 +93,7 @@ namespace test.core.Pieces
             Dummy inst =  scene.Instantiate<Dummy>();
             inst.controller = gameController;
             inst.Set("position", CalculatePosition(posVector));
-            tableGraphics.AddChild(inst);
+            tableGraphics.CallDeferred("add_child", inst); 
             node = inst;
             SetColor();
     

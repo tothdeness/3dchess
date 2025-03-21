@@ -21,7 +21,7 @@ namespace test.core.Controllers
 
         private bool botGame;
 
-        public Node3D tableGraphics;
+        public main tableGraphics;
 
         public int player1;
 
@@ -45,13 +45,19 @@ namespace test.core.Controllers
 
         public Thread bot_thread;
 
-        public LinkedList<AvailableMove> moves = new LinkedList<AvailableMove> ();
+        public bool isProcessingMove = false;
+
+        public readonly object _moveLock = new object();
+
+        public bool takeBackPending = false;
+
+        public LinkedList<AvailableMove> moves = new LinkedList<AvailableMove>();
 
         // 0 local
         // 1 bot
         // 2 lan
 
-		public GameController(bool botGame, int depth, Node3D tableGraphics, int player1,TcpConnect server,int gameMode,string gameID)
+        public GameController(bool botGame, int depth, main tableGraphics, int player1, TcpConnect server, int gameMode, string gameID)
         {
             this.botGame = botGame;
             this.tableGraphics = tableGraphics;
@@ -60,62 +66,45 @@ namespace test.core.Controllers
             TableController.tableGraphics = tableGraphics;
             table = TableController.table;
             board = new Board(table);
-            bot = new Bot(depth, player2);
+            bot_thread = new Thread(() => bot.ExecuteNextMove(board));
+			bot = new Bot(depth, player2, this);
             SetupBaseGame.AddPiecesStandardGame(this, board);
             this.gameMode = gameMode;
             this.server = server;
             this.gameID = gameID;
-		}
+        }
 
 
         private void AddVisuals()
         {
-			SetupBaseGame.AddVisuals(this);
-		}
-        
+            SetupBaseGame.AddVisuals(this);
+        }
+
         private void UpdateVisual()
         {
             SetupBaseGame.UpdateVisuals(this);
         }
 
 
-        public void MoveBack()
-        {
-
-            if(moves.Count == 0) return;
-
-            int currTeam = moves.Last().moving.team;
-
-            if (gameMode == 1)
+        public void MoveBack() { 
+            lock (_moveLock)
             {
-   
-                    board.TakeBackMove(moves.Last());
-					moves.RemoveLast();
-					board.TakeBackMove(moves.Last());
-					currTeam = moves.Last().moving.team;
-					moves.RemoveLast();
 
+				if (moves.Count < 2 || isProcessingMove || gameMode == 1 && bot_thread.IsAlive) return;
 
-            }
-            else
-            {
-                board.TakeBackMove(moves.Last());
-                moves.RemoveLast();
-            }
-
-
+			}
+            board.TakeBackMove(moves.Last());
+			moves.RemoveLast();
+			board.TakeBackMove(moves.Last());
+			int currTeam = moves.Last().moving.team;
+			moves.RemoveLast();
             UpdateVisual();
-
-
 			current = currTeam;
 			board.current = currTeam;
-
-
-		
-		
+            MoveLogger.DeleteLastMove(gameID);
+			MoveLogger.DeleteLastMove(gameID);
 			MoveGenerator.CheckValidMoves(board);
 		
-
 		}
 
 
@@ -131,20 +120,28 @@ namespace test.core.Controllers
 			if (gameMode == 2 && server != null)
 			{
 				server.ReceivedMove += ReceivedMove;
+				server.OnTakeBackRequested += HandleTakeBackRequest;
+				server.OnTakeBackAccepted += AcceptIncome;
+				server.OnTakeBackDeclined += DeclineIncome;
+
 			}
 		}
 
+		private void HandleTakeBackRequest()
+		{
+            tableGraphics.CallDeferred("ShowTakeBackPopup");
+		}
 
-		public static GameController CreateAndStartGame(bool botGame, int depth, Node3D tableGraphics, int player1, TcpConnect server, int gameMode, string gameID)
+		public static GameController CreateAndStartGame(bool botGame, int depth, main tableGraphics, int player1, TcpConnect server, int gameMode, string gameID)
         {
 		   var game = new GameController(botGame, depth, tableGraphics, player1, server, gameMode, gameID);
            game.AddVisuals();
 		   game.StartGame();
-            return game;
+           return game;
         }
 
 
-        public static  GameController  LoadAndStartGame(bool botGame, int depth, Node3D tableGraphics, int player1, TcpConnect server, int gameMode, string gameID)
+        public static  GameController  LoadAndStartGame(bool botGame, int depth, main tableGraphics, int player1, TcpConnect server, int gameMode, string gameID)
         {
 			var game = new GameController(botGame, depth, tableGraphics, player1, server, gameMode, gameID);
 
@@ -182,14 +179,74 @@ namespace test.core.Controllers
 			game.AddVisuals();
             game.LanGameStart();
 
-      
-			game.NextMove(lastmove.moving.team, lastmove);
+
+        
+			game.NextMove(lastmove.moving.team, null);
+ 
 		
             return game;
 
 		}
+		public void AcceptTakeBack()
+		{
+			if (gameMode == 2 && server != null)
+			{
+				server.SendAcceptTakeBack();
+				MoveBack(); // Execute the take back on the accepting side
+				GD.Print("Accepted opponent's take back request.");
+                takeBackPending = false;
+			}
+		}
 
-     
+		// Decline a take back request
+		public void DeclineTakeBack()
+		{
+			if (gameMode == 2 && server != null)
+			{
+				server.SendDeclineTakeBack();
+				GD.Print("Declined opponent's take back request.");
+				takeBackPending = false;
+			}
+		}
+
+
+        public void DeclineIncome()
+        {
+            if (gameMode == 2 && server != null)
+            {
+                tableGraphics.CallDeferred("ResponseDeclined");
+                takeBackPending = false;
+            }
+        }
+
+        public void AcceptIncome()
+        {
+			if (gameMode == 2 && server != null)
+			{
+				tableGraphics.CallDeferred("ResponseAccept");
+				MoveBack();
+				takeBackPending = false;
+			}
+		}
+
+
+		public void RequestTakeBack()
+		{
+			if (gameMode == 2 && server != null) // LAN mode
+			{
+				takeBackPending = true;
+				server.SendTakeBackMove();
+				GD.Print("Requested take back from opponent.");
+            }
+            else
+            {
+                GD.Print("Cant send request!");
+            }
+		}
+
+
+
+
 		public void NextMove(int team,AvailableMove move)
         {
 
@@ -205,11 +262,10 @@ namespace test.core.Controllers
 
             GD.Print(board.CheckGameState(moves).name);
 
-            if (team == player1 && botGame)
+			lock (_moveLock) { isProcessingMove = false; }
+
+			if (team == player1 && botGame)
             {
-
-                GD.Print("sEARCHING");
-
                 bot_thread = new Thread(() => bot.ExecuteNextMove(board));
                 bot_thread.Start();
 			}
