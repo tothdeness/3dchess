@@ -109,9 +109,26 @@ namespace test.core.Controllers
 
 
 
-        public void StartGame()
+        public async Task StartGameAsync()
         {
-            LanGameStart();
+
+			if (!tableGraphics.IsNodeReady()) // Optional: wait for basic ready first
+			{
+				await tableGraphics.ToSignal(tableGraphics, "ready");
+
+			}
+
+			if (!tableGraphics.IsFullyInitialized()) // Check our custom flag/wait for signal
+			{
+				GD.Print("GameController: Waiting for main to be fully initialized...");
+				await tableGraphics.ToSignal(tableGraphics, main.SignalName.FullyInitialized);
+				GD.Print("GameController: Main reports fully initialized.");
+			}
+
+			// Now call the method
+			tableGraphics.CallDeferred("SetCameraPosition", player1);
+
+			LanGameStart();
 			if (player1 == -1 && gameMode == 1) { NextMove(player1, null); }
 		}
 
@@ -136,7 +153,7 @@ namespace test.core.Controllers
         {
 		   var game = new GameController(botGame, depth, tableGraphics, player1, server, gameMode, gameID);
            game.AddVisuals();
-		   game.StartGame();
+		   game.StartGameAsync();
            return game;
         }
 

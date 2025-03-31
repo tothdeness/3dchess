@@ -185,38 +185,100 @@ namespace test.core.Pieces
 
 
 		public void VirtualMove(Vector3 vector, AvailableMove move, Board board)
-        {
+		{
+			// Store the original position *before* changing posVector
+			// This is crucial because TakeBackMove relies on move.oldPositon being correct.
+			// Ensure move.oldPositon is correctly set when the AvailableMove is created.
+			// If not, you might need to capture it here: Vector3 originalPos = posVector;
 
-            posVector = vector;
+			// Update the piece's position vector
+			posVector = vector;
 
-            if (move.attack && move.target != null)
-            {
-                board.UpdateWithAttack(move);
-            }
-            else
-            {
-                board.Updatekey(move);
-            }
+			// --- START MODIFICATION ---
+			// Check the actual state of the target square *in the current virtual board*
+			bool targetSquareOccupied = board.table.ContainsKey(vector);
 
-            if (this is Pawn)
-            {
-                Pawn pawn = (Pawn)this;
-                pawn.PromotePawn(gameController.board, move, false);
-            }
+			if (targetSquareOccupied)
+			{
+				// Target square IS occupied. Treat as an attack, regardless of original move.attack flag.
+				// Ensure the move object reflects the attack if it didn't already.
+				if (!move.attack || move.target == null)
+				{
+					move.attack = true;
+					// Attempt to get the piece being virtually captured
+					move.target = board.FindPiece(vector); // Make sure FindPiece correctly returns the piece at 'vector'
+					if (move.target == null)
+					{
+						// This case would be strange - dictionary says key exists but FindPiece fails. Log error.
+						Godot.GD.PrintErr($"VirtualMove Error: table contains key {vector} but FindPiece returned null.");
+						// Avoid calling UpdateWithAttack if target is null, maybe fallback or throw?
+						// For now, let's prevent the call if target is unexpectedly null
+						goto SkipBoardUpdate; // Use goto sparingly, consider restructuring if possible
+					}
+				}
+				// Make sure the target we found is actually the opponent
+				if (move.target.team != this.team)
+				{
+					board.UpdateWithAttack(move);
+				}
+				else
+				{
+					// This implies moving onto a square occupied by a friendly piece - invalid move state.
+					Godot.GD.PrintErr($"VirtualMove Error: Attempting virtual move onto friendly piece at {vector}.");
+					// Decide how to handle - potentially revert posVector and skip update?
+					// posVector = originalPos; // Revert if you captured originalPos above
+					goto SkipBoardUpdate;
+				}
+			}
+			else
+			{
+				// Target square IS NOT occupied. Treat as a simple move.
+				// Ensure move object reflects non-attack if it somehow thought it was one.
+				if (move.attack)
+				{
+					move.attack = false;
+					move.target = null;
+				}
+				board.Updatekey(move);
+			}
 
-            if (firstMove) firstMove = false;
-
-            if (this is King && move.castle)
-            {
-                move.rook.VirtualMove(move.rookNewPos, new AvailableMove(move.rook, move.rookNewPos, false, move.rookOldPos, true), board);
-            }
-
-        }
+		SkipBoardUpdate:; // Label for goto, execution continues here if update was skipped
+						  // --- END MODIFICATION ---
 
 
+			// --- Existing Logic (Pawn Promotion, Castling, firstMove) ---
+			if (this is Pawn)
+			{
+				Pawn pawn = (Pawn)this;
+				// Note: PromotePawn itself modifies board.table, ensure this interaction is safe
+				// It replaces the pawn with a queen in the dictionary.
+				pawn.PromotePawn(board, move, false); // false because it's virtual
+			}
+
+			// Ensure firstMove flag is updated *after* the board state changes
+			// But careful if promotion changes 'this' piece instance effectively
+			if (firstMove) firstMove = false;
+
+			if (this is King && move.castle)
+			{
+				// Ensure the rook object and its move details are correct in the 'move' object
+				if (move.rook != null)
+				{
+					// Create a simple move representation for the rook's virtual move
+					AvailableMove rookVirtualMove = new AvailableMove(move.rook, move.rookNewPos, false, move.rookOldPos, true); // Assuming rook move isn't attack
+					move.rook.VirtualMove(move.rookNewPos, rookVirtualMove, board);
+				}
+				else
+				{
+					Godot.GD.PrintErr($"VirtualMove Error: Castle move missing rook object.");
+				}
+			}
+		}
 
 
-        public void Delete()
+
+
+		public void Delete()
         {
             node.QueueFree();
             DeleteVisualizers();

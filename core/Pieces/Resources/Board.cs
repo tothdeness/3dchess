@@ -126,7 +126,19 @@ namespace test.core.Pieces.Resources
         {
             if (move.firstMove) { move.moving.firstMove = true; }
 
-            if (move.attack)
+
+			if (move.promoted)
+			{
+				Piece promotedPiece = FindPiece(move.move);
+				if (promotedPiece != null && promotedPiece.node != null && Godot.GodotObject.IsInstanceValid(promotedPiece.node))
+				{
+					promotedPiece.node.QueueFree(); // Remove the Queen's visual node
+				}
+			}
+
+
+
+			if (move.attack)
             {
                 table[move.moving.posVector] = move.target;
                 table.Add(move.oldPositon, move.moving);

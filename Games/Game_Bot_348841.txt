@@ -1,0 +1,6 @@
+[GameType "Bot"]
+[GameID "348841"]
+[Date "2025-03-31 23:20:59"]
+[BotDepth "1"]
+[PlayerTeam "White"]
+

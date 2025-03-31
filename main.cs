@@ -30,10 +30,15 @@ public partial class main : Node3D
 
 	private bool pressed;
 
+
+	[Signal]
+	public delegate void FullyInitializedEventHandler();
+	private bool _isFullyInitialized = false;
+
 	public override void _Ready()
 	{
-
-		GD.Print("Udvozlet a 3D sakk jatekban!");
+		GD.Print("main _Ready: Start");
+		cameraHelper = GetNode<Node3D>("camera");
 
 
 		elfogad = GetNode<Button>("UI/VBoxContainer/Elfogad");
@@ -48,8 +53,14 @@ public partial class main : Node3D
 
 		container.Hide();
 
-		//takeBackPopup.Hide();
+
+		GD.Print("main _Ready: Finished setup. Emitting FullyInitialized.");
+		_isFullyInitialized = true;
+		EmitSignal(SignalName.FullyInitialized);
+
 	}
+
+	public bool IsFullyInitialized() => _isFullyInitialized;
 
 	public void ShowTakeBackPopup()
 	{
@@ -168,6 +179,18 @@ public partial class main : Node3D
 	}
 
 
+	//1 white
+	//-1 black
+	public void SetCameraPosition(int position)
+	{
+
+		if (position == -1)
+		{
+			cameraHelper.RotateY((float)3.14159);
+		}
+
+	}
+
 
 
 	public override void _Process(double delta)
@@ -196,8 +219,6 @@ public partial class main : Node3D
 		else if (_event is InputEventMouseMotion && rightMouseButtonIsPressed)
 		{
 			InputEventMouseMotion mouse = (InputEventMouseMotion) _event;
-
-			cameraHelper = GetNode<Node3D>("camera");
 
 			float rotatingSpeed = 0.022f;
 

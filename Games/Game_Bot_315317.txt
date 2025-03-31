@@ -1,7 +1,0 @@
-[GameType "Bot"]
-[GameID "315317"]
-[Date "2025-03-21 01:15:55"]
-[BotDepth "4"]
-[PlayerTeam "Black"]
-
-1. (2, -0.25, 4) (4, -0.25, 4)
