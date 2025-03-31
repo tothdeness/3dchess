@@ -107,10 +107,28 @@ public partial class main : Node3D
 		}
 	}
 
+	private void CleanupPreviousGame()
+	{
+		GD.Print("Checking for existing game controller to clean up...");
+		if (game != null)
+		{
+			GD.Print("Found existing game controller. Cleaning up...");
+			game.Cleanup();
+			game = null; // Release the reference
+		}
+		else
+		{
+			GD.Print("No existing game controller found.");
+		}
 
+		// Optional: Add any other scene-specific cleanup needed here
+		// e.g., removing leftover visual nodes not tied to pieces, resetting UI elements.
+		// Since TableController.table.Clear() is called anyway, maybe not much else needed here.
+	}
 
 	public void StartNewBotGame(int depth, int team)
 	{
+		CleanupPreviousGame();
 		TableController.table.Clear();
 		string playerTeam = team == -1 ? "Black" : "White"; // Map team to string
 		var gameID = CreateGameFile.CreateNewGameFile("Bot", playerTeam, depth);
@@ -120,6 +138,7 @@ public partial class main : Node3D
 
 	public void LoadGame(string gameID)
 	{
+		CleanupPreviousGame();
 		TableController.table.Clear();
 		var data = GameFileReader.GetGameMetadata(gameID);
 
@@ -133,6 +152,7 @@ public partial class main : Node3D
 
 	public void StartNewPvpGame()
 	{
+		CleanupPreviousGame();
 		TableController.table.Clear();
 		var gameID = CreateGameFile.CreateNewGameFile("PvP");
 		game = GameController.CreateAndStartGame(false, 0, this, 1, null, 0, gameID);
@@ -141,6 +161,7 @@ public partial class main : Node3D
 
 	private void OnConnectionEstablished(TcpConnect client)
 	{
+		CleanupPreviousGame();
 		GD.Print("Creating new game after connection...");
 		var gameID = CreateGameFile.CreateNewGameFile("PvP");
 		game = GameController.CreateAndStartGame(false, 0, this, 1, client, 2, gameID);
@@ -148,6 +169,7 @@ public partial class main : Node3D
 
 	public async void CreateNewLanGame(string port)
 	{
+		CleanupPreviousGame();
 		GD.Print(port);
 		TableController.table.Clear();
 		TcpConnect server = new TcpConnect("0",int.Parse(port));
@@ -157,6 +179,7 @@ public partial class main : Node3D
 
 	public void ConnectLanGame(string ip,string port)
 	{
+		CleanupPreviousGame();
 		TableController.table.Clear();
 		TcpConnect server = new TcpConnect(ip, int.Parse(port));
 		var gameID = CreateGameFile.CreateNewGameFile("PvP");
@@ -281,7 +304,11 @@ public partial class main : Node3D
 
 	private void LoadNewScene(string scenePath)
 	{
-		//TableController.table.Clear();
+		if(game != null && game.gameMode == 2)
+		{
+			TableController.table.Clear();
+			CleanupPreviousGame();
+		}
 		var sceneSwitcher = GetNode("/root/SceneSwitcher");
 		sceneSwitcher.Call("switch_scene", scenePath);
 

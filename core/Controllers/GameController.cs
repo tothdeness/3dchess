@@ -296,9 +296,61 @@ namespace test.core.Controllers
 
 
 
+		public void Cleanup()
+		{
+			GD.Print("Cleaning up GameController resources...");
+
+			// --- Stop Bot Thread ---
+			if (bot_thread != null && bot_thread.IsAlive)
+			{
+				GD.Print("Attempting to stop bot thread...");
+				try
+				{
+					// NOTE: Thread.Abort() is generally discouraged due to potential state corruption.
+					// A cooperative cancellation mechanism (e.g., using a CancellationToken
+					// or a flag checked by the bot periodically) is strongly preferred if possible.
+					// If you must use Abort, be aware of the risks.
+					#pragma warning disable SYSLIB0006 // Disable Obsolete warning for Thread.Abort
+					bot_thread.Abort();
+					#pragma warning restore SYSLIB0006
+					bot_thread.Join(TimeSpan.FromSeconds(1)); // Give it a moment to abort
+					GD.Print("Bot thread stopped.");
+				}
+				catch (PlatformNotSupportedException pex)
+				{
+					GD.PrintErr($"Thread.Abort is not supported on this platform: {pex.Message}");
+					// You MUST implement cooperative cancellation if Abort is not supported.
+				}
+				catch (ThreadStateException tex)
+				{
+					GD.PrintErr($"Error stopping bot thread (ThreadStateException): {tex.Message}");
+					// Thread might be already stopped or in a state where it cannot be aborted.
+				}
+				catch (Exception ex)
+				{
+					GD.PrintErr($"Error stopping bot thread: {ex.Message}");
+				}
+			}
+			bot_thread = null; // Release thread reference
 
 
-        public void ReceivedMove(string move)
+			// --- Close Network Connection ---
+			if (server != null)
+			{
+				GD.Print("Closing network connection...");
+				server.CloseConnection(); // Call the cleanup method we added
+			}
+			server = null; // Release server reference
+
+			// --- Optional: Clean up other resources ---
+			// If GameController holds other disposable resources, clean them up here.
+			// For example, unsubscribe from events on tableGraphics if necessary, etc.
+
+
+			GD.Print("GameController cleanup finished.");
+		}
+
+		public void ReceivedMove(string move)
         {
 
 
