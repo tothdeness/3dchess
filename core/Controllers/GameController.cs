@@ -109,7 +109,7 @@ namespace test.core.Controllers
 
 
 
-        public async Task StartGameAsync()
+        public async Task StartGameAsync(int nextplayer)
         {
 
 			if (!tableGraphics.IsNodeReady()) // Optional: wait for basic ready first
@@ -129,7 +129,7 @@ namespace test.core.Controllers
 			tableGraphics.CallDeferred("SetCameraPosition", player1);
 
 			LanGameStart();
-			if (player1 == -1 && gameMode == 1) { NextMove(player1, null); }
+			if (player1 == -1 && gameMode == 1) { NextMove(nextplayer, null); }
 		}
 
         private void LanGameStart()
@@ -153,7 +153,7 @@ namespace test.core.Controllers
         {
 		   var game = new GameController(botGame, depth, tableGraphics, player1, server, gameMode, gameID);
            game.AddVisuals();
-		   game.StartGameAsync();
+		   game.StartGameAsync(player1);
            return game;
         }
 
@@ -194,13 +194,8 @@ namespace test.core.Controllers
 			}
 
 			game.AddVisuals();
-            game.LanGameStart();
+            game.StartGameAsync(lastmove.moving.team);
 
-
-        
-			game.NextMove(lastmove.moving.team, null);
- 
-		
             return game;
 
 		}
