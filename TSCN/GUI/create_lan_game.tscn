@@ -43,6 +43,13 @@ grow_vertical = 2
 localize_numeral_system = false
 alignment = 1
 
+[node name="Label" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "Load game:"
+
+[node name="SavedGamesOptionButton" type="OptionButton" parent="VBoxContainer"]
+layout_mode = 2
+
 [node name="OptionButton" type="OptionButton" parent="VBoxContainer"]
 layout_mode = 2
 item_count = 2
@@ -61,7 +68,7 @@ custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 placeholder_text = "PORT"
 
-[node name="new_game_bot" type="Button" parent="VBoxContainer"]
+[node name="start_or_join_lan_game" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 text = "Start
 "
@@ -71,5 +78,5 @@ layout_mode = 2
 text = "Vissza"
 
 [connection signal="item_selected" from="VBoxContainer/OptionButton" to="." method="_on_option_button_item_selected"]
-[connection signal="pressed" from="VBoxContainer/new_game_bot" to="." method="_on_new_game_bot_pressed"]
+[connection signal="pressed" from="VBoxContainer/start_or_join_lan_game" to="." method="_on_start_or_join_lan_game_pressed"]
 [connection signal="pressed" from="VBoxContainer/quit" to="." method="_on_quit_pressed"]

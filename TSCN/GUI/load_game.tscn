@@ -56,13 +56,45 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -88.0
-offset_top = -85.0
-offset_right = 89.0
-offset_bottom = -41.0
+offset_left = -82.0
+offset_top = -82.0
+offset_right = 95.0
+offset_bottom = -38.0
 grow_horizontal = 2
 grow_vertical = 0
 text = "Vissza
+"
+
+[node name="LoadButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 134.0
+offset_top = -82.0
+offset_right = 311.0
+offset_bottom = -38.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "Betölt
+"
+
+[node name="DeleteButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -306.0
+offset_top = -82.0
+offset_right = -129.0
+offset_bottom = -38.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "Töröl
 "
 
 [connection signal="pressed" from="quit" to="." method="_on_quit_pressed"]

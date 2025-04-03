@@ -87,12 +87,15 @@ namespace test.core.Controllers
 
 
         public void MoveBack() { 
+
             lock (_moveLock)
             {
 
 				if (moves.Count < 2 || isProcessingMove || gameMode == 1 && bot_thread.IsAlive) return;
 
 			}
+
+
             board.TakeBackMove(moves.Last());
 			moves.RemoveLast();
 			board.TakeBackMove(moves.Last());
@@ -193,6 +196,7 @@ namespace test.core.Controllers
 				game.board.current *= -1;
 			}
 
+			game.current = game.board.current;
 			game.AddVisuals();
             game.StartGameAsync(lastmove.moving.team);
 
@@ -244,7 +248,7 @@ namespace test.core.Controllers
 
 		public void RequestTakeBack()
 		{
-			if (gameMode == 2 && server != null) // LAN mode
+			if (gameMode == 2 && server != null && current == player1) // LAN mode
 			{
 				takeBackPending = true;
 				server.SendTakeBackMove();
@@ -275,6 +279,7 @@ namespace test.core.Controllers
             GD.Print(board.CheckGameState(moves).name);
 
 			lock (_moveLock) { isProcessingMove = false; }
+
 
 			if (team == player1 && botGame)
             {

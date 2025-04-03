@@ -144,7 +144,7 @@ public partial class main : Node3D
 
 		GD.Print(data["GameType"]);
 
-		game = GameController.LoadAndStartGame(data["GameType"] == "Bot", int.Parse(data["BotDepth"]), this, data["PlayerTeam"] == "White" ? 1 : -1, null, data["GameType"] == "Bot" ? 1 : 0, gameID);
+		game = GameController.LoadAndStartGame(data["GameType"] == "Bot", data["GameType"] == "Bot" ? int.Parse(data["BotDepth"]) : 0, this, data["PlayerTeam"] == "White" ? 1 : -1, null, data["GameType"] == "Bot" ? 1 : 0, gameID);
 
 
 	}
@@ -163,7 +163,7 @@ public partial class main : Node3D
 	{
 		CleanupPreviousGame();
 		GD.Print("Creating new game after connection...");
-		var gameID = CreateGameFile.CreateNewGameFile("PvP");
+		var gameID = CreateGameFile.CreateNewGameFile("LAN","White");
 		game = GameController.CreateAndStartGame(false, 0, this, 1, client, 2, gameID);
 	}
 
@@ -177,12 +177,44 @@ public partial class main : Node3D
 		await server.CreateTcpListener();
 	}
 
+	public async void LoadNewLanGame(string port, string gameID)
+	{
+		CleanupPreviousGame();
+		TableController.table.Clear();
+		TcpConnect server = new TcpConnect("0", int.Parse(port));
+
+		var data = GameFileReader.GetGameMetadata(gameID);
+
+		server.OnConnectionEstablished += (client) => {
+			GD.Print("Load game after connection...");
+			game = GameController.LoadAndStartGame(data["GameType"] == "Bot", data["GameType"] == "Bot" ? int.Parse(data["BotDepth"]) : 0, this, data["PlayerTeam"] == "White" ? 1 : -1, server, 2, gameID);
+		}; 
+
+
+		await server.CreateTcpListener();
+
+	}
+
+	public void ConnectLoadLanGame(string ip,string port, string gameID)
+	{
+
+
+		CleanupPreviousGame();
+		TableController.table.Clear();
+		TcpConnect server = new TcpConnect(ip, int.Parse(port));
+		var data = GameFileReader.GetGameMetadata(gameID);
+		game = GameController.LoadAndStartGame(data["GameType"] == "Bot", data["GameType"] == "Bot" ? int.Parse(data["BotDepth"]) : 0, this, data["PlayerTeam"] == "White" ? 1 : -1, server, 2, gameID);
+		server.ConnectToPeer();
+
+	}
+
+
 	public void ConnectLanGame(string ip,string port)
 	{
 		CleanupPreviousGame();
 		TableController.table.Clear();
 		TcpConnect server = new TcpConnect(ip, int.Parse(port));
-		var gameID = CreateGameFile.CreateNewGameFile("PvP");
+		var gameID = CreateGameFile.CreateNewGameFile("LAN","Black");
 		game = GameController.CreateAndStartGame(false, 0, this, -1, server, 2, gameID);
 		server.ConnectToPeer();
 	}
