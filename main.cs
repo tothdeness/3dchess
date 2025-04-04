@@ -30,6 +30,9 @@ public partial class main : Node3D
 
 	private bool pressed;
 
+	private Vector2 rotationInput = Vector2.Zero;
+
+
 
 	[Signal]
 	public delegate void FullyInitializedEventHandler();
@@ -250,6 +253,28 @@ public partial class main : Node3D
 
 	public override void _Process(double delta)
 	{
+		if (rightMouseButtonIsPressed && rotationInput != Vector2.Zero)
+		{
+			float sensitivity = 0.005f;
+			float yaw = -rotationInput.X * sensitivity;
+			float pitch = -rotationInput.Y * sensitivity; // Negative Y for up/down
+
+			// --- YAW ---
+			// Rotates the helper around the WORLD'S Y axis (Up)
+			cameraHelper.RotateY(yaw);
+
+			// --- PITCH ---
+			// Rotates the helper around ITS OWN LOCAL X axis (Right)
+			// This should make the camera attached to it tilt up/down.
+			cameraHelper.RotateObjectLocal(new Vector3(0,0,1), pitch); // Use this!
+
+			// --- Optional Pitch Clamping ---
+			Vector3 currentRotation = cameraHelper.Rotation;
+			currentRotation.X = Mathf.Clamp(currentRotation.X, Mathf.DegToRad(-85.0f), Mathf.DegToRad(85.0f));
+			cameraHelper.Rotation = currentRotation;
+
+			rotationInput = Vector2.Zero;
+		}
 	}
 
 	public void add_child(Dummy child)
@@ -260,41 +285,29 @@ public partial class main : Node3D
 	public override void _Input(InputEvent _event)
 	{
 		base._Input(_event);
-
-		if (_event is InputEventMouseButton)
+		if (_event is InputEventMouseButton mouseButtonEvent)
 		{
-			InputEventMouseButton mouse = (InputEventMouseButton)_event;
-
-			if (mouse.ButtonIndex == MouseButton.Right)
+			if (mouseButtonEvent.ButtonIndex == MouseButton.Right)
 			{
-				draggingPosition = mouse.Position;
-				rightMouseButtonIsPressed = !rightMouseButtonIsPressed;
+				rightMouseButtonIsPressed = mouseButtonEvent.Pressed;
+				// Optional: Reset rotation input when button is released to prevent
+				// lingering movement if _Process runs slightly after release.
+				if (!rightMouseButtonIsPressed)
+				{
+					rotationInput = Vector2.Zero;
+				}
+				// Optional: Capture mouse mode to hide cursor and keep it centered
+				Input.MouseMode = rightMouseButtonIsPressed ? Input.MouseModeEnum.Captured : Input.MouseModeEnum.Visible;
 			}
 		}
-		else if (_event is InputEventMouseMotion && rightMouseButtonIsPressed)
+		// Accumulate Mouse Motion if Right Button is Held
+		else if (_event is InputEventMouseMotion mouseMotionEvent && rightMouseButtonIsPressed)
 		{
-			InputEventMouseMotion mouse = (InputEventMouseMotion) _event;
-
-			float rotatingSpeed = 0.022f;
-
-			currentPos = mouse.Position;
-
-			Vector2 distance = draggingPosition - currentPos;
-
-			if (Math.Abs(distance.X) > 2)
-			{
-				cameraHelper.RotateY(rotatingSpeed * (distance.X > 0 ? 1 : -1));
-				draggingPosition = currentPos;
-			}
-
-			if (Math.Abs(distance.Y) > 2)
-			{
-				cameraHelper.RotateObjectLocal(new Vector3(0, 0, 1), rotatingSpeed * (distance.Y > 0 ? 1 : -1));
-				draggingPosition = currentPos;
-			}
-
-
+			// Accumulate relative movement. This is the key change.
+			rotationInput += mouseMotionEvent.Relative;
 		}
+
+
 
 		if (_event is InputEventKey keyEvent && keyEvent.Pressed && keyEvent.Keycode == Key.Escape)
 		{
@@ -331,6 +344,9 @@ public partial class main : Node3D
 				game.MoveBack();
 			}
 		}
+
+
+
 
 	}
 

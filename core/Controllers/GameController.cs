@@ -133,6 +133,7 @@ namespace test.core.Controllers
 
 			LanGameStart();
 			if (player1 == -1 && gameMode == 1) { NextMove(nextplayer, null); }
+			if (gameMode == 2) { current = board.current; }
 		}
 
         private void LanGameStart()
@@ -196,7 +197,7 @@ namespace test.core.Controllers
 				game.board.current *= -1;
 			}
 
-			game.current = game.board.current;
+			
 			game.AddVisuals();
             game.StartGameAsync(lastmove.moving.team);
 
